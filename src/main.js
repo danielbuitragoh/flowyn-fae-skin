@@ -18,6 +18,8 @@ import './estilos/hero.css';
 import './estilos/secciones.css';
 import './estilos/ritual.css';
 import './estilos/formula.css';
+import './estilos/comprar.css';
+import './estilos/carrito.css';
 
 import { iniciarRevelado } from './modulos/revelar.js';
 import { sembrarBruma, sembrarDestellos } from './modulos/atmosfera.js';
@@ -27,6 +29,8 @@ import { montarIconos } from './modulos/iconos.js';
 import { iniciarRitual } from './modulos/ritual.js';
 import { montarFrasco3D } from './modulos/frasco3d.js';
 import { iniciarProfundidad } from './modulos/profundidad.js';
+import { montarCarrito } from './modulos/carrito-ui.js';
+import { montarFicha } from './modulos/ficha.js';
 
 function iniciar() {
   montarNav();
@@ -36,6 +40,12 @@ function iniciar() {
   sembrarDestellos(document.querySelector('[data-destellos]'));
   iniciarRitual();
   iniciarProfundidad();
+
+  // La tienda va antes que el revelado: el carrito tiene que pintar su
+  // contenido guardado aunque el visitante no haya hecho scroll todavía.
+  montarCarrito();
+  montarFicha();
+
   iniciarRevelado();
 
   // El 3D se monta aparte y sin bloquear: three.js viaja en su propio

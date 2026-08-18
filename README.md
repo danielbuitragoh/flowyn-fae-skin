@@ -22,11 +22,15 @@ El material de partida son tres documentos de marca: Marketing MIX, Objetivos SM
 
 ## Lo que más me interesa que se mire
 
-**El frasco es un modelo 3D, no una foto.** El manual describe el envase como "vidrio translúcido con reflejos iridiscentes". Una fotografía congela una única incidencia de luz, y el iridiscente sólo se entiende cuando el objeto gira y los reflejos se desplazan por la superficie. El frasco del hero es geometría generada por código —un sólido de revolución con estrías retorcidas— con vidrio refractivo e iridiscencia física, y se puede arrastrar para girarlo.
+**El carrito es una bandeja, no una lista.** Añadir el frasco tiene que sentirse como recibir algo, no como rellenar una fila de una tabla: por eso el producto va grande sobre un lecho nude en arco, la línea se asienta desde arriba en vez de aparecer de golpe, y el resumen respira. El panel es un diálogo modal de verdad —atrapa el foco, se cierra con Escape, devuelve el foco al botón que lo abrió, bloquea el scroll de detrás— y al repintarse conserva el foco del teclado, porque si no, pulsar "+" te expulsaba al principio del documento y la tienda quedaba inservible sin ratón.
 
-El perfil no está dibujado a ojo: se midió sobre el canal alfa del packshot, tomando el semiancho fila a fila. De ahí salen la proporción real del envase (2.45 de alto por 1 de ancho) y el hombro casi recto del tercio superior, que es lo que lo hace reconocible. Describirlo así pesa unos cientos de bytes en lugar de los megas de una malla exportada, y se ajusta editando números.
+**El precio vive en un solo sitio.** El catálogo, las tarifas y el umbral de envío gratis están en `src/datos/`, y tanto la ficha como el carrito los leen de ahí. Si el precio estuviera escrito en el HTML y calculado otra vez en el panel, tarde o temprano dejarían de coincidir — y en una tienda eso no es un detalle estético.
 
-Hay dos acabados para ese mismo vidrio. Con GPU, refracción real: la luz atraviesa el frasco y arrastra el fondo consigo. Sin GPU —rasterizado por software, donde la refracción o sale plana o corre a cinco fotogramas por segundo— se usa un nácar translúcido que conserva la iridiscencia y se dibuja en una sola pasada. Y si el equipo no da ni para eso, o el visitante pidió menos movimiento, se queda la fotografía. three.js viaja en su propio fragmento diferido, así que la página es usable mucho antes de que llegue: el 3D es una mejora, nunca un requisito para ver el producto.
+**Lo que es dato de marca y lo que es decisión mía está separado.** El precio (COP $89.900), el posicionamiento y los cinco pilares de valor salen literalmente del Marketing MIX. Las tarifas de envío, los plazos y el umbral de envío gratis no aparecen en ningún documento —el manual sólo promete "envíos seguros y rápidos" y sitúa al público en "ciudades principales de Colombia", sin nombrarlas ni poner cifras—, así que los definí para el proyecto y están marcados como tales en el código. Un hueco identificado vale más que un dato inventado que parezca oficial.
+
+**El frasco del hero: la foto, con profundidad.** El manual describe el envase como "vidrio translúcido con reflejos iridiscentes", y esa cualidad pedía 3D. Modelé el frasco por código a partir del perfil medido sobre el canal alfa del packshot —de ahí salen su proporción real, 2.45 por 1, la sección aplanada y la torsión del eje— pero no llegó al nivel del producto: lo que hace bello a ese envase son las nervaduras de vidrio refractando la luz, no su silueta, y aproximar eso con fórmulas siempre daba algo parecido pero peor.
+
+Así que el hero sirve la fotografía y le da dimensión tratando la escena como capas a distinta distancia: velo, halo, frasco y destellos se desplazan en proporción a su profundidad al mover el puntero, y el frasco gira unos grados hacia el lado al que se inclina. El seguimiento interpola en cada fotograma en lugar de saltar al cursor — un objeto con masa no se teletransporta, y ese retraso es lo que separa la sensación de peso de la de temblor. El modelo 3D sigue en el repositorio tras `?forzar3d=1`, a la espera del archivo original del envase o de una secuencia de giro renderizada.
 
 **La paleta no se tocó, se separó.** El manual de marca es monocromo cálido: crema, nude, cobre, caoba. Precioso en muestras grandes, pero medí los pares y tres fallaban WCAG AA en texto pequeño — el cobre de las etiquetas daba 3.01:1 sobre crema, cuando el mínimo es 4.5:1. La salida fácil habría sido oscurecer la marca. En vez de eso, los tonos originales se quedan para superficies, filetes y acentos, y para texto hay variantes más profundas del mismo color. Un verificador corre en cada push y falla la construcción si alguien rompe el equilibrio.
 
@@ -44,9 +48,14 @@ Hay dos acabados para ese mismo vidrio. Con GPU, refracción real: la luz atravi
 |---|---|
 | `src/estilos/tokens.css` | Paleta, tipografía, ritmo y movimiento. Fuente única de verdad |
 | `src/estilos/` | Base, navegación y una hoja por sección |
-| `src/modulos/` | JavaScript por responsabilidad: revelado, atmósfera, marca, navegación |
+| `src/datos/catalogo.js` | Producto, precio, tarifas de envío y umbral de envío gratis |
+| `src/modulos/carrito.js` | Estado del carrito y cálculo de totales. No toca el DOM |
+| `src/modulos/carrito-ui.js` | El panel: pinta el estado y traduce las acciones de la clienta |
+| `src/modulos/` | El resto, por responsabilidad: revelado, atmósfera, marca, navegación, ritual, profundidad |
 | `public/assets/` | Logotipo y isotipo vectorizados, packshots y fotografía de campaña |
 | `scripts/verificar-contraste.mjs` | Mide la paleta contra WCAG AA y falla si algo no cumple |
+
+El estado del carrito y su interfaz están deliberadamente separados. Hoy la persistencia es `localStorage`, suficiente para que el carrito sobreviva a un refresco; en la Fase 3 pasa a Supabase para que sobreviva también a cambiar de dispositivo. Ese cambio debería tocar de dónde salen los datos, no lo que la tienda hace con ellos.
 
 ## Correrlo
 
@@ -62,8 +71,8 @@ npm run build      # genera dist/
 Este repositorio está en construcción. Lo que ya funciona y lo que falta:
 
 - [x] **Fase 0** — Activos de marca, sistema de diseño, verificador de contraste, hero
-- [x] **Fase 1** — Secciones de producto, ritual, fórmula y aroma, y frasco en 3D
-- [ ] **Fase 2** — Carrito y cálculo de envío por ciudad
+- [x] **Fase 1** — Secciones de producto, ritual, fórmula y aroma
+- [x] **Fase 2** — Ficha de compra, carrito y cálculo de envío por ciudad
 - [ ] **Fase 3** — Autenticación con Google
 - [ ] **Fase 4** — Checkout con firma del pago en servidor
 - [ ] **Fase 5** — Accesibilidad, responsive y despliegue

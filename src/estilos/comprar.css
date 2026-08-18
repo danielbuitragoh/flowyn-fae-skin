@@ -1,0 +1,199 @@
+/* ==========================================================================
+   FLOWYN · 09 · Comprar
+   El momento de la compra es donde más marcas rompen su propio tono: bajan
+   el precio de golpe, meten cuentas atrás, gritan. El manual de flowyn no
+   tiene un solo signo de exclamación, así que esta sección se comporta
+   igual que las anteriores — sólo que aquí se puede pedir.
+   ========================================================================== */
+
+.comprar { overflow: hidden; }
+
+.comprar__rejilla {
+  display: grid;
+  grid-template-columns: 0.95fr 1fr;
+  gap: clamp(2rem, 6vw, 5.5rem);
+  align-items: center;
+}
+
+/* --- Producto -------------------------------------------------------------- */
+.comprar__escena {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: min(60svh, 520px);
+}
+
+.comprar__halo {
+  position: absolute;
+  inset: auto auto 10% 50%;
+  translate: -50% 0;
+  width: min(34vw, 380px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(255, 252, 246, .92) 0%,
+    rgba(244, 235, 230, .6) 38%,
+    rgba(250, 245, 242, 0) 72%);
+  filter: blur(8px);
+}
+
+.comprar__foto {
+  position: relative;
+  z-index: 1;
+  height: min(58svh, 500px);
+  width: auto;
+  filter: drop-shadow(0 34px 44px rgba(139, 90, 75, .15));
+}
+
+/* --- Ficha ------------------------------------------------------------------ */
+.ficha__marca {
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+  margin-bottom: var(--e-2);
+}
+
+.ficha h2 {
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+.ficha__descriptor {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: var(--t-sub);
+  color: var(--cobre-texto);
+  margin-bottom: var(--e-4);
+}
+
+.ficha__precio {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: var(--e-2);
+}
+.ficha__precio strong {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(2rem, 3.4vw, 2.6rem);
+  color: var(--caoba);
+  letter-spacing: 0.01em;
+}
+.ficha__precio span {
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+}
+
+.ficha__nota {
+  font-size: var(--t-pequeno);
+  color: var(--taupe-texto);
+  margin-bottom: var(--e-6);
+}
+
+/* --- Pilares de valor -------------------------------------------------------
+   Los cinco del Marketing MIX, con su texto literal. Van en dos columnas
+   con filete superior, el mismo patrón que los beneficios, para que se lean
+   como parte del mismo sistema y no como una tabla de especificaciones. */
+.ficha__valor {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--e-2) var(--e-4);
+  list-style: none;
+  margin: 0 0 var(--e-6);
+  padding: 0;
+}
+.ficha__valor li {
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--rosa-borde);
+}
+.ficha__valor strong {
+  display: block;
+  font-size: var(--t-etiqueta);
+  font-weight: 400;
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--caoba);
+}
+.ficha__valor span { font-size: 0.875rem; color: var(--taupe); }
+
+/* --- Cantidad y compra ------------------------------------------------------ */
+.ficha__compra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-3);
+  margin-bottom: var(--e-4);
+}
+
+.cantidad {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.3rem;
+  border: 1px solid var(--rosa-borde);
+  border-radius: 999px;
+}
+.cantidad button {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--caoba);
+  font-family: var(--sans);
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--dur-corta) var(--curva);
+}
+.cantidad button:hover:not(:disabled) { background: var(--nude); }
+.cantidad button:disabled { opacity: .32; cursor: not-allowed; }
+.cantidad output {
+  min-width: 2ch;
+  text-align: center;
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  color: var(--caoba);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Promesas de servicio ---------------------------------------------------
+   Literales del documento de marca. Aquí funcionan como sellos de
+   confianza sin necesidad de inventarse garantías que la marca no ha
+   prometido.                                                              */
+.ficha__promesas {
+  display: grid;
+  gap: var(--e-2);
+  list-style: none;
+  margin: 0;
+  padding-top: var(--e-4);
+  border-top: 1px solid var(--rosa-borde);
+}
+.ficha__promesas li {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+  font-size: 0.875rem;
+  color: var(--taupe);
+}
+.ficha__promesas .destello { --d: 9px; }
+
+/* --- Adaptación ------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .comprar__rejilla { grid-template-columns: 1fr; gap: var(--e-4); }
+  .comprar__escena { order: -1; min-height: auto; }
+  .comprar__foto { height: min(38svh, 330px); }
+  .comprar__halo { width: min(60vw, 280px); }
+}
+
+@media (max-width: 520px) {
+  .ficha__valor { grid-template-columns: 1fr; }
+  .ficha__compra { flex-direction: column; align-items: stretch; }
+  .cantidad { justify-content: space-between; }
+}

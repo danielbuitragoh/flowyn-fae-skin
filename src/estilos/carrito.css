@@ -1,0 +1,286 @@
+/* ==========================================================================
+   FLOWYN · Carrito
+   La idea que gobierna este panel: no es una lista de la compra, es una
+   bandeja. Cuando alguien añade el frasco, la sensación tiene que ser la de
+   recibir algo, no la de rellenar una fila de una tabla. De ahí el fondo
+   cálido, el producto grande, y que el resumen respire en vez de apretarse.
+   ========================================================================== */
+
+/* --- Velo de fondo ---------------------------------------------------------- */
+.velo-carrito {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(121, 65, 50, 0.16);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-media) var(--curva),
+              visibility var(--dur-media) var(--curva);
+}
+.velo-carrito[data-abierto='true'] { opacity: 1; visibility: visible; }
+
+/* --- Panel ------------------------------------------------------------------ */
+.carrito {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: 70;
+  width: min(100%, 27rem);
+  display: flex;
+  flex-direction: column;
+  background: var(--crema);
+  border-left: 1px solid var(--rosa-borde);
+  box-shadow: -30px 0 70px -40px rgba(139, 90, 75, .45);
+  translate: 100% 0;
+  visibility: hidden;
+  transition: translate var(--dur-media) var(--curva),
+              visibility var(--dur-media) var(--curva);
+}
+.carrito[data-abierto='true'] { translate: 0 0; visibility: visible; }
+
+@media (prefers-reduced-motion: reduce) {
+  .carrito, .velo-carrito { transition-duration: 1ms; }
+}
+
+/* --- Cabecera --------------------------------------------------------------- */
+.carrito__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-2);
+  padding: var(--e-4);
+  border-bottom: 1px solid var(--rosa-borde);
+}
+.carrito__titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  color: var(--caoba);
+  letter-spacing: 0.03em;
+  margin: 0;
+}
+.carrito__iso { width: 20px; height: auto; color: var(--oro-rosa); }
+
+.carrito__cerrar {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--caoba);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--dur-corta) var(--curva),
+              border-color var(--dur-corta) var(--curva);
+}
+.carrito__cerrar:hover { background: var(--nude); border-color: var(--rosa-borde); }
+
+/* --- Cuerpo ----------------------------------------------------------------- */
+.carrito__cuerpo {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;   /* el scroll no se contagia a la página */
+  padding: var(--e-4);
+}
+
+/* --- Vacío -------------------------------------------------------------------
+   Un carrito vacío es una oportunidad, no un error. Nada de "no hay nada
+   aquí": se enseña el producto y se invita.                              */
+.carrito__vacio {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: var(--e-3);
+  padding-block: var(--e-8);
+}
+.carrito__vacio img { width: 90px; height: auto; opacity: .85; }
+.carrito__vacio p { margin: 0; color: var(--taupe); max-width: 26ch; }
+.carrito__vacio strong {
+  display: block;
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--caoba);
+}
+
+/* --- Línea de producto ------------------------------------------------------- */
+.linea {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: var(--e-3);
+  align-items: start;
+  padding-bottom: var(--e-4);
+  margin-bottom: var(--e-4);
+  border-bottom: 1px solid var(--rosa-borde);
+}
+
+/* La foto del frasco va sobre un lecho nude en arco: es lo que convierte la
+   fila en bandeja. */
+.linea__foto {
+  display: grid;
+  place-items: center;
+  height: 104px;
+  border-radius: 14px 14px 40% 40% / 14px 14px 22% 22%;
+  background: var(--nude);
+}
+.linea__foto img { height: 88px; width: auto; }
+
+.linea__nombre {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  color: var(--caoba);
+  letter-spacing: 0.02em;
+}
+.linea__meta {
+  font-size: var(--t-etiqueta);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+  margin-bottom: var(--e-2);
+}
+.linea__pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-2);
+  margin-top: var(--e-2);
+}
+.linea__precio {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  color: var(--caoba);
+  font-variant-numeric: tabular-nums;
+}
+
+.linea .cantidad { padding: 0.2rem; }
+.linea .cantidad button { width: 30px; height: 30px; font-size: 0.95rem; }
+.linea .cantidad output { font-size: 1rem; }
+
+.linea__quitar {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-family: var(--sans);
+  font-size: var(--t-etiqueta);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--taupe-texto);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--dur-corta) var(--curva);
+}
+.linea__quitar:hover { color: var(--caoba-hondo); }
+
+/* --- Envío -------------------------------------------------------------------- */
+.envio { margin-top: var(--e-2); }
+.envio__etiqueta {
+  display: block;
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+  margin-bottom: var(--e-2);
+}
+.envio select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--borde-ui);
+  border-radius: 12px;
+  background: var(--crema);
+  color: var(--caoba);
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+.envio__plazo {
+  margin: var(--e-2) 0 0;
+  font-size: var(--t-pequeno);
+  color: var(--taupe-texto);
+}
+
+/* Barra hacia el envío gratis. Informa de un beneficio real, sin cuenta
+   atrás ni presión: si no se llega, no pasa nada. */
+.progreso { margin-top: var(--e-3); }
+.progreso__pista {
+  height: 3px;
+  border-radius: 3px;
+  background: var(--nude-hondo);
+  overflow: hidden;
+}
+.progreso__barra {
+  height: 100%;
+  width: var(--avance, 0%);
+  border-radius: 3px;
+  background: var(--grad-oro);
+  transition: width var(--dur-larga) var(--curva);
+}
+.progreso p {
+  margin: var(--e-2) 0 0;
+  font-size: var(--t-pequeno);
+  color: var(--taupe-texto);
+}
+.progreso p strong { color: var(--caoba); font-weight: 400; }
+
+/* --- Resumen ------------------------------------------------------------------ */
+.carrito__pie {
+  padding: var(--e-4);
+  border-top: 1px solid var(--rosa-borde);
+  background: var(--crema-calida);
+}
+
+.resumen { display: grid; gap: 0.55rem; margin-bottom: var(--e-3); }
+.resumen div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--e-2);
+  font-size: 0.9375rem;
+  color: var(--taupe);
+}
+.resumen span:last-child { font-variant-numeric: tabular-nums; }
+.resumen .gratis { color: var(--cobre-texto); letter-spacing: 0.1em; text-transform: uppercase; font-size: var(--t-etiqueta); }
+
+.resumen__total {
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--rosa-borde);
+}
+.resumen__total span:first-child {
+  font-family: var(--sans);
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+}
+.resumen__total span:last-child {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  color: var(--caoba);
+}
+
+.carrito__pie .boton { width: 100%; }
+
+.carrito__aviso {
+  margin: var(--e-3) 0 0;
+  font-size: var(--t-pequeno);
+  color: var(--taupe-texto);
+  text-align: center;
+}
+
+/* --- Entrada del producto ------------------------------------------------------
+   Al añadir, la línea se asienta desde arriba en vez de aparecer de golpe:
+   el mismo gesto de bruma que gobierna el resto de la página.            */
+@keyframes asentar {
+  from { opacity: 0; transform: translateY(-14px) scale(.98); }
+  to   { opacity: 1; transform: none; }
+}
+.linea--nueva { animation: asentar var(--dur-media) var(--curva); }
+
+@media (prefers-reduced-motion: reduce) {
+  .linea--nueva { animation: none; }
+}
