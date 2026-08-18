@@ -1,0 +1,107 @@
+/* ==========================================================================
+   FLOWYN · Tokens de diseño
+   Los colores están muestreados de los documentos de marca de Gabriela
+   Chávez, no elegidos a ojo. Tres reglas que el sistema no rompe nunca:
+   no hay negro puro, no hay blanco puro, y no entra ningún color frío.
+   El único punto saturado de todo el sitio es el iridiscente del vidrio
+   en las fotografías — por eso el resto se mantiene callado.
+   ========================================================================== */
+
+:root {
+  /* ---- Superficies ---------------------------------------------------- */
+  --crema:          #FAF5F2;   /* fondo dominante, blanco roto cálido */
+  --crema-calida:   #FCF8ED;   /* alternancia de sección */
+  --nude:           #F4EBE6;   /* tarjetas y bloques */
+  --nude-hondo:     #EFE4DE;
+
+  /* ---- Acentos -------------------------------------------------------- */
+  --blush:          #E9D2CC;   /* velos y ondas de seda */
+  --rosa-borde:     #DDCBC3;   /* filetes de 1px */
+  --oro-rosa:       #C79191;   /* logo, degradados */
+  --oro-rosa-hondo: #A78584;
+  --cobre:          #A9877B;   /* etiquetas de sección */
+
+  /* ---- Tinta ---------------------------------------------------------- */
+  --caoba:          #8B5A4B;   /* titulares */
+  --caoba-hondo:    #794132;   /* texto que necesita contraste AA */
+  --taupe:          #6E655E;   /* cuerpo */
+  --taupe-claro:    #8A837B;   /* SOLO decorativo — ver nota de abajo */
+
+  /* ---- Variantes de texto ----------------------------------------------
+     La paleta de la marca se diseñó mirando muestras grandes de color. En
+     esa escala funciona; en texto de 11–13 px, no: --cobre da 3.01:1 sobre
+     crema y --taupe-claro 3.46:1, ambos por debajo del 4.5:1 que pide AA.
+     La respuesta no es retocar la marca, sino separar los usos. Los tonos
+     originales se quedan para superficies, filetes y acentos; para texto
+     usamos estas variantes más profundas del mismo color, calculadas para
+     cumplir sobre los tres fondos del sistema. Es la misma solución que
+     adoptamos en La Mesa cuando el naranja mandarina falló como precio.  */
+  --cobre-texto:    #7F655C;   /* etiquetas de sección — 4.95:1 sobre crema */
+  --taupe-texto:    #706A64;   /* texto secundario   — 4.93:1 sobre crema */
+  --borde-ui:       #928681;   /* bordes con significado (campos, foco) */
+
+  /* ---- Degradados ----------------------------------------------------- */
+  --grad-oro:   linear-gradient(135deg, #D9A9A4 0%, #C79191 45%, #A78584 100%);
+  --grad-velo:  linear-gradient(160deg, rgba(233,210,204,.55) 0%, rgba(250,245,242,0) 70%);
+
+  /* ---- Tipografía ------------------------------------------------------
+     Display: serif de alto contraste, siempre en versales con tracking
+     amplio — así se comporta en los documentos originales.
+     Cuerpo: sans geométrica ligera; nunca compite con el serif.        */
+  --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --sans:  'Jost', 'Helvetica Neue', Arial, sans-serif;
+
+  --track-etiqueta: 0.22em;   /* etiquetas de sección en versales */
+  --track-titular:  0.08em;   /* titulares display */
+
+  /* ---- Escala tipográfica (fluida) ------------------------------------ */
+  --t-display: clamp(2.75rem, 7vw, 6rem);
+  --t-titular: clamp(2rem, 4.4vw, 3.4rem);
+  --t-sub:     clamp(1.25rem, 2.2vw, 1.75rem);
+  --t-cuerpo:  clamp(1rem, 1.05vw, 1.0625rem);
+  --t-pequeno: 0.8125rem;
+  --t-etiqueta: 0.6875rem;
+
+  /* ---- Ritmo espacial --------------------------------------------------
+     Escala de 8px. Las secciones respiran mucho: el aire es parte de la
+     identidad, no relleno.                                              */
+  --e-1: 0.5rem;
+  --e-2: 1rem;
+  --e-3: 1.5rem;
+  --e-4: 2rem;
+  --e-6: 3rem;
+  --e-8: 4rem;
+  --e-12: 6rem;
+  --e-16: 8rem;
+  --seccion-y: clamp(5rem, 11vw, 10rem);
+
+  /* ---- Medidas -------------------------------------------------------- */
+  --ancho-max: 1280px;
+  --ancho-texto: 62ch;
+  --radio-suave: 18px;
+  --radio-arco: 50% 50% 12px 12px / 32% 32% 12px 12px;  /* foto en arco */
+
+  /* ---- Movimiento ------------------------------------------------------
+     Nada aparece de golpe: todo se asienta como bruma. La curva es suave
+     de salida para que la entrada se sienta inevitable, no mecánica.    */
+  --curva: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --curva-suave: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-corta: 240ms;
+  --dur-media: 620ms;
+  --dur-larga: 1100ms;
+
+  /* ---- Sombras ---------------------------------------------------------
+     Cálidas y muy abiertas. Una sombra gris rompería el sistema.        */
+  --sombra-suave: 0 18px 50px -24px rgba(139, 90, 75, 0.28);
+  --sombra-media: 0 30px 70px -30px rgba(139, 90, 75, 0.34);
+}
+
+/* Quien pida menos movimiento, recibe menos movimiento. La identidad de
+   la marca es la calma, así que esto no le quita nada esencial. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-corta: 1ms;
+    --dur-media: 1ms;
+    --dur-larga: 1ms;
+  }
+}

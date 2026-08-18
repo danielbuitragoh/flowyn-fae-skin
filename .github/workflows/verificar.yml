@@ -1,0 +1,21 @@
+name: Verificar
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # El contraste va primero: si la paleta se rompió, no tiene sentido
+      # gastar tiempo construyendo un sitio que no se puede leer.
+      - run: npm run verificar:contraste
+      - run: npm run build

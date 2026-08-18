@@ -1,0 +1,25 @@
+{
+  "name": "flowyn-fae-skin",
+  "version": "1.0.0",
+  "description": "Landing page y tienda de FAE SKIN — Ethereal Skin Mist, de la marca flowyn.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "verificar:contraste": "node scripts/verificar-contraste.mjs",
+    "verificar": "npm run verificar:contraste && npm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^5.4.21"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/jost": "^5.3.0"
+  },
+  "private": true,
+  "type": "module"
+}

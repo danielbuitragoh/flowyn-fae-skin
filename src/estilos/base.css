@@ -1,0 +1,198 @@
+/* ==========================================================================
+   FLOWYN · Base y primitivas compartidas
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--crema);
+  color: var(--taupe);
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: var(--t-cuerpo);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img, svg { display: block; max-width: 100%; }
+
+h1, h2, h3 {
+  font-family: var(--serif);
+  color: var(--caoba);
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: var(--track-titular);
+  margin: 0;
+}
+
+p { margin: 0 0 var(--e-3); max-width: var(--ancho-texto); }
+
+a { color: inherit; }
+
+::selection { background: var(--blush); color: var(--caoba-hondo); }
+
+:focus-visible {
+  outline: 2px solid var(--cobre-texto);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* --- Contenedor ---------------------------------------------------------- */
+.contenedor {
+  width: min(100% - 2.5rem, var(--ancho-max));
+  margin-inline: auto;
+}
+
+.seccion { padding-block: var(--seccion-y); position: relative; }
+.seccion--nude { background: var(--nude); }
+.seccion--calida { background: var(--crema-calida); }
+
+/* --- Etiqueta de sección -------------------------------------------------
+   Versales, tracking amplio, precedidas de un filete. Es el patrón que se
+   repite en cada diapositiva del manual, así que aquí también ancla.     */
+.etiqueta {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+  margin: 0 0 var(--e-3);
+}
+.etiqueta::before {
+  content: '';
+  width: 44px;
+  height: 1px;
+  background: var(--rosa-borde);
+  flex: none;
+}
+
+.titular { font-size: var(--t-titular); text-transform: uppercase; }
+.titular em { font-style: italic; text-transform: none; letter-spacing: 0.02em; }
+
+.entradilla {
+  font-size: var(--t-sub);
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--caoba);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+/* --- Destello de cuatro puntas -------------------------------------------
+   El motivo gráfico firma de la marca. Se dibuja en CSS para poder
+   sembrarlo por todas partes sin pedir una imagen cada vez.             */
+.destello {
+  width: var(--d, 14px);
+  aspect-ratio: 1;
+  background: var(--oro-rosa);
+  clip-path: polygon(50% 0%, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0% 50%, 42% 42%);
+  flex: none;
+}
+
+/* --- Botones -------------------------------------------------------------
+   El CTA de la marca es "DESCUBRIR" y aparece así en el manual. Nunca
+   grita: el relleno caoba es firme pero el tracking lo mantiene sereno. */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e-1);
+  padding: 1.05rem 2.6rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: var(--t-pequeno);
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--dur-corta) var(--curva),
+              background-color var(--dur-corta) var(--curva),
+              color var(--dur-corta) var(--curva),
+              box-shadow var(--dur-corta) var(--curva);
+}
+.boton--principal {
+  background: var(--caoba);
+  color: var(--crema);
+  box-shadow: var(--sombra-suave);
+}
+.boton--principal:hover { background: var(--caoba-hondo); transform: translateY(-2px); }
+.boton--fantasma {
+  background: transparent;
+  color: var(--caoba);
+  border-color: var(--rosa-borde);
+}
+.boton--fantasma:hover { border-color: var(--cobre); transform: translateY(-2px); }
+
+/* --- Revelado al hacer scroll --------------------------------------------
+   Nada aparece de golpe. El desplazamiento es corto a propósito: si es
+   largo se lee como "animación web"; corto se lee como bruma asentándose. */
+.revelar {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity var(--dur-larga) var(--curva),
+              transform var(--dur-larga) var(--curva);
+  transition-delay: var(--retardo, 0ms);
+}
+.revelar.visible { opacity: 1; transform: none; }
+
+/* --- Velos de seda en las esquinas ---------------------------------------
+   Firma visual presente en casi todas las diapositivas. Decorativo puro,
+   por eso queda fuera del árbol de accesibilidad y no captura clics.    */
+.velo {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  background: var(--grad-velo);
+  filter: blur(28px);
+  opacity: 0.85;
+}
+.velo--sup-der {
+  top: -12%; right: -10%;
+  width: 46vw; height: 46vw;
+  border-radius: 46% 54% 38% 62% / 52% 38% 62% 48%;
+}
+.velo--inf-izq {
+  bottom: -16%; left: -12%;
+  width: 42vw; height: 42vw;
+  border-radius: 58% 42% 62% 38% / 44% 58% 42% 56%;
+}
+
+.sobre-velo { position: relative; z-index: 1; }
+
+/* --- Utilidad de accesibilidad ------------------------------------------- */
+.solo-lectores {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.saltar-al-contenido {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -160%);
+  z-index: 100;
+  background: var(--caoba);
+  color: var(--crema);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0 0 12px 12px;
+  font-size: var(--t-pequeno);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform var(--dur-corta) var(--curva);
+}
+.saltar-al-contenido:focus { transform: translate(-50%, 0); }

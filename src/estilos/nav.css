@@ -1,0 +1,115 @@
+/* ==========================================================================
+   FLOWYN · Navegación
+   Arranca transparente sobre el hero para no interrumpir la entrada, y sólo
+   se materializa cuando el visitante ya se fue de la primera pantalla. Una
+   barra opaca desde el segundo cero le quitaría aire justo al momento que
+   más lo necesita.
+   ========================================================================== */
+
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-3);
+  padding: var(--e-3) clamp(1.25rem, 3vw, 2.5rem);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background-color var(--dur-media) var(--curva),
+              border-color var(--dur-media) var(--curva),
+              padding var(--dur-media) var(--curva),
+              backdrop-filter var(--dur-media) var(--curva);
+}
+
+.nav.compacta {
+  background: rgba(250, 245, 242, 0.86);
+  backdrop-filter: blur(14px) saturate(1.1);
+  border-bottom-color: var(--rosa-borde);
+  padding-block: 0.7rem;
+}
+
+.nav__marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--caoba);
+  text-decoration: none;
+}
+.nav__marca svg { width: 92px; height: auto; }
+.nav__iso { width: 20px; height: auto; color: var(--oro-rosa); }
+
+.nav__enlaces {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2.4vw, 2.2rem);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nav__enlaces a {
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--taupe-texto);
+  text-decoration: none;
+  padding-block: 0.35rem;
+  position: relative;
+  transition: color var(--dur-corta) var(--curva);
+}
+.nav__enlaces a:hover { color: var(--caoba); }
+/* El subrayado crece desde la izquierda: el mismo gesto de "algo que se
+   revela" que gobierna el resto de la página. */
+.nav__enlaces a::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 1px;
+  background: var(--oro-rosa);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-media) var(--curva);
+}
+.nav__enlaces a:hover::after { transform: scaleX(1); }
+
+.nav__acciones { display: flex; align-items: center; gap: var(--e-2); }
+
+.nav__carrito {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 1.15rem;
+  border: 1px solid var(--rosa-borde);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--caoba);
+  font-family: var(--sans);
+  font-size: var(--t-etiqueta);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color var(--dur-corta) var(--curva),
+              background-color var(--dur-corta) var(--curva);
+}
+.nav__carrito:hover { border-color: var(--cobre); background: var(--nude); }
+
+.nav__cuenta {
+  display: grid;
+  place-items: center;
+  min-width: 26px;
+  height: 20px;
+  padding-inline: 6px;
+  border-radius: 999px;
+  background: var(--caoba);
+  color: var(--crema);
+  font-size: 0.625rem;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.nav__cuenta[data-vacio='true'] { display: none; }
+
+@media (max-width: 760px) {
+  .nav__enlaces { display: none; }
+  .nav__marca svg { width: 78px; }
+}

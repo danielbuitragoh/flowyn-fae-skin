@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>flowyn · FAE SKIN — Ethereal Skin Mist</title>
+  <meta name="description" content="FAE SKIN es una bruma facial ultrafina de tratamiento que refresca, hidrata y devuelve luminosidad a la piel durante el día. Skincare premium accesible, hecho en Colombia." />
+  <meta name="theme-color" content="#FAF5F2" />
+  <link rel="icon" href="/assets/isotipo-gota.svg" type="image/svg+xml" />
+
+  <meta property="og:title" content="flowyn · FAE SKIN — Ethereal Skin Mist" />
+  <meta property="og:description" content="Una niebla de frescura que devuelve la luz natural de la piel." />
+  <meta property="og:image" content="/assets/packshot-frasco-centro.jpg" />
+  <meta property="og:type" content="product" />
+  <meta property="og:locale" content="es_CO" />
+</head>
+<body>
+  <a class="saltar-al-contenido" href="#contenido">Saltar al contenido</a>
+
+  <header class="nav" data-nav>
+    <a class="nav__marca" href="#contenido" aria-label="flowyn — inicio">
+      <span class="nav__iso" data-nav-iso aria-hidden="true"></span>
+      <span data-nav-logo aria-hidden="true"></span>
+    </a>
+
+    <nav aria-label="Secciones">
+      <ul class="nav__enlaces">
+        <li><a href="#ritual">El ritual</a></li>
+        <li><a href="#formula">La fórmula</a></li>
+        <li><a href="#aroma">El aroma</a></li>
+        <li><a href="#comprar">Comprar</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav__acciones">
+      <button class="nav__carrito" type="button" data-abrir-carrito aria-label="Abrir el carrito">
+        Carrito
+        <span class="nav__cuenta" data-cuenta-carrito data-vacio="true">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="contenido">
+
+    <!-- ====================================================================
+         HERO
+         ==================================================================== -->
+    <section class="hero" aria-labelledby="hero-titulo">
+      <div class="velo velo--sup-der" aria-hidden="true"></div>
+      <div class="velo velo--inf-izq" aria-hidden="true"></div>
+
+      <div class="hero__bruma" aria-hidden="true" data-bruma></div>
+      <div class="hero__destellos" aria-hidden="true" data-destellos></div>
+
+      <div class="hero__rejilla">
+
+        <div class="hero__marca">
+          <h1 id="hero-titulo" class="solo-lectores">
+            flowyn · FAE SKIN — Ethereal Skin Mist, bruma facial de tratamiento
+          </h1>
+
+          <div class="hero__logo revelar" data-logo aria-hidden="true"></div>
+
+          <p class="hero__claim revelar" style="--retardo:120ms">
+            Una niebla de frescura que devuelve la luz natural de la piel.
+          </p>
+
+          <p class="hero__texto revelar" style="--retardo:220ms">
+            Bruma facial ultrafina de tratamiento, diseñada para refrescar,
+            hidratar y devolver luminosidad durante todo el día.
+          </p>
+
+          <div class="hero__acciones revelar" style="--retardo:320ms">
+            <a class="boton boton--principal" href="#ritual">Descubrir</a>
+            <p class="hero__precio">
+              <span>100 ml · COP</span>
+              <strong>$89.900</strong>
+            </p>
+          </div>
+        </div>
+
+        <div class="hero__producto">
+          <div class="hero__halo" aria-hidden="true"></div>
+          <img
+            class="hero__frasco"
+            src="/assets/packshot-frasco-recortado.png"
+            alt="Frasco de FAE SKIN, bruma facial de 100 ml en vidrio opalescente con atomizador en oro rosa"
+            width="587" height="1648" fetchpriority="high" />
+          <div class="hero__reflejo" aria-hidden="true"></div>
+        </div>
+
+      </div>
+
+      <a class="hero__scroll" href="#ritual">
+        <i aria-hidden="true"></i>
+        Desliza
+      </a>
+    </section>
+
+    <div data-centinela aria-hidden="true"></div>
+
+    <!-- ====================================================================
+         ANCLA TEMPORAL — las secciones 02 a 11 llegan en la Fase 1
+         ==================================================================== -->
+    <section class="seccion seccion--nude" id="ritual" aria-labelledby="ritual-titulo">
+      <div class="contenedor">
+        <p class="etiqueta revelar">El ritual</p>
+        <h2 id="ritual-titulo" class="titular revelar" style="--retardo:100ms">
+          Hydrate. <em>Refresh.</em> Reveal.
+        </h2>
+        <p class="entradilla revelar" style="--retardo:200ms">
+          Descubrir · Tomar · Aplicar · Sentir · Incorporar
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+/* ==========================================================================
+   FLOWYN · Hero
+   El manual insiste en una idea: "una nube dulce flotando en el aire".
+   Por eso el frasco no está apoyado en nada — flota, deriva muy despacio,
+   y la luz nace detrás de él. Si el frasco se sintiera posado sobre una
+   superficie, la promesa de la marca se rompería en el primer segundo.
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding-block: clamp(6rem, 12vh, 9rem) var(--e-8);
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 78% 42%, rgba(252, 248, 237, .95) 0%, rgba(250, 245, 242, 0) 60%),
+    var(--crema);
+}
+
+.hero__rejilla {
+  position: relative;
+  z-index: 2;
+  /* Más estrecho que el contenedor general a propósito: el aire tiene que
+     rodear la composición por fuera, no abrir un hueco en medio de ella. */
+  width: min(100% - 2.5rem, 1080px);
+  display: grid;
+  grid-template-columns: 1fr 0.82fr;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+/* --- Columna de texto ----------------------------------------------------- */
+.hero__marca { max-width: 30rem; }
+
+.hero__logo {
+  width: clamp(15rem, 26vw, 23rem);
+  height: auto;
+  margin-bottom: var(--e-4);
+}
+.hero__logo path { fill: var(--caoba); }
+
+.hero__claim {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 2.9vw, 2.4rem);
+  font-style: italic;
+  line-height: 1.28;
+  color: var(--caoba);
+  letter-spacing: 0.01em;
+  margin: 0 0 var(--e-3);
+  max-width: 18ch;
+}
+
+.hero__texto {
+  color: var(--taupe);
+  max-width: 34ch;
+  margin-bottom: var(--e-6);
+}
+
+.hero__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-3);
+}
+
+.hero__precio {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-family: var(--serif);
+  color: var(--caoba);
+}
+.hero__precio span {
+  font-family: var(--sans);
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+}
+.hero__precio strong { font-weight: 400; font-size: 1.7rem; letter-spacing: 0.02em; }
+
+/* --- Columna del frasco ---------------------------------------------------
+   El halo va detrás y ligeramente más abajo que el centro óptico, para que
+   la luz parezca salir del líquido y no de un foco puesto detrás.        */
+.hero__producto {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: min(74svh, 640px);
+}
+
+.hero__halo {
+  position: absolute;
+  inset: auto auto 8% 50%;
+  translate: -50% 0;
+  width: min(46vw, 460px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(255, 252, 246, .95) 0%,
+    rgba(244, 235, 230, .72) 34%,
+    rgba(233, 210, 204, .30) 58%,
+    rgba(250, 245, 242, 0) 74%);
+  filter: blur(6px);
+  animation: latido 9s var(--curva-suave) infinite;
+}
+
+.hero__frasco {
+  position: relative;
+  z-index: 2;
+  height: min(72svh, 620px);
+  width: auto;
+  filter: drop-shadow(0 40px 48px rgba(139, 90, 75, .16));
+  animation: derivar 11s ease-in-out infinite;
+}
+
+/* Reflejo apenas insinuado. No es un espejo — es la memoria de uno. */
+.hero__reflejo {
+  position: absolute;
+  bottom: -2%;
+  left: 50%;
+  translate: -50% 0;
+  width: 46%;
+  height: 26px;
+  background: radial-gradient(ellipse at center, rgba(199, 145, 145, .26) 0%, rgba(250, 245, 242, 0) 72%);
+  filter: blur(7px);
+  z-index: 1;
+}
+
+@keyframes derivar {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-16px) rotate(-0.7deg); }
+}
+@keyframes latido {
+  0%, 100% { opacity: .82; transform: translate(-50%, 0) scale(1); }
+  50%      { opacity: 1;   transform: translate(-50%, 0) scale(1.045); }
+}
+
+/* --- Bruma ----------------------------------------------------------------
+   Partículas que suben y se desvanecen. Deliberadamente pocas y lentas:
+   muchas y rápidas leerían como "nieve", no como bruma.                 */
+.hero__bruma {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.particula {
+  position: absolute;
+  bottom: 12%;
+  width: var(--tam, 5px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(233,210,204,.5) 55%, transparent 72%);
+  opacity: 0;
+  animation: ascender var(--vel, 13s) linear infinite;
+  animation-delay: var(--retraso, 0s);
+}
+@keyframes ascender {
+  0%   { opacity: 0; transform: translate(0, 0) scale(.6); }
+  12%  { opacity: .85; }
+  70%  { opacity: .5; }
+  100% { opacity: 0; transform: translate(var(--deriva, 26px), -62svh) scale(1.35); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__frasco, .hero__halo, .particula { animation: none; }
+  .particula { opacity: .4; }
+}
+
+/* --- Destellos sembrados --------------------------------------------------- */
+.hero__destellos { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.hero__destellos .destello {
+  position: absolute;
+  opacity: .55;
+  animation: titilar var(--vel, 5s) ease-in-out infinite;
+  animation-delay: var(--retraso, 0s);
+}
+@keyframes titilar {
+  0%, 100% { opacity: .22; transform: scale(.82) rotate(0deg); }
+  50%      { opacity: .8;  transform: scale(1.1) rotate(45deg); }
+}
+
+/* --- Indicador de scroll --------------------------------------------------- */
+.hero__scroll {
+  position: absolute;
+  bottom: clamp(1.25rem, 3.5vh, 2.25rem);
+  left: 50%;
+  translate: -50% 0;
+  z-index: 3;
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+  text-decoration: none;
+}
+.hero__scroll i {
+  display: block;
+  width: 1px;
+  height: 46px;
+  background: linear-gradient(to bottom, var(--rosa-borde), transparent);
+  animation: caer 2.6s var(--curva-suave) infinite;
+}
+@keyframes caer {
+  0%   { transform: scaleY(.25); transform-origin: top; opacity: 0; }
+  45%  { transform: scaleY(1);   transform-origin: top; opacity: 1; }
+  100% { transform: scaleY(1);   transform-origin: bottom; opacity: 0; }
+}
+
+/* --- Adaptación ------------------------------------------------------------ */
+@media (max-width: 900px) {
+  /* En vertical el frasco cede protagonismo: si ocupa media pantalla, el
+     claim y el precio caen por debajo del pliegue y la primera impresión
+     se convierte en una foto de producto sin contexto. */
+  .hero { min-height: auto; padding-block: 5rem var(--e-6); }
+  .hero__rejilla { grid-template-columns: 1fr; text-align: center; gap: var(--e-4); }
+  .hero__marca { max-width: none; margin-inline: auto; }
+  .hero__logo { width: min(72vw, 17rem); margin-inline: auto var(--e-3); margin-inline: auto; }
+  .hero__claim { font-size: clamp(1.35rem, 5.6vw, 1.9rem); max-width: 20ch; margin-inline: auto; }
+  .hero__texto { max-width: 36ch; margin-inline: auto; margin-bottom: var(--e-4); }
+  .hero__acciones { justify-content: center; flex-direction: column; gap: var(--e-2); }
+  .hero__producto { order: -1; min-height: auto; }
+  .hero__frasco { height: min(36svh, 320px); }
+  .hero__halo { width: min(64vw, 300px); bottom: 2%; }
+  .hero__scroll { display: none; }
+}
+
+@media (max-width: 420px) {
+  .hero__frasco { height: min(30svh, 260px); }
+}
