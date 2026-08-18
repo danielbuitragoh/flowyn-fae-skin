@@ -132,9 +132,11 @@
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50%      { transform: translateY(-16px) rotate(-0.7deg); }
 }
+/* El centrado lo hace `translate`; aquí sólo la respiración. Antes este
+   keyframe repetía el -50 % y el halo acababa desplazado el doble. */
 @keyframes latido {
-  0%, 100% { opacity: .82; transform: translate(-50%, 0) scale(1); }
-  50%      { opacity: 1;   transform: translate(-50%, 0) scale(1.045); }
+  0%, 100% { opacity: .82; scale: 1; }
+  50%      { opacity: 1;   scale: 1.045; }
 }
 
 /* --- Bruma ----------------------------------------------------------------
@@ -278,4 +280,46 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hero__pista { animation: none; opacity: .75; }
+}
+
+/* --- Profundidad por capas --------------------------------------------------
+   Cada capa se desplaza en proporción a su distancia. Los valores los pone
+   el JS en `--par-x` / `--par-y`; aquí sólo se declaran los valores neutros
+   para que sin JS —o con el movimiento reducido— todo quede en su sitio.
+   --------------------------------------------------------------------------- */
+.hero { perspective: 1400px; }
+
+.hero__destellos,
+.velo {
+  translate: var(--par-x, 0) var(--par-y, 0);
+}
+
+/* El halo ya usa `translate` para centrarse sobre su eje, así que el
+   paralaje se suma dentro del mismo valor en vez de reemplazarlo. */
+.hero__halo {
+  translate: calc(-50% + var(--par-x, 0px)) var(--par-y, 0px);
+}
+/* Las capas de fondo no necesitan seguir el puntero al milisegundo: una
+   transición suave basta y ahorra escrituras en cada fotograma. */
+.velo { transition: translate 700ms var(--curva); }
+
+.hero__flotante {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  transform-style: preserve-3d;
+  translate: var(--par-x, 0) var(--par-y, 0);
+  rotate: 0deg;
+  transform: rotateY(var(--par-giro-y, 0deg)) rotateX(var(--par-giro-x, 0deg));
+}
+
+/* La deriva vive en la imagen y el paralaje en el envoltorio: si
+   compartieran propiedad, uno pisaría al otro. */
+.hero__frasco { z-index: auto; }
+
+/* La sombra se estira y se desplaza al contrario que el frasco, como haría
+   una sombra real cuando el objeto se ladea. */
+.hero__reflejo {
+  translate: calc(-50% + var(--par-x, 0px) * -0.6) 0;
 }

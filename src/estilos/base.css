@@ -22,6 +22,11 @@ body {
 
 img, svg { display: block; max-width: 100%; }
 
+/* Cualquier regla con `display` gana al comportamiento por defecto de
+   `hidden`, y entonces el atributo deja de ocultar nada. Esta línea
+   devuelve a `hidden` su significado en todo el sitio. */
+[hidden] { display: none !important; }
+
 h1, h2, h3 {
   font-family: var(--serif);
   color: var(--caoba);

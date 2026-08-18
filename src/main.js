@@ -26,6 +26,7 @@ import { montarNav } from './modulos/nav.js';
 import { montarIconos } from './modulos/iconos.js';
 import { iniciarRitual } from './modulos/ritual.js';
 import { montarFrasco3D } from './modulos/frasco3d.js';
+import { iniciarProfundidad } from './modulos/profundidad.js';
 
 function iniciar() {
   montarNav();
@@ -34,6 +35,7 @@ function iniciar() {
   sembrarBruma(document.querySelector('[data-bruma]'));
   sembrarDestellos(document.querySelector('[data-destellos]'));
   iniciarRitual();
+  iniciarProfundidad();
   iniciarRevelado();
 
   // El 3D se monta aparte y sin bloquear: three.js viaja en su propio
