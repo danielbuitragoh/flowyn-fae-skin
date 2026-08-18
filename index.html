@@ -33,6 +33,16 @@
     </nav>
 
     <div class="nav__acciones">
+      <!-- Oculto hasta que el módulo de sesión confirme que hay cuentas
+           configuradas y sepa si hay alguien dentro. Aparecer diciendo
+           "Entrar" y cambiar a un nombre medio segundo después es un
+           parpadeo que delata la maquinaria. -->
+      <button class="nav__perfil" type="button" data-abrir-cuenta
+              aria-label="Entrar en tu cuenta" hidden>
+        <span class="nav__avatar" data-cuenta-avatar aria-hidden="true" hidden></span>
+        <span data-cuenta-etiqueta>Entrar</span>
+      </button>
+
       <button class="nav__carrito" type="button" data-abrir-carrito aria-label="Abrir el carrito">
         Carrito
         <span class="nav__cuenta" data-cuenta-carrito data-vacio="true">0</span>
@@ -545,7 +555,7 @@
         <span class="carrito__iso" data-carrito-iso aria-hidden="true"></span>
         Tu bandeja
       </h2>
-      <button type="button" class="carrito__cerrar" data-cerrar-carrito aria-label="Cerrar el carrito">×</button>
+      <button type="button" class="carrito__cerrar" data-cerrar aria-label="Cerrar el carrito">×</button>
     </header>
 
     <div class="carrito__cuerpo" data-carrito-cuerpo></div>
@@ -555,6 +565,26 @@
          contenido que se repinta: si estuviera dentro, cada redibujado la
          sustituiría por un nodo nuevo y dejaría de anunciarse. -->
     <p class="solo-lectores" data-anuncio role="status" aria-live="polite"></p>
+  </aside>
+
+  <!-- ======================================================================
+       CUENTA
+       ====================================================================== -->
+  <div class="velo-carrito" data-velo-cuenta aria-hidden="true"></div>
+
+  <aside class="carrito cuenta" data-cuenta role="dialog" aria-modal="true"
+         aria-labelledby="cuenta-titulo" data-abierto="false">
+    <header class="carrito__cabecera">
+      <h2 class="carrito__titulo" id="cuenta-titulo">
+        <span class="carrito__iso" data-cuenta-iso aria-hidden="true"></span>
+        Tu cuenta
+      </h2>
+      <button type="button" class="carrito__cerrar" data-cerrar aria-label="Cerrar la cuenta">×</button>
+    </header>
+
+    <div class="carrito__cuerpo" data-cuenta-cuerpo></div>
+
+    <p class="solo-lectores" data-cuenta-anuncio role="status" aria-live="polite"></p>
   </aside>
 
   <script type="module" src="/src/main.js"></script>

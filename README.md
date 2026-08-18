@@ -24,6 +24,29 @@ El material de partida son tres documentos de marca: Marketing MIX, Objetivos SM
 
 **El carrito es una bandeja, no una lista.** Añadir el frasco tiene que sentirse como recibir algo, no como rellenar una fila de una tabla: por eso el producto va grande sobre un lecho nude en arco, la línea se asienta desde arriba en vez de aparecer de golpe, y el resumen respira. El panel es un diálogo modal de verdad —atrapa el foco, se cierra con Escape, devuelve el foco al botón que lo abrió, bloquea el scroll de detrás— y al repintarse conserva el foco del teclado, porque si no, pulsar "+" te expulsaba al principio del documento y la tienda quedaba inservible sin ratón.
 
+**La tienda funciona sin credenciales.** El repositorio es público y
+cualquiera puede clonarlo sin tener llaves de Supabase. Si eso rompiera la
+página, el proyecto sólo funcionaría en mi máquina. Así que cuando no hay
+credenciales el botón de cuenta no aparece, el carrito se guarda en el
+navegador y la tienda se comporta exactamente como en la Fase 2 — sin
+errores en consola y sin una puerta que no abre.
+
+**La clienta no puede crear pedidos, y eso es la parte importante del
+esquema.** `pedidos` tiene política de lectura pero ninguna de inserción. Un
+pedido nace en una función de servidor que recalcula el total desde el
+catálogo; si el navegador pudiera escribir en esa tabla, cualquiera con la
+consola abierta podría registrar un frasco de 100 ml por mil pesos. El
+carrito sí es suyo —es una intención de compra, no un cobro— y el precio no
+se guarda nunca en él: sale del catálogo cada vez que se calcula un total.
+
+**Entrar no te hace perder la bandeja.** Al iniciar sesión hay dos carritos
+posibles: el de esta pestaña, de quien acaba de añadir el frasco y luego
+decide crear cuenta, y el de la nube, de quien lo añadió ayer desde el móvil.
+Tirar cualquiera de los dos se siente como una pérdida, así que se fusionan
+quedándose con la cantidad mayor. Al cerrar sesión, en cambio, el carrito se
+vacía: si no, la siguiente persona que abra ese ordenador encontraría la
+compra de otra.
+
 **El precio vive en un solo sitio.** El catálogo, las tarifas y el umbral de envío gratis están en `src/datos/`, y tanto la ficha como el carrito los leen de ahí. Si el precio estuviera escrito en el HTML y calculado otra vez en el panel, tarde o temprano dejarían de coincidir — y en una tienda eso no es un detalle estético.
 
 **Lo que es dato de marca y lo que es decisión mía está separado.** El precio (COP $89.900), el posicionamiento y los cinco pilares de valor salen literalmente del Marketing MIX. Las tarifas de envío, los plazos y el umbral de envío gratis no aparecen en ningún documento —el manual sólo promete "envíos seguros y rápidos" y sitúa al público en "ciudades principales de Colombia", sin nombrarlas ni poner cifras—, así que los definí para el proyecto y están marcados como tales en el código. Un hueco identificado vale más que un dato inventado que parezca oficial.
@@ -51,20 +74,38 @@ Así que el hero sirve la fotografía y le da dimensión tratando la escena como
 | `src/datos/catalogo.js` | Producto, precio, tarifas de envío y umbral de envío gratis |
 | `src/modulos/carrito.js` | Estado del carrito y cálculo de totales. No toca el DOM |
 | `src/modulos/carrito-ui.js` | El panel: pinta el estado y traduce las acciones de la clienta |
+| `src/modulos/modal.js` | Diálogo accesible: trampa de foco, Escape, `inert`, scroll |
+| `src/modulos/sesion.js` | Quién está dentro. Un solo sitio lo sabe; el resto se suscribe |
+| `src/modulos/cuenta-ui.js` | El panel de cuenta: entrar, identidad, historial |
+| `src/modulos/sincronizar-carrito.js` | El único archivo que conoce a la vez la sesión y el carrito |
+| `src/servicios/` | Todo lo que habla con Supabase, y nada más |
 | `src/modulos/` | El resto, por responsabilidad: revelado, atmósfera, marca, navegación, ritual, profundidad |
+| `supabase/migraciones/` | El esquema, con el porqué de cada decisión escrito arriba |
+| `docs/credenciales.md` | Cómo sacar las llaves de Google y dónde va cada una |
 | `public/assets/` | Logotipo y isotipo vectorizados, packshots y fotografía de campaña |
 | `scripts/verificar-contraste.mjs` | Mide la paleta contra WCAG AA y falla si algo no cumple |
 
-El estado del carrito y su interfaz están deliberadamente separados. Hoy la persistencia es `localStorage`, suficiente para que el carrito sobreviva a un refresco; en la Fase 3 pasa a Supabase para que sobreviva también a cambiar de dispositivo. Ese cambio debería tocar de dónde salen los datos, no lo que la tienda hace con ellos.
+El estado del carrito y su interfaz están separados, y el almacén donde se
+guarda es intercambiable. Sin sesión es `localStorage`; con sesión es la
+tabla `carritos`. El resto del módulo no se entera de cuál está puesto, que
+era exactamente el objetivo de separarlos en la Fase 2.
+
+La sesión y el carrito tampoco se conocen entre sí: `sincronizar-carrito.js`
+es el único archivo que sabe las dos cosas y las conecta. Si mañana la
+persistencia cambia de proveedor, se reescribe ese archivo y nada más.
 
 ## Correrlo
 
 ```bash
 npm install
-npm run dev        # servidor de desarrollo
-npm run verificar  # contraste + construcción
-npm run build      # genera dist/
+cp .env.example .env   # opcional: sin esto funciona todo menos la cuenta
+npm run dev            # servidor de desarrollo
+npm run verificar      # contraste + construcción
+npm run build          # genera dist/
 ```
+
+Las llaves y los pasos para obtenerlas están en
+[`docs/credenciales.md`](docs/credenciales.md).
 
 ## Estado
 
@@ -73,9 +114,15 @@ Este repositorio está en construcción. Lo que ya funciona y lo que falta:
 - [x] **Fase 0** — Activos de marca, sistema de diseño, verificador de contraste, hero
 - [x] **Fase 1** — Secciones de producto, ritual, fórmula y aroma
 - [x] **Fase 2** — Ficha de compra, carrito y cálculo de envío por ciudad
-- [ ] **Fase 3** — Autenticación con Google
+- [x] **Fase 3** — Cuenta con Google, carrito en la nube, historial de pedidos
 - [ ] **Fase 4** — Checkout con firma del pago en servidor
 - [ ] **Fase 5** — Accesibilidad, responsive y despliegue
+
+De la Fase 3 queda un cabo suelto honesto: el esquema, las políticas y el
+código están hechos y comprobados, pero el recorrido completo de Google no
+se ha podido ejecutar de punta a punta porque el proveedor necesita unas
+credenciales que sólo puede crear el dueño de la cuenta. Es la primera
+prueba que hay que hacer al abrir el proyecto con el `.env` puesto.
 
 ## Sobre los pagos
 

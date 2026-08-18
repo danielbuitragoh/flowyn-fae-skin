@@ -1,0 +1,239 @@
+/* ==========================================================================
+   FLOWYN · Cuenta
+   El panel hereda la caja del carrito (`.carrito.cuenta` en el HTML): misma
+   entrada, misma cabecera, mismo peso. Es deliberado — los dos paneles son
+   el mismo gesto de la interfaz, y darles cuerpos distintos sólo obligaría
+   a la clienta a aprender dos veces lo mismo. Aquí va únicamente lo que
+   cambia por dentro.
+   ========================================================================== */
+
+/* --- Botón de la barra ------------------------------------------------------ */
+.nav__perfil {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--caoba);
+  font-family: var(--sans);
+  font-size: var(--t-etiqueta);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  max-width: 12rem;
+  transition: border-color var(--dur-corta) var(--curva),
+              background-color var(--dur-corta) var(--curva);
+}
+.nav__perfil:hover { border-color: var(--rosa-borde); background: var(--nude); }
+
+/* El nombre puede ser largo. Se recorta en lugar de empujar al carrito
+   fuera de la barra. */
+.nav__perfil > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Sin foto, la inicial. `padding-left` compensa: cuando no hay avatar el
+   botón no debe quedar con un hueco a la izquierda. */
+.nav__perfil:has(.nav__avatar[hidden]) { padding-left: 1rem; }
+
+.nav__avatar {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--grad-oro);
+  color: var(--crema);
+  font-size: 0.7rem;
+  letter-spacing: 0;
+}
+.nav__avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* --- Cuerpo del panel ------------------------------------------------------- */
+.cuenta .carrito__cuerpo {
+  padding: var(--e-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-4);
+}
+
+/* --- Fuera: la invitación --------------------------------------------------- */
+.cuenta__invitacion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-2);
+}
+.cuenta__lema {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  line-height: 1.25;
+  color: var(--caoba);
+  margin: 0;
+}
+.cuenta__invitacion p {
+  margin: 0;
+  color: var(--taupe);
+  font-size: var(--t-cuerpo);
+  line-height: 1.7;
+}
+.cuenta__letra-chica {
+  font-size: var(--t-pequeno);
+  color: var(--taupe-texto) !important;
+  line-height: 1.6 !important;
+}
+
+/* El botón de Google conserva sus proporciones y su logotipo intactos —sus
+   condiciones de marca no permiten recolorearlo—, pero el resto del control
+   es de la casa: borde fino, esquina redonda, mismo tipo que la tienda. */
+.boton-google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-block: var(--e-2);
+  padding: 0.95rem 1.5rem;
+  border: 1px solid var(--borde-ui);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--taupe);
+  font-family: var(--sans);
+  font-size: var(--t-pequeno);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: box-shadow var(--dur-corta) var(--curva),
+              transform var(--dur-corta) var(--curva);
+}
+.boton-google:hover { box-shadow: var(--sombra-suave); transform: translateY(-1px); }
+.boton-google:disabled { opacity: .6; cursor: progress; transform: none; }
+.boton-google svg { flex: none; }
+
+/* --- Dentro: identidad ------------------------------------------------------ */
+.cuenta__identidad {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+  padding-bottom: var(--e-3);
+  border-bottom: 1px solid var(--rosa-borde);
+}
+.cuenta__foto {
+  width: 52px;
+  height: 52px;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--grad-oro);
+}
+.cuenta__foto--inicial {
+  display: grid;
+  place-items: center;
+  color: var(--crema);
+  font-family: var(--serif);
+  font-size: 1.4rem;
+}
+.cuenta__nombre {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  color: var(--caoba);
+}
+/* El correo es un dato, no un titular: se recorta antes de romper la caja. */
+.cuenta__correo {
+  margin: 0.15rem 0 0;
+  font-size: var(--t-pequeno);
+  color: var(--taupe-texto);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 15rem;
+}
+
+/* --- Dentro: pedidos -------------------------------------------------------- */
+.cuenta__pedidos h3 {
+  margin: 0 0 var(--e-2);
+  font-family: var(--sans);
+  font-size: var(--t-etiqueta);
+  font-weight: 400;
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+}
+.cuenta__vacio {
+  margin: 0;
+  font-size: var(--t-pequeno);
+  line-height: 1.7;
+  color: var(--taupe-texto);
+}
+
+.pedidos { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--e-2); }
+
+.pedido {
+  padding: var(--e-2);
+  border: 1px solid var(--rosa-borde);
+  border-radius: var(--radio-suave);
+  background: var(--nude);
+}
+.pedido__fila {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--e-1);
+}
+.pedido__ref {
+  font-family: var(--sans);
+  font-size: var(--t-pequeno);
+  letter-spacing: 0.08em;
+  color: var(--caoba);
+}
+.pedido__estado {
+  font-size: var(--t-etiqueta);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--taupe-texto);
+}
+/* El color dice lo mismo que el texto, nunca en su lugar: quien no
+   distingue los tonos lee "Pagado" igual. */
+.pedido__estado[data-estado='aprobado'] { color: var(--verde-ok); }
+.pedido__estado[data-estado='rechazado'],
+.pedido__estado[data-estado='anulado']  { color: var(--caoba-hondo); }
+
+.pedido__meta {
+  margin: 0.35rem 0 0;
+  font-size: var(--t-pequeno);
+  color: var(--taupe-texto);
+}
+.pedido__total {
+  margin: 0.35rem 0 0;
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  color: var(--caoba);
+}
+
+.cuenta__salir { align-self: flex-start; }
+
+@media (max-width: 760px) {
+  /* En móvil la barra no tiene sitio para un nombre. Queda el avatar, que
+     ya dice quién está dentro. */
+  .nav__perfil > span:last-child { display: none; }
+  .nav__perfil { padding: 0.5rem; }
+  .nav__perfil:has(.nav__avatar[hidden]) > span:last-child { display: inline; }
+}
+
+/* El reintento va dentro del propio mensaje: es la continuación de la
+   frase, no una acción aparte. */
+.cuenta__reintentar {
+  border: 0;
+  background: none;
+  padding: 0;
+  margin-left: 0.35rem;
+  font: inherit;
+  color: var(--caoba-hondo);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}

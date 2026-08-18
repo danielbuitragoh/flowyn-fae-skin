@@ -20,6 +20,7 @@ import './estilos/ritual.css';
 import './estilos/formula.css';
 import './estilos/comprar.css';
 import './estilos/carrito.css';
+import './estilos/cuenta.css';
 
 import { iniciarRevelado } from './modulos/revelar.js';
 import { sembrarBruma, sembrarDestellos } from './modulos/atmosfera.js';
@@ -31,6 +32,9 @@ import { montarFrasco3D } from './modulos/frasco3d.js';
 import { iniciarProfundidad } from './modulos/profundidad.js';
 import { montarCarrito } from './modulos/carrito-ui.js';
 import { montarFicha } from './modulos/ficha.js';
+import { montarCuenta } from './modulos/cuenta-ui.js';
+import { iniciarSesionModulo } from './modulos/sesion.js';
+import { sincronizarCarritoConSesion } from './modulos/sincronizar-carrito.js';
 
 function iniciar() {
   montarNav();
@@ -45,6 +49,13 @@ function iniciar() {
   // contenido guardado aunque el visitante no haya hecho scroll todavía.
   montarCarrito();
   montarFicha();
+
+  // La cuenta se suscribe antes de que la sesión arranque, para no perderse
+  // el primer aviso. Sin credenciales configuradas, `montarCuenta` se
+  // retira sola y la tienda funciona igual que en la Fase 2.
+  montarCuenta();
+  sincronizarCarritoConSesion();
+  iniciarSesionModulo();
 
   iniciarRevelado();
 

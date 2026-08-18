@@ -15,10 +15,17 @@
   backdrop-filter: blur(3px);
   opacity: 0;
   visibility: hidden;
+  /* Mismo criterio que el panel: instantánea al aparecer, con retardo al
+     desaparecer para no cortar el desvanecido. */
   transition: opacity var(--dur-media) var(--curva),
-              visibility var(--dur-media) var(--curva);
+              visibility 0s linear var(--dur-media);
 }
-.velo-carrito[data-abierto='true'] { opacity: 1; visibility: visible; }
+.velo-carrito[data-abierto='true'] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--dur-media) var(--curva),
+              visibility 0s;
+}
 
 /* --- Panel ------------------------------------------------------------------ */
 .carrito {
@@ -33,10 +40,28 @@
   box-shadow: -30px 0 70px -40px rgba(139, 90, 75, .45);
   translate: 100% 0;
   visibility: hidden;
+
+  /* La visibilidad no se interpola, se conmuta — y cuándo se conmuta
+     importa más de lo que parece.
+
+     Al CERRAR tiene que esperar a que el panel termine de deslizarse; si
+     desapareciera al instante, el cierre sería un corte. De ahí el retardo
+     igual a la duración.
+
+     Al ABRIR tiene que ser inmediata. Con `visibility` dentro de la
+     transición normal, durante el primer fotograma el panel sigue siendo
+     invisible para el navegador, y `focus()` sobre un elemento invisible no
+     hace nada: falla en silencio. El resultado era un diálogo que se abría
+     sin llevarse el foco, o sea, un diálogo inservible con teclado. */
   transition: translate var(--dur-media) var(--curva),
-              visibility var(--dur-media) var(--curva);
+              visibility 0s linear var(--dur-media);
 }
-.carrito[data-abierto='true'] { translate: 0 0; visibility: visible; }
+.carrito[data-abierto='true'] {
+  translate: 0 0;
+  visibility: visible;
+  transition: translate var(--dur-media) var(--curva),
+              visibility 0s;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .carrito, .velo-carrito { transition-duration: 1ms; }

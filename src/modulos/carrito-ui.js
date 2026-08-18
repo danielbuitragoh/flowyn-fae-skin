@@ -7,9 +7,8 @@
  *
  * El panel es un diálogo modal de verdad, no una capa bonita: atrapa el
  * foco mientras está abierto, se cierra con Escape, devuelve el foco al
- * botón que lo abrió y bloquea el scroll de la página. Quien navega con
- * teclado o con lector de pantalla se encuentra lo mismo que quien navega
- * con ratón, que es lo mínimo para una tienda.
+ * botón que lo abrió y bloquea el scroll de la página. Ese comportamiento
+ * vive en `modal.js`, compartido con el panel de cuenta.
  */
 
 import isotipo from '/assets/isotipo-gota.svg?raw';
@@ -18,8 +17,7 @@ import {
   obtenerLineas, obtenerCiudad, totales, unidades, estaVacio,
   fijarCantidad, quitar, fijarCiudad, alCambiar,
 } from './carrito.js';
-
-const FOCUSABLES = 'a[href], button:not([disabled]), select, input, [tabindex]:not([tabindex="-1"])';
+import { crearModal, conFocoPreservado } from './modal.js';
 
 export function montarCarrito() {
   const panel = document.querySelector('[data-carrito]');
@@ -31,59 +29,9 @@ export function montarCarrito() {
   const iso = panel.querySelector('[data-carrito-iso]');
   if (iso) iso.innerHTML = isotipo;
 
-  let abridor = null;
   let recienAgregado = false;
 
-  /* --- Apertura y cierre --------------------------------------------------- */
-
-  const estaAbierto = () => panel.dataset.abierto === 'true';
-
-  function abrir(disparador) {
-    if (estaAbierto()) return;
-    abridor = disparador ?? document.activeElement;
-    panel.dataset.abierto = 'true';
-    velo.dataset.abierto = 'true';
-    panel.removeAttribute('inert');
-    // Sin esto la página de detrás sigue desplazándose bajo el panel.
-    document.body.style.overflow = 'hidden';
-    // El primer elemento útil, no el título: quien abre el carrito quiere
-    // actuar sobre él.
-    const primero = panel.querySelector(FOCUSABLES);
-    primero?.focus();
-  }
-
-  function cerrar() {
-    if (!estaAbierto()) return;
-    panel.dataset.abierto = 'false';
-    velo.dataset.abierto = 'false';
-    panel.setAttribute('inert', '');
-    document.body.style.overflow = '';
-    abridor?.focus();
-    abridor = null;
-  }
-
-  panel.querySelector('[data-cerrar-carrito]')?.addEventListener('click', () => cerrar());
-  velo.addEventListener('click', () => cerrar());
-
-  document.addEventListener('keydown', (e) => {
-    if (!estaAbierto()) return;
-
-    if (e.key === 'Escape') { cerrar(); return; }
-
-    // Trampa de foco: dentro de un modal, tabular no debe llevarte a la
-    // página de detrás, que sigue ahí pero es inalcanzable visualmente.
-    if (e.key !== 'Tab') return;
-    const focos = [...panel.querySelectorAll(FOCUSABLES)].filter((el) => el.offsetParent !== null);
-    if (!focos.length) return;
-    const primero = focos[0];
-    const ultimo = focos[focos.length - 1];
-
-    if (e.shiftKey && document.activeElement === primero) {
-      e.preventDefault(); ultimo.focus();
-    } else if (!e.shiftKey && document.activeElement === ultimo) {
-      e.preventDefault(); primero.focus();
-    }
-  });
+  const { abrir, cerrar } = crearModal({ panel, velo });
 
   document.querySelectorAll('[data-abrir-carrito]').forEach((b) => {
     b.addEventListener('click', () => abrir(b));
@@ -180,40 +128,15 @@ export function montarCarrito() {
       <p class="carrito__aviso">El pago llega en la siguiente fase del proyecto.</p>`;
   }
 
-  /**
-   * Repinta conservando el foco.
-   *
-   * El panel se vuelve a dibujar entero en cada cambio, lo que es simple y
-   * robusto pero destruye el nodo que tuviera el foco. Para quien usa
-   * teclado eso significa que al pulsar "+" el foco salta al principio del
-   * documento y hay que volver a tabular hasta el carrito — suficiente para
-   * hacer la tienda inservible sin ratón.
-   *
-   * Se anota qué elemento estaba enfocado por su atributo `data-`, que
-   * sobrevive al repintado porque describe la acción y no la instancia, y
-   * se le devuelve el foco al elemento equivalente del panel nuevo.
-   */
-  function conFocoPreservado(dibujar) {
-    const activo = document.activeElement;
-    const marca = activo && panel.contains(activo)
-      ? ['mas', 'menos', 'quitar', 'ciudad'].find((k) => activo.hasAttribute(`data-${k}`))
-      : null;
-
-    dibujar();
-
-    if (!marca) return;
-    const destino = panel.querySelector(`[data-${marca}]`);
+  function pintar() {
     // Si el botón reaparece deshabilitado (bajaste a una unidad), el foco va
     // a su hermano en lugar de perderse en el vacío.
-    if (destino && !destino.disabled) destino.focus();
-    else panel.querySelector(`[data-${marca === 'menos' ? 'mas' : 'menos'}]`)?.focus();
-  }
-
-  function pintar() {
-    conFocoPreservado(() => {
-      if (estaVacio()) pintarVacio();
-      else pintarLineas();
-    });
+    conFocoPreservado(
+      panel,
+      ['mas', 'menos', 'quitar', 'ciudad'],
+      () => { if (estaVacio()) pintarVacio(); else pintarLineas(); },
+      { menos: 'mas', mas: 'menos', quitar: 'mas' },
+    );
     actualizarContadores();
     anunciar();
   }
@@ -278,10 +201,13 @@ export function montarCarrito() {
   alCambiar(({ motivo }) => {
     recienAgregado = motivo === 'agregar';
     pintar();
+    // Sólo se abre solo cuando la clienta acaba de añadir algo. Entrar con
+    // Google también cambia el carrito (se fusiona con el de la cuenta),
+    // pero abrirle el panel en la cara al volver de Google sería una
+    // interrupción, no una confirmación.
     if (motivo === 'agregar') abrir(document.querySelector('[data-abrir-carrito]'));
   });
 
-  panel.setAttribute('inert', '');
   pintar();
 
   return { abrir, cerrar };
