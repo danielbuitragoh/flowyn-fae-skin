@@ -18,7 +18,8 @@
   },
   "dependencies": {
     "@fontsource/cormorant-garamond": "^5.3.0",
-    "@fontsource/jost": "^5.3.0"
+    "@fontsource/jost": "^5.3.0",
+    "three": "^0.185.1"
   },
   "private": true,
   "type": "module"

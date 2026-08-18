@@ -22,6 +22,12 @@ El material de partida son tres documentos de marca: Marketing MIX, Objetivos SM
 
 ## Lo que más me interesa que se mire
 
+**El frasco es un modelo 3D, no una foto.** El manual describe el envase como "vidrio translúcido con reflejos iridiscentes". Una fotografía congela una única incidencia de luz, y el iridiscente sólo se entiende cuando el objeto gira y los reflejos se desplazan por la superficie. El frasco del hero es geometría generada por código —un sólido de revolución con estrías retorcidas— con vidrio refractivo e iridiscencia física, y se puede arrastrar para girarlo.
+
+El perfil no está dibujado a ojo: se midió sobre el canal alfa del packshot, tomando el semiancho fila a fila. De ahí salen la proporción real del envase (2.45 de alto por 1 de ancho) y el hombro casi recto del tercio superior, que es lo que lo hace reconocible. Describirlo así pesa unos cientos de bytes en lugar de los megas de una malla exportada, y se ajusta editando números.
+
+Hay dos acabados para ese mismo vidrio. Con GPU, refracción real: la luz atraviesa el frasco y arrastra el fondo consigo. Sin GPU —rasterizado por software, donde la refracción o sale plana o corre a cinco fotogramas por segundo— se usa un nácar translúcido que conserva la iridiscencia y se dibuja en una sola pasada. Y si el equipo no da ni para eso, o el visitante pidió menos movimiento, se queda la fotografía. three.js viaja en su propio fragmento diferido, así que la página es usable mucho antes de que llegue: el 3D es una mejora, nunca un requisito para ver el producto.
+
 **La paleta no se tocó, se separó.** El manual de marca es monocromo cálido: crema, nude, cobre, caoba. Precioso en muestras grandes, pero medí los pares y tres fallaban WCAG AA en texto pequeño — el cobre de las etiquetas daba 3.01:1 sobre crema, cuando el mínimo es 4.5:1. La salida fácil habría sido oscurecer la marca. En vez de eso, los tonos originales se quedan para superficies, filetes y acentos, y para texto hay variantes más profundas del mismo color. Un verificador corre en cada push y falla la construcción si alguien rompe el equilibrio.
 
 **El frasco flota, y eso no es un capricho.** El manual repite una imagen: *"una nube dulce flotando en el aire"*. Si el packshot estuviera apoyado sobre una superficie con su sombra debajo, la promesa de la marca se rompería en el primer segundo. Por eso el frasco deriva muy despacio, la luz nace detrás de él, y lo único que hay abajo es la memoria de un reflejo.
@@ -56,7 +62,7 @@ npm run build      # genera dist/
 Este repositorio está en construcción. Lo que ya funciona y lo que falta:
 
 - [x] **Fase 0** — Activos de marca, sistema de diseño, verificador de contraste, hero
-- [ ] **Fase 1** — Secciones de producto, ritual, fórmula y aroma
+- [x] **Fase 1** — Secciones de producto, ritual, fórmula y aroma, y frasco en 3D
 - [ ] **Fase 2** — Carrito y cálculo de envío por ciudad
 - [ ] **Fase 3** — Autenticación con Google
 - [ ] **Fase 4** — Checkout con firma del pago en servidor

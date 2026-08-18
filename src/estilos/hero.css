@@ -232,3 +232,50 @@
 @media (max-width: 420px) {
   .hero__frasco { height: min(30svh, 260px); }
 }
+
+/* --- Frasco en 3D -----------------------------------------------------------
+   El lienzo se superpone al PNG y ambos hacen una transición cruzada cuando
+   el modelo termina de montarse. Sustituir uno por otro de golpe produciría
+   un parpadeo justo en el primer elemento que ve el visitante.
+   --------------------------------------------------------------------------- */
+.hero__lienzo {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 900ms var(--curva);
+}
+.hero__lienzo[data-listo='true'] { opacity: 1; }
+.hero__lienzo canvas { display: block; width: 100%; height: 100%; }
+
+/* El PNG cede el sitio pero no desaparece del todo: sigue aportando la
+   sombra proyectada que el modelo no calcula. */
+.hero__producto[data-modo='3d'] .hero__frasco {
+  opacity: 0;
+  transition: opacity 900ms var(--curva);
+  pointer-events: none;
+}
+
+.hero__pista {
+  position: absolute;
+  bottom: 2%;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+  opacity: 0;
+  animation: aparecer-pista 800ms var(--curva) 1200ms forwards;
+  pointer-events: none;
+}
+@keyframes aparecer-pista { to { opacity: .75; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__pista { animation: none; opacity: .75; }
+}
