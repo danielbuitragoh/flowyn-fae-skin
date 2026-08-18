@@ -1,0 +1,203 @@
+/* ==========================================================================
+   FLOWYN · Secciones 02–04
+   Concepto · Anatomía del frasco · Beneficios
+   ========================================================================== */
+
+/* --- Icono dentro de círculo de trazo fino --------------------------------
+   El patrón exacto del manual. El círculo es casi tan importante como el
+   icono: sin él los trazos flotan y el conjunto pierde la compostura
+   editorial que tienen las diapositivas.                                 */
+.icono-circulo {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--rosa-borde);
+  border-radius: 50%;
+  color: var(--cobre-texto);
+  flex: none;
+  transition: border-color var(--dur-media) var(--curva),
+              background-color var(--dur-media) var(--curva);
+}
+.icono-circulo svg { width: 24px; height: 24px; }
+
+/* ==========================================================================
+   02 · CONCEPTO
+   La sección más silenciosa del sitio a propósito: una sola frase grande y
+   aire alrededor. Es el momento en que la marca se presenta, y presentarse
+   a gritos sería contradecir todo lo que dice.
+   ========================================================================== */
+
+.concepto { text-align: center; overflow: hidden; }
+
+.concepto__frase {
+  font-family: var(--serif);
+  font-size: clamp(1.85rem, 4vw, 3.15rem);
+  font-style: italic;
+  line-height: 1.32;
+  color: var(--caoba);
+  max-width: 17ch;
+  margin-inline: auto;
+  margin-bottom: var(--e-6);
+}
+
+.concepto__texto {
+  max-width: 52ch;
+  margin-inline: auto;
+  margin-bottom: var(--e-8);
+}
+
+/* Los cinco adjetivos del manual, separados por destellos. Van en fila y
+   caen a varias líneas sin romperse porque cada par palabra+destello es
+   un bloque indivisible. */
+.concepto__resultado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e-2) var(--e-3);
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+}
+.concepto__resultado li { display: flex; align-items: center; gap: var(--e-3); }
+.concepto__resultado { list-style: none; margin: 0; padding: 0; }
+.concepto__resultado li:not(:last-child)::after {
+  content: '';
+  width: 9px; height: 9px;
+  background: var(--oro-rosa);
+  clip-path: polygon(50% 0%, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0% 50%, 42% 42%);
+}
+
+/* ==========================================================================
+   03 · ANATOMÍA DEL FRASCO
+   Reproduce la lámina técnica del manual: el boceto a lápiz en el centro y
+   las cuatro llamadas alrededor, unidas por filetes. En pantallas estrechas
+   la composición radial no cabe, así que se convierte en lista — pero el
+   boceto se queda, porque es lo que hace creíble la explicación.
+   ========================================================================== */
+
+.anatomia__cabecera { text-align: center; margin-bottom: var(--e-12); }
+.anatomia__cabecera .etiqueta { justify-content: center; }
+.anatomia__cabecera .etiqueta::before { display: none; }
+
+.anatomia__lamina {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+}
+
+.anatomia__boceto {
+  /* El grafito ya viene sobre transparente: el papel del documento
+     original se eliminó restando el tono local de la página, así que el
+     dibujo se apoya en cualquier fondo del sistema sin recuadro. */
+  width: min(22vw, 236px);
+  height: auto;
+  opacity: 0.92;
+}
+
+.anatomia__columna { display: grid; gap: var(--e-8); }
+.anatomia__columna--izq { justify-items: end; text-align: right; }
+
+.anatomia__punto { max-width: 27ch; }
+.anatomia__punto h3 {
+  font-family: var(--sans);
+  font-size: var(--t-etiqueta);
+  font-weight: 400;
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--caoba);
+  margin-bottom: var(--e-1);
+}
+.anatomia__punto p { font-size: 0.9375rem; margin: 0; color: var(--taupe); }
+
+/* El filete que sale de cada llamada hacia el boceto. Es lo que convierte
+   cuatro párrafos sueltos en una lámina anotada. */
+.anatomia__punto {
+  position: relative;
+  padding-inline: 0 0;
+}
+.anatomia__columna--izq .anatomia__punto { padding-right: var(--e-4); }
+.anatomia__columna--der .anatomia__punto { padding-left: var(--e-4); }
+
+.anatomia__punto::after {
+  content: '';
+  position: absolute;
+  top: 0.55rem;
+  width: 18px;
+  height: 1px;
+  background: var(--rosa-borde);
+}
+.anatomia__columna--izq .anatomia__punto::after { right: 0; }
+.anatomia__columna--der .anatomia__punto::after { left: 0; }
+
+.anatomia__punto::before {
+  content: '';
+  position: absolute;
+  top: calc(0.55rem - 3px);
+  width: 7px; height: 7px;
+  background: var(--oro-rosa);
+  border-radius: 50%;
+}
+.anatomia__columna--izq .anatomia__punto::before { right: -4px; }
+.anatomia__columna--der .anatomia__punto::before { left: -4px; }
+
+/* ==========================================================================
+   04 · BENEFICIOS
+   Cuatro columnas, un icono cada una. El manual las trata como iguales, sin
+   jerarquía entre ellas, así que aquí tampoco hay una destacada.
+   ========================================================================== */
+
+.beneficios__cabecera { max-width: 46ch; margin-bottom: var(--e-12); }
+
+.beneficios__rejilla {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+.beneficio {
+  display: grid;
+  gap: var(--e-3);
+  justify-items: start;
+  padding-top: var(--e-3);
+  border-top: 1px solid var(--rosa-borde);
+}
+.beneficio h3 {
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  letter-spacing: 0.03em;
+  color: var(--caoba);
+}
+.beneficio p { font-size: 0.9375rem; margin: 0; }
+
+.beneficio:hover .icono-circulo {
+  border-color: var(--cobre);
+  background: var(--crema);
+}
+
+/* --- Adaptación ------------------------------------------------------------ */
+@media (max-width: 1000px) {
+  .beneficios__rejilla { grid-template-columns: repeat(2, 1fr); gap: var(--e-6); }
+}
+
+@media (max-width: 860px) {
+  /* La lámina radial deja de funcionar: el boceto pasa arriba y las
+     llamadas se leen como lista, sin los filetes que ya no apuntan a nada. */
+  .anatomia__lamina { grid-template-columns: 1fr; justify-items: center; gap: var(--e-8); }
+  .anatomia__boceto { width: min(46vw, 200px); order: -1; }
+  .anatomia__columna { gap: var(--e-6); width: 100%; max-width: 34rem; }
+  .anatomia__columna--izq { justify-items: start; text-align: left; }
+  .anatomia__columna--izq .anatomia__punto,
+  .anatomia__columna--der .anatomia__punto { padding-inline: var(--e-4) 0; }
+  .anatomia__punto::after { left: 0; right: auto; }
+  .anatomia__punto::before { left: -4px; right: auto; }
+  .anatomia__punto { max-width: none; }
+}
+
+@media (max-width: 560px) {
+  .beneficios__rejilla { grid-template-columns: 1fr; }
+  .concepto__frase { max-width: none; }
+}

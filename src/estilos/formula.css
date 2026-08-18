@@ -1,0 +1,290 @@
+/* ==========================================================================
+   FLOWYN · 06 Fórmula · 07 Aroma · 08 Momentos
+   ========================================================================== */
+
+/* ==========================================================================
+   06 · LA FÓRMULA
+   Los nombres INCI van visibles, no escondidos en un desplegable. En
+   skincare la transparencia es parte del producto: quien busca ectoína la
+   busca por su nombre técnico, y quien no, simplemente lee la explicación
+   en español que va debajo.
+   ========================================================================== */
+
+.formula__cabecera { max-width: 48ch; margin-bottom: var(--e-12); }
+
+.formula__protagonistas {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  margin-bottom: var(--e-12);
+}
+
+.ingrediente {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--e-3);
+  align-items: start;
+  padding: var(--e-4);
+  background: var(--crema);
+  border: 1px solid var(--rosa-borde);
+  border-radius: var(--radio-suave);
+  transition: border-color var(--dur-media) var(--curva),
+              transform var(--dur-media) var(--curva);
+}
+.ingrediente:hover { border-color: var(--oro-rosa); transform: translateY(-3px); }
+
+.ingrediente__numero {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--oro-rosa);
+  font-variant-numeric: tabular-nums;
+}
+
+.ingrediente h3 {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.15rem;
+}
+
+/* El nombre INCI en monoespaciada: señala visualmente que es una
+   nomenclatura, no prosa. */
+.ingrediente__inci {
+  display: inline-block;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+  margin-bottom: var(--e-2);
+}
+
+.ingrediente p { font-size: 0.9375rem; margin: 0; }
+
+/* --- Complementarios: mismo sistema, menor peso --------------------------- */
+.formula__complementarios h3 {
+  font-family: var(--sans);
+  font-size: var(--t-etiqueta);
+  font-weight: 400;
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+  margin-bottom: var(--e-4);
+}
+
+.formula__lista {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--e-3) clamp(1rem, 2.5vw, 2.5rem);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.formula__lista li {
+  padding-top: var(--e-2);
+  border-top: 1px solid var(--rosa-borde);
+}
+.formula__lista strong {
+  display: block;
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--caoba);
+}
+.formula__lista span {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+}
+.formula__lista em {
+  display: block;
+  font-style: normal;
+  font-size: 0.875rem;
+  color: var(--taupe);
+  margin-top: 0.35rem;
+}
+
+.formula__nota {
+  margin-top: var(--e-8);
+  padding-top: var(--e-4);
+  border-top: 1px solid var(--rosa-borde);
+  font-size: var(--t-pequeno);
+  color: var(--taupe-texto);
+  max-width: 70ch;
+}
+
+/* ==========================================================================
+   07 · ETHEREAL COTTON
+   Una pirámide olfativa se dibuja siempre de arriba abajo: salida, corazón,
+   fondo. Respetamos esa convención porque quien conoce perfumería la lee
+   sin instrucciones, y quien no, sigue igual el orden temporal en que el
+   aroma se despliega.
+   ========================================================================== */
+
+.aroma { overflow: hidden; }
+
+.aroma__rejilla {
+  display: grid;
+  grid-template-columns: 0.85fr 1fr;
+  gap: clamp(2rem, 6vw, 5.5rem);
+  align-items: center;
+}
+
+.aroma__intro h2 { margin-bottom: var(--e-3); }
+.aroma__frase {
+  font-family: var(--serif);
+  font-size: var(--t-sub);
+  font-style: italic;
+  color: var(--caoba);
+  line-height: 1.5;
+  margin-bottom: var(--e-4);
+}
+
+.aroma__recorrido {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-2);
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+}
+.aroma__recorrido span:not(:last-child)::after {
+  content: '→';
+  margin-left: var(--e-2);
+  color: var(--oro-rosa);
+}
+
+/* --- Las tres notas -------------------------------------------------------- */
+.aroma__piramide { display: grid; gap: var(--e-3); }
+
+.nota {
+  position: relative;
+  padding: var(--e-4) var(--e-4) var(--e-4) var(--e-8);
+  background: var(--crema);
+  border: 1px solid var(--rosa-borde);
+  border-radius: var(--radio-suave);
+  transition: border-color var(--dur-media) var(--curva);
+}
+.nota:hover { border-color: var(--oro-rosa); }
+
+/* Filete vertical que se acorta en cada nivel: la pirámide se percibe sin
+   dibujar un triángulo, que a esta escala quedaría infantil. */
+.nota::before {
+  content: '';
+  position: absolute;
+  left: var(--e-4);
+  top: var(--e-4);
+  width: 2px;
+  height: var(--alto, 60%);
+  border-radius: 2px;
+  background: var(--grad-oro);
+}
+.nota--salida  { --alto: 34%; }
+.nota--corazon { --alto: 58%; }
+.nota--fondo   { --alto: 78%; }
+
+.nota__tipo {
+  display: flex;
+  align-items: baseline;
+  gap: var(--e-2);
+  margin-bottom: var(--e-2);
+}
+.nota__tipo h3 {
+  font-family: var(--sans);
+  font-size: var(--t-etiqueta);
+  font-weight: 400;
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--caoba);
+}
+.nota__tipo em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--cobre-texto);
+}
+
+.nota ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-1) var(--e-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  color: var(--taupe);
+}
+.nota li { display: flex; align-items: center; gap: var(--e-3); }
+.nota li:not(:last-child)::after {
+  content: '';
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--rosa-borde);
+}
+
+.aroma__aviso {
+  margin-top: var(--e-4);
+  font-size: var(--t-pequeno);
+  color: var(--taupe-texto);
+}
+
+/* ==========================================================================
+   08 · MOMENTOS
+   El manual lista ocho ocasiones de uso. Ocho tarjetas serían demasiadas;
+   seis bien elegidas comunican lo mismo —"cabe en cualquier momento"— sin
+   convertir la sección en un inventario.
+   ========================================================================== */
+
+.momentos__cabecera { text-align: center; margin-bottom: var(--e-12); }
+.momentos__cabecera .etiqueta { justify-content: center; }
+.momentos__cabecera .etiqueta::before { display: none; }
+
+.momentos__rejilla {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.momento {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+  padding: var(--e-3) var(--e-4);
+  border: 1px solid var(--rosa-borde);
+  border-radius: 999px;
+  background: var(--crema);
+  transition: border-color var(--dur-media) var(--curva),
+              background-color var(--dur-media) var(--curva);
+}
+.momento:hover { border-color: var(--oro-rosa); background: var(--nude); }
+.momento .icono-circulo { width: 42px; height: 42px; }
+.momento .icono-circulo svg { width: 19px; height: 19px; }
+.momento p {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--taupe);
+}
+
+/* --- Adaptación ------------------------------------------------------------ */
+@media (max-width: 1000px) {
+  .aroma__rejilla { grid-template-columns: 1fr; gap: var(--e-6); }
+  .momentos__rejilla { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 760px) {
+  .formula__protagonistas { grid-template-columns: 1fr; }
+  .formula__lista { grid-template-columns: repeat(2, 1fr); }
+  .momentos__rejilla { grid-template-columns: 1fr; }
+  .nota { padding-left: var(--e-6); }
+  .nota::before { left: var(--e-3); }
+}
+
+@media (max-width: 460px) {
+  .formula__lista { grid-template-columns: 1fr; }
+}

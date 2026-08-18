@@ -15,17 +15,24 @@ import './estilos/tokens.css';
 import './estilos/base.css';
 import './estilos/nav.css';
 import './estilos/hero.css';
+import './estilos/secciones.css';
+import './estilos/ritual.css';
+import './estilos/formula.css';
 
 import { iniciarRevelado } from './modulos/revelar.js';
 import { sembrarBruma, sembrarDestellos } from './modulos/atmosfera.js';
 import { montarLogo } from './modulos/marca.js';
 import { montarNav } from './modulos/nav.js';
+import { montarIconos } from './modulos/iconos.js';
+import { iniciarRitual } from './modulos/ritual.js';
 
 function iniciar() {
   montarNav();
+  montarIconos();
   montarLogo(document.querySelector('[data-logo]'));
   sembrarBruma(document.querySelector('[data-bruma]'));
   sembrarDestellos(document.querySelector('[data-destellos]'));
+  iniciarRitual();
   iniciarRevelado();
 }
 

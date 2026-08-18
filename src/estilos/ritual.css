@@ -1,0 +1,164 @@
+/* ==========================================================================
+   FLOWYN · 05 · El ritual
+   El manual describe el producto como cinco momentos, no como una lista de
+   características: descubrir, tomar, aplicar, sentir, incorporar. Contarlo
+   como cinco tarjetas en fila lo convertiría otra vez en lista.
+   Aquí la imagen se queda quieta y el texto avanza, que es exactamente lo
+   que pasa en la vida real: el frasco es el mismo todo el día; lo que
+   cambia es el momento.
+   ========================================================================== */
+
+.ritual { position: relative; overflow: clip; }
+
+.ritual__cabecera { text-align: center; margin-bottom: var(--e-8); }
+.ritual__cabecera .etiqueta { justify-content: center; }
+.ritual__cabecera .etiqueta::before { display: none; }
+
+.ritual__rejilla {
+  display: grid;
+  grid-template-columns: 0.9fr 1fr;
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: start;
+}
+
+/* --- Columna fija ---------------------------------------------------------- */
+.ritual__escena {
+  position: sticky;
+  top: 50%;
+  translate: 0 -50%;
+  /* La altura la fija el marco, no el contenido: si cada foto impusiera la
+     suya, la columna daría saltos al cambiar de paso. */
+  height: min(70svh, 560px);
+}
+
+.ritual__marco {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radio-arco);
+  overflow: hidden;
+  background: var(--nude-hondo);
+  box-shadow: var(--sombra-media);
+}
+
+.ritual__foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  /* Escala mínima al entrar: da la sensación de que la imagen respira sin
+     que se lea como un carrusel con efecto. */
+  transform: scale(1.045);
+  transition: opacity var(--dur-larga) var(--curva),
+              transform 1600ms var(--curva);
+}
+.ritual__foto.activa { opacity: 1; transform: scale(1); }
+
+/* Contador del paso, sobre la foto */
+.ritual__contador {
+  position: absolute;
+  left: var(--e-3);
+  bottom: var(--e-3);
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  background: rgba(250, 245, 242, 0.9);
+  backdrop-filter: blur(10px);
+  font-family: var(--serif);
+  color: var(--caoba);
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+}
+.ritual__contador small {
+  font-family: var(--sans);
+  font-size: var(--t-etiqueta);
+  letter-spacing: 0.14em;
+  color: var(--cobre-texto);
+}
+
+/* --- Columna que avanza ----------------------------------------------------- */
+.ritual__pasos { display: grid; }
+
+.ritual__paso {
+  min-height: 76svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--e-2);
+  /* El paso inactivo no desaparece: se atenúa. Así el visitante conserva la
+     noción de que hay un antes y un después, en lugar de sentir que el
+     contenido aparece de la nada. */
+  opacity: 0.32;
+  transition: opacity var(--dur-media) var(--curva);
+}
+.ritual__paso.activo { opacity: 1; }
+
+.ritual__numero {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+  font-family: var(--sans);
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+}
+.ritual__numero::before {
+  content: '';
+  width: 30px; height: 1px;
+  background: var(--rosa-borde);
+  transition: width var(--dur-media) var(--curva), background-color var(--dur-media) var(--curva);
+}
+.ritual__paso.activo .ritual__numero::before { width: 58px; background: var(--oro-rosa); }
+
+.ritual__paso h3 {
+  font-size: clamp(2rem, 4.4vw, 3.2rem);
+  text-transform: uppercase;
+  letter-spacing: var(--track-titular);
+}
+
+.ritual__paso p {
+  font-size: var(--t-sub);
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--taupe);
+  line-height: 1.5;
+  max-width: 26ch;
+  margin: 0;
+}
+
+/* --- Adaptación --------------------------------------------------------------
+   En vertical no hay dos columnas que sincronizar, así que el patrón cambia
+   de raíz: cada paso lleva su propia imagen encima y se lee en secuencia.
+   Forzar el sticky en móvil dejaría media pantalla ocupada por una foto
+   mientras el texto pelea por el resto.                                     */
+@media (max-width: 900px) {
+  .ritual__rejilla { grid-template-columns: 1fr; gap: 0; }
+  .ritual__escena { display: none; }
+  .ritual__paso {
+    min-height: 0;
+    opacity: 1;
+    padding-block: var(--e-6);
+    border-top: 1px solid var(--rosa-borde);
+  }
+  .ritual__paso:first-child { border-top: 0; }
+  .ritual__paso p { max-width: none; }
+  .ritual__paso-foto {
+    display: block;
+    width: 100%;
+    height: min(46svh, 320px);
+    object-fit: cover;
+    border-radius: var(--radio-arco);
+    margin-bottom: var(--e-3);
+  }
+}
+
+/* En escritorio la foto por paso sobra: la lleva la columna fija. */
+@media (min-width: 901px) {
+  .ritual__paso-foto { display: none; }
+}
