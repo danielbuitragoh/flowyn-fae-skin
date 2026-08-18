@@ -19,74 +19,22 @@
  * bien: el 3D es una mejora, nunca un requisito para ver el producto.
  */
 
-/* --- Perfil del frasco -----------------------------------------------------
-   Estos números no están estimados a ojo: se midieron sobre el canal alfa
-   del packshot recortado, tomando el semiancho fila a fila y normalizando
-   para que el radio máximo valga 0.5. De ahí sale la proporción real del
-   envase —2.45 de alto por 1 de ancho— y el hombro casi recto del tercio
-   superior, que es el rasgo que lo hace reconocible.
-
-   Pares [radio, altura].                                                 */
-const PERFIL = [
-  [0.000, 0.000], [0.288, 0.000], [0.312, 0.034], [0.342, 0.104],
-  [0.386, 0.250], [0.426, 0.400], [0.455, 0.560], [0.476, 0.720],
-  [0.490, 0.860], [0.496, 1.000], [0.498, 1.120], [0.498, 1.230],
-  [0.478, 1.350], [0.440, 1.470], [0.403, 1.590], [0.373, 1.712],
-  [0.358, 1.835], [0.353, 1.957], [0.346, 2.079], [0.328, 2.200],
-  [0.286, 2.318], [0.212, 2.418], [0.160, 2.486], [0.140, 2.532],
-  [0.136, 2.580],
-];
-
-const ALTURA = 2.58;
-
-/**
- * Deforma un sólido de revolución para crear las estrías retorcidas.
- *
- * Tres términos superpuestos, cada uno con un propósito distinto:
- * las ondas principales dibujan las estrías del vidrio; el primer armónico
- * rompe la simetría perfecta para que el objeto parezca soplado y no
- * torneado; y la atenuación en los extremos evita que las estrías lleguen
- * al cuello y a la base, donde el frasco real es liso.
- */
-function aplicarEstrias(geometria, THREE) {
-  const pos = geometria.attributes.position;
-  const v = new THREE.Vector3();
-
-  for (let i = 0; i < pos.count; i += 1) {
-    v.fromBufferAttribute(pos, i);
-
-    const radio = Math.hypot(v.x, v.z);
-    if (radio < 1e-4) continue;
-
-    const theta = Math.atan2(v.z, v.x);
-    const t = v.y / ALTURA;
-
-    // Las estrías se apagan en la base y en el cuello.
-    const atenua = Math.sin(Math.PI * Math.min(Math.max((t - 0.02) / 0.86, 0), 1)) ** 0.7;
-
-    // Amplitudes deliberadamente pequeñas. El frasco real tiene
-    // acanaladuras finas, no gajos: pasando de ~0.02 la silueta deja de
-    // leerse como vidrio moldeado y empieza a parecer abollada.
-    const estrias   = 0.019 * Math.sin(5 * theta + 3.1 * t) * atenua;
-    const finas     = 0.007 * Math.sin(11 * theta + 5.2 * t) * atenua;
-    const asimetria = 0.011 * Math.sin(theta + 0.6) * atenua;
-
-    const nuevo = radio + estrias + finas + asimetria;
-    v.x = (v.x / radio) * nuevo;
-    v.z = (v.z / radio) * nuevo;
-    pos.setXYZ(i, v.x, v.y, v.z);
-  }
-
-  pos.needsUpdate = true;
-  geometria.computeVertexNormals();
-}
+import { construirFrasco, construirBase, ALTURA, CUELLO } from './geometria-frasco.js';
 
 /** ¿Tiene sentido gastar three.js en este dispositivo? */
 function equipoCapaz() {
-  // Puerta de servicio para revisar el modelo en equipos que no pasarían el
-  // filtro (máquinas de prueba, portátiles modestos, capturas automáticas).
-  // No afecta a nadie que no la escriba a mano en la barra de direcciones.
+  // El modelo procedural está en pausa: reproduce la proporción y la
+  // torsión medidas del envase, pero no su carácter. Lo que hace bello al
+  // frasco real son las nervaduras de vidrio refractando la luz, y eso no
+  // se alcanza aproximando la forma con fórmulas. Hasta decidir el camino
+  // —modelo original de la diseñadora, secuencia 360 o packshot con
+  // profundidad— la página sirve la fotografía, que sí está a la altura.
+  //
+  // El modelo sigue accesible con ?forzar3d=1 para poder seguir juzgándolo.
   if (new URLSearchParams(location.search).has('forzar3d')) return true;
+  return false;
+
+  /* eslint-disable no-unreachable */
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
   // El vidrio con transmisión es caro de rasterizar. En pantallas pequeñas
@@ -101,6 +49,7 @@ function equipoCapaz() {
   } catch {
     return false;
   }
+  /* eslint-enable no-unreachable */
 }
 
 /**
@@ -244,62 +193,62 @@ export async function montarFrasco3D(contenedor) {
   /* --- Geometría --------------------------------------------------------- */
   const grupo = new THREE.Group();
 
-  const puntos = PERFIL.map(([r, y]) => new THREE.Vector2(r, y));
-
-  const geoVidrio = new THREE.LatheGeometry(puntos, 192);
-  aplicarEstrias(geoVidrio, THREE);
+  const geoVidrio = construirFrasco(THREE, { relieve: 0.040 });
   grupo.add(new THREE.Mesh(geoVidrio, vidrio));
 
-  // El contenido repite el perfil un poco encogido y sin llegar arriba: el
-  // frasco no está lleno hasta el borde.
-  const puntosDentro = PERFIL
-    .filter(([, y]) => y <= 2.28)
-    .map(([r, y]) => new THREE.Vector2(Math.max(r - 0.055, 0), y * 0.985));
-  const geoDentro = new THREE.LatheGeometry(puntosDentro, 128);
-  aplicarEstrias(geoDentro, THREE);
-  // Sin refracción, una segunda pared translúcida dentro de otra sólo
-  // acumula opacidad y emborrona la silueta.
+  const geoBase = construirBase(THREE);
+  grupo.add(new THREE.Mesh(geoBase, vidrio));
+
+  // El contenido repite la forma un poco encogida. Sin refracción, una
+  // segunda pared translúcida dentro de otra sólo acumula opacidad y
+  // emborrona la silueta, así que sólo se añade cuando aporta.
+  const geoDentro = construirFrasco(THREE, {
+    segmentosU: 140, segmentosV: 160, encoger: 0.045, relieve: 0.022,
+  });
   if (conRefraccion) grupo.add(new THREE.Mesh(geoDentro, contenido));
 
   /* --- Atomizador ---------------------------------------------------------- */
   const tapa = new THREE.Group();
+  // El cuello está algo desplazado del eje por la torsión del cuerpo, así
+  // que el atomizador tiene que seguirlo o quedaría flotando de lado.
+  tapa.position.x = CUELLO.desvio;
 
-  const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.138, 0.146, 0.10, 64), oroRosa);
-  collar.position.y = 2.610;
+  const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.152, 0.166, 0.09, 64), oroRosa);
+  collar.position.y = 2.462;
   tapa.add(collar);
 
   // Cuerpo estriado: las acanaladuras verticales del atomizador real.
-  const cuerpo = new THREE.Mesh(new THREE.CylinderGeometry(0.132, 0.134, 0.30, 64, 1), oroRosa);
-  cuerpo.position.y = 2.815;
+  const cuerpo = new THREE.Mesh(new THREE.CylinderGeometry(0.148, 0.152, 0.26, 64, 1), oroRosa);
+  cuerpo.position.y = 2.640;
   tapa.add(cuerpo);
 
   const acanaladuras = new THREE.Group();
   for (let i = 0; i < 28; i += 1) {
     const a = (i / 28) * Math.PI * 2;
-    const barra = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.26, 0.012), oroRosa);
-    barra.position.set(Math.cos(a) * 0.133, 2.815, Math.sin(a) * 0.133);
+    const barra = new THREE.Mesh(new THREE.BoxGeometry(0.013, 0.22, 0.013), oroRosa);
+    barra.position.set(Math.cos(a) * 0.149, 2.640, Math.sin(a) * 0.149);
     barra.rotation.y = -a;
     acanaladuras.add(barra);
   }
   tapa.add(acanaladuras);
 
-  const hombro = new THREE.Mesh(new THREE.CylinderGeometry(0.118, 0.132, 0.06, 64), oroRosa);
-  hombro.position.y = 2.995;
+  const hombro = new THREE.Mesh(new THREE.CylinderGeometry(0.132, 0.150, 0.055, 64), oroRosa);
+  hombro.position.y = 2.790;
   tapa.add(hombro);
 
-  const pulsador = new THREE.Mesh(new THREE.CylinderGeometry(0.112, 0.116, 0.075, 64), oroRosa);
-  pulsador.position.y = 3.060;
+  const pulsador = new THREE.Mesh(new THREE.CylinderGeometry(0.126, 0.132, 0.07, 64), oroRosa);
+  pulsador.position.y = 2.840;
   tapa.add(pulsador);
 
   const boquilla = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.026, 0.03, 24), oroRosa);
-  boquilla.position.set(0, 3.090, 0.09);
+  boquilla.position.set(0, 2.868, 0.10);
   tapa.add(boquilla);
 
   grupo.add(tapa);
 
   // Centrado para que gire sobre su eje óptico y no sobre la base. La
-  // altura total con atomizador ronda 3.10, así que el centro cae en 1.55.
-  const CENTRO = 1.55;
+  // altura total con atomizador ronda 2.88, así que el centro cae en 1.44.
+  const CENTRO = 1.44;
   grupo.position.y = -CENTRO;
   escena.add(grupo);
 
