@@ -23,7 +23,13 @@ export function iniciarRevelado(raiz = document) {
   const observador = new IntersectionObserver(
     (entradas) => {
       for (const entrada of entradas) {
-        if (!entrada.isIntersecting) continue;
+        // Además de "está entrando", cuenta "ya quedó arriba". Si alguien
+        // llega por un enlace de anclaje o baja de un tirón, los elementos
+        // que el viewport se saltó no llegan a intersecar nunca — y con
+        // sólo `isIntersecting` se quedaban en opacidad cero para siempre,
+        // invisibles al volver a subir.
+        const yaPaso = entrada.boundingClientRect.bottom <= 0;
+        if (!entrada.isIntersecting && !yaPaso) continue;
         entrada.target.classList.add('visible');
         observador.unobserve(entrada.target);
       }

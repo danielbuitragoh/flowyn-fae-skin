@@ -72,10 +72,16 @@
 
 /* ==========================================================================
    03 · ANATOMÍA DEL FRASCO
-   Reproduce la lámina técnica del manual: el boceto a lápiz en el centro y
-   las cuatro llamadas alrededor, unidas por filetes. En pantallas estrechas
-   la composición radial no cabe, así que se convierte en lista — pero el
-   boceto se queda, porque es lo que hace creíble la explicación.
+   Reproduce la lámina técnica del manual: el producto en el centro y las
+   llamadas alrededor, unidas por filetes. En pantallas estrechas la
+   composición radial no cabe y se convierte en lista, pero la pieza se
+   queda, porque es lo que hace creíble la explicación.
+
+   Aquí iba el boceto a lápiz del manual. Se cambió por la fotografía del
+   producto cerrado: el recorte del boceto tenía el borde del papel visible
+   y se leía como un dibujo mal recortado en lugar de como una lámina. La
+   foto además enseña la tapa puesta, que es la primera pieza que describen
+   las llamadas y la que faltaba en el packshot destapado.
    ========================================================================== */
 
 .anatomia__cabecera { text-align: center; margin-bottom: var(--e-12); }
@@ -89,13 +95,10 @@
   gap: clamp(1.5rem, 4vw, 4rem);
 }
 
-.anatomia__boceto {
-  /* El grafito ya viene sobre transparente: el papel del documento
-     original se eliminó restando el tono local de la página, así que el
-     dibujo se apoya en cualquier fondo del sistema sin recuadro. */
-  width: min(22vw, 236px);
+.anatomia__pieza {
+  width: min(24vw, 260px);
   height: auto;
-  opacity: 0.92;
+  filter: drop-shadow(0 34px 44px rgba(139, 90, 75, .18));
 }
 
 .anatomia__columna { display: grid; gap: var(--e-8); }
@@ -187,7 +190,7 @@
   /* La lámina radial deja de funcionar: el boceto pasa arriba y las
      llamadas se leen como lista, sin los filetes que ya no apuntan a nada. */
   .anatomia__lamina { grid-template-columns: 1fr; justify-items: center; gap: var(--e-8); }
-  .anatomia__boceto { width: min(46vw, 200px); order: -1; }
+  .anatomia__pieza { width: min(48vw, 215px); order: -1; }
   .anatomia__columna { gap: var(--e-6); width: 100%; max-width: 34rem; }
   .anatomia__columna--izq { justify-items: start; text-align: left; }
   .anatomia__columna--izq .anatomia__punto,

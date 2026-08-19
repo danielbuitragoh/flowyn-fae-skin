@@ -150,11 +150,73 @@ a { color: inherit; }
 .revelar {
   opacity: 0;
   transform: translateY(22px);
+  /* El desenfoque es lo que convierte esto en "bruma que se asienta" en
+     lugar de "div que sube". Un elemento que sólo se desplaza y aparece se
+     lee como una transición de plantilla; uno que además entra en foco se
+     lee como algo materializándose, que es exactamente la promesa de la
+     marca. Cuesta un filtro que se ejecuta una sola vez por elemento. */
+  filter: blur(7px);
   transition: opacity var(--dur-larga) var(--curva),
-              transform var(--dur-larga) var(--curva);
+              transform var(--dur-larga) var(--curva),
+              filter var(--dur-larga) var(--curva);
   transition-delay: var(--retardo, 0ms);
 }
-.revelar.visible { opacity: 1; transform: none; }
+.revelar.visible { opacity: 1; transform: none; filter: blur(0); }
+
+/* --- Titulares que se descubren --------------------------------------------
+   Los titulares grandes no entran como los párrafos: se descubren detrás de
+   su propia línea de base, subiendo dentro de una máscara. Es el gesto de
+   una cortina abriéndose, y es la diferencia entre un texto que aparece y
+   uno que se presenta.
+
+   Se descubre con `mask-image` y no con `clip-path`, aunque `clip-path` era
+   lo natural: IntersectionObserver calcula el solape DESPUÉS de aplicar los
+   recortes, así que un titular recortado a cero tiene ratio 0, nunca cruza
+   el umbral de 0.12 y su propio observador no lo revela jamás. Quedaba
+   invisible para siempre mientras el resto de la sección aparecía sin
+   problema. Las máscaras son de pintado, no de geometría, y no engañan al
+   observador.
+
+   Tampoco se parte el titular en líneas por JS: llevan `<em>` dentro y
+   trocear el HTML por palabras los rompería.                             */
+.revelar--titular {
+  /* Máscara del doble de alto que el elemento: mitad opaca arriba, mitad
+     transparente abajo. Moverla de `0 100%` a `0 0` barre el borde entre
+     las dos de abajo hacia arriba, y el texto se descubre. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent 50%);
+          mask-image: linear-gradient(to bottom, #000 50%, transparent 50%);
+  -webkit-mask-size: 100% 200%;
+          mask-size: 100% 200%;
+  -webkit-mask-position: 0 100%;
+          mask-position: 0 100%;
+  transform: translateY(0.16em);
+  filter: none;
+  transition: -webkit-mask-position 1150ms var(--curva),
+              mask-position 1150ms var(--curva),
+              transform 1150ms var(--curva),
+              opacity 650ms var(--curva);
+  transition-delay: var(--retardo, 0ms);
+}
+.revelar--titular.visible {
+  -webkit-mask-position: 0 0;
+          mask-position: 0 0;
+  transform: none;
+  filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Quien pide menos movimiento recibe el contenido, no una versión pobre
+     de la animación: nada se desplaza, nada se desenfoca, todo está. */
+  .revelar,
+  .revelar--titular {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    -webkit-mask-image: none;
+            mask-image: none;
+    transition: none;
+  }
+}
 
 /* --- Velos de seda en las esquinas ---------------------------------------
    Firma visual presente en casi todas las diapositivas. Decorativo puro,

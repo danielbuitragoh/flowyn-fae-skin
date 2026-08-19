@@ -231,6 +231,12 @@
   .hero__scroll { display: none; }
   /* El frasco ya mide un tercio en vertical: el mismo desplazamiento en
      píxeles que en escritorio se leería como si la tapa saliera volando. */
+  .hero__vaho i:nth-child(1) { --dx:  -70px; --dy:  28px; }
+  .hero__vaho i:nth-child(2) { --dx:   52px; --dy: -14px; }
+  .hero__vaho i:nth-child(3) { --dx:  -98px; --dy:  58px; }
+  .hero__vaho i:nth-child(4) { --dx:   82px; --dy:  42px; }
+  .hero__vaho i:nth-child(5) { --dx:  -44px; --dy:  86px; }
+
   .hero__flotante[data-tapa-abierta] .hero__tapa {
     translate: -50% -28px;
     rotate: -16deg;
@@ -388,7 +394,11 @@
 /* El pase inicial: la tapa llega puesta, no aparece ya puesta. Es la
    primera demostración del gesto, antes de que nadie haya tocado nada. */
 .hero__tapa {
-  animation: tapa-armar 1100ms var(--curva) 900ms both;
+  /* `backwards`, no `both`: con `both` la animación conserva su fotograma
+     final al terminar, y en la cascada una animación gana a cualquier regla
+     normal — así que el `:hover` de abajo no volvía a mover la tapa nunca
+     más. Por eso el gesto "funcionaba" el primer segundo y luego no. */
+  animation: tapa-armar 1100ms var(--curva) 900ms backwards;
 }
 @keyframes tapa-armar {
   from {
@@ -435,4 +445,79 @@
    una sombra real cuando el objeto se ladea. */
 .hero__reflejo {
   translate: calc(-50% + var(--par-x, 0px) * -0.6) 0;
+}
+
+
+/* --- El vaho ----------------------------------------------------------------
+   Al quitar la tapa sale bruma. Enseña el atomizador funcionando, que es
+   justo lo que un packshot quieto no puede contar.
+
+   Sobre crema la bruma no puede ser blanca: blanco sobre blanco roto no se
+   ve. Lo que la hace visible aquí es el anillo de blush alrededor del
+   núcleo — el mismo tono que ya usan los velos de las esquinas, así que la
+   bruma pertenece a la paleta en vez de ser una nube gris pegada encima.
+
+   Cinco motas escalonadas, no una nube: lo que dispersa este envase es
+   "bruma ultrafina", y una masa sólida se leería como humo.             */
+.hero__vaho {
+  position: absolute;
+  top: 3%;
+  left: 49.8%;
+  translate: -50% 0;
+  width: 1px; height: 1px;
+  z-index: 4;
+  pointer-events: none;
+}
+.hero__vaho i {
+  position: absolute;
+  left: 0; top: 0;
+  width: 116px; height: 116px;
+  margin: -58px 0 0 -58px;
+  border-radius: 50%;
+  /* Sobre crema la bruma tiene que ser MÁS OSCURA que el fondo, no más
+     clara: blanco sobre blanco roto es invisible. Un aerosol fino visto
+     contra una pared clara se ve así, como una sombra suave teñida — y el
+     tono es el blush que ya usan los velos, así que pertenece a la paleta
+     en vez de ser una nube gris pegada encima. El núcleo blanco se queda,
+     pero pequeño: es el brillo del chorro al salir. */
+  background: radial-gradient(circle,
+    rgba(255, 255, 255, .55) 0%,
+    rgba(233, 210, 204, .62) 26%,
+    rgba(199, 145, 145, .34) 52%,
+    rgba(199, 145, 145, 0) 76%);
+  filter: blur(7px);
+  opacity: 0;
+}
+
+/* Cada mota lleva su deriva, su altura y su tamaño final. Iguales se leerían
+   como una fila de círculos y no como algo dispersándose. */
+/* El retardo va en una variable y no en `animation-delay` porque la regla
+   de abajo usa el atajo `animation`, y el atajo reinicia a cero todas las
+   sub-propiedades que no menciona. Con `animation-delay` declarado aparte,
+   las cinco motas salían a la vez y el chorro se leía como un latido. */
+.hero__vaho i:nth-child(1) { --dx: -172px; --dy:  34px; --escala: 2.6; --t: 0s;   }
+.hero__vaho i:nth-child(2) { --dx: -112px; --dy: -22px; --escala: 2.1; --t: .55s; }
+.hero__vaho i:nth-child(3) { --dx: -246px; --dy: 104px; --escala: 3.2; --t: 1.1s; }
+.hero__vaho i:nth-child(4) { --dx:  -70px; --dy:  70px; --escala: 1.8; --t: 1.7s; }
+.hero__vaho i:nth-child(5) { --dx: -206px; --dy: 172px; --escala: 2.9; --t: 2.3s; }
+
+@media (hover: hover) and (pointer: fine) {
+  .hero__flotante:hover .hero__vaho i,
+  .hero__flotante:focus-within .hero__vaho i { animation: vaho 3.2s ease-out var(--t, 0s) infinite; }
+}
+.hero__flotante[data-tapa-abierta] .hero__vaho i { animation: vaho 3.2s ease-out var(--t, 0s) infinite; }
+
+/* Sale rápido y se frena: es lo que hace un aerosol al perder la presión
+   del disparo y quedar a merced del aire. */
+@keyframes vaho {
+  0%   { opacity: 0;   transform: translate(0, 0) scale(.28); }
+  14%  { opacity: .95; }
+  55%  { opacity: .6;  }
+  100% { opacity: 0;   transform: translate(var(--dx), var(--dy)) scale(var(--escala)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__flotante:hover .hero__vaho i,
+  .hero__flotante:focus-within .hero__vaho i,
+  .hero__flotante[data-tapa-abierta] .hero__vaho i { animation: none; }
 }

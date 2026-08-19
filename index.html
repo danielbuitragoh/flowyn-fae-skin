@@ -110,6 +110,14 @@
               alt=""
               aria-hidden="true"
               width="219" height="285" data-tapa />
+
+            <!-- El vaho sale del atomizador al quitar la tapa. Es la razón
+                 por la que el gesto de destapar merece existir: el producto
+                 es una bruma y hasta ahora la bruma no salía por ningún
+                 lado. -->
+            <span class="hero__vaho" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i>
+            </span>
           </div>
 
           <div class="hero__lienzo" data-frasco-3d aria-hidden="true"></div>
@@ -141,7 +149,7 @@
       <div class="contenedor sobre-velo">
         <p class="etiqueta revelar" style="justify-content:center" id="concepto-titulo">El concepto</p>
 
-        <p class="concepto__frase revelar" style="--retardo:100ms">
+        <p class="concepto__frase revelar revelar--titular" style="--retardo:100ms">
           Una niebla de frescura que devuelve la luz natural de la piel.
         </p>
 
@@ -169,7 +177,7 @@
 
         <div class="anatomia__cabecera">
           <p class="etiqueta revelar">El objeto</p>
-          <h2 id="frasco-titulo" class="titular revelar" style="--retardo:100ms">
+          <h2 id="frasco-titulo" class="titular revelar revelar--titular" style="--retardo:100ms">
             Una gota de agua <em>convertida en objeto</em>
           </h2>
         </div>
@@ -191,10 +199,10 @@
             </div>
           </div>
 
-          <img class="anatomia__boceto revelar" style="--retardo:60ms"
-               src="/assets/frasco-boceto.png"
-               alt="Boceto técnico a lápiz del frasco de FAE SKIN, de silueta ondulada y atomizador superior"
-               width="1124" height="3441" loading="lazy" />
+          <img class="anatomia__pieza revelar" style="--retardo:60ms"
+               src="/assets/frasco-completo.png"
+               alt="Frasco de FAE SKIN cerrado, con su tapa cilíndrica en oro rosa sobre el cuerpo de vidrio opalino"
+               width="587" height="1641" loading="lazy" />
 
           <div class="anatomia__columna anatomia__columna--der">
             <div class="anatomia__punto revelar" style="--retardo:180ms">
@@ -223,7 +231,7 @@
 
         <div class="beneficios__cabecera">
           <p class="etiqueta revelar">Lo que hace</p>
-          <h2 id="beneficios-titulo" class="titular revelar" style="--retardo:100ms">
+          <h2 id="beneficios-titulo" class="titular revelar revelar--titular" style="--retardo:100ms">
             Cuatro cosas, <em>bien hechas</em>
           </h2>
         </div>
@@ -268,7 +276,7 @@
 
         <div class="ritual__cabecera">
           <p class="etiqueta revelar">El ritual</p>
-          <h2 id="ritual-titulo" class="titular revelar" style="--retardo:100ms">
+          <h2 id="ritual-titulo" class="titular revelar revelar--titular" style="--retardo:100ms">
             Hydrate. <em>Refresh.</em> Reveal.
           </h2>
         </div>
@@ -342,7 +350,7 @@
 
         <div class="formula__cabecera">
           <p class="etiqueta revelar">La fórmula</p>
-          <h2 id="formula-titulo" class="titular revelar" style="--retardo:100ms">
+          <h2 id="formula-titulo" class="titular revelar revelar--titular" style="--retardo:100ms">
             Agua, <em>y cuatro razones para volver</em>
           </h2>
         </div>
@@ -419,7 +427,7 @@
 
           <div class="aroma__intro">
             <p class="etiqueta revelar">El aroma</p>
-            <h2 id="aroma-titulo" class="titular revelar" style="--retardo:100ms">
+            <h2 id="aroma-titulo" class="titular revelar revelar--titular" style="--retardo:100ms">
               Ethereal <em>Cotton</em>
             </h2>
             <p class="aroma__frase revelar" style="--retardo:180ms">
@@ -470,7 +478,7 @@
 
         <div class="momentos__cabecera">
           <p class="etiqueta revelar">Cuándo</p>
-          <h2 id="momentos-titulo" class="titular revelar" style="--retardo:100ms">
+          <h2 id="momentos-titulo" class="titular revelar revelar--titular" style="--retardo:100ms">
             Cabe en <em>cualquier momento</em>
           </h2>
         </div>
