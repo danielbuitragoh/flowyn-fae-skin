@@ -28,59 +28,17 @@
    a gritos sería contradecir todo lo que dice.
    ========================================================================== */
 
-/* --- El amanecer -------------------------------------------------------------
-   Aquí es donde la página hace lo que el producto promete. El manual de
-   marca resume FAE SKIN en una frase — "una niebla de frescura que devuelve
-   la luz natural de la piel" — y esta sección es esa frase ocurriendo: entra
-   todavía en el abismo del hero y sale en la crema de la marca, pasando por
-   los tonos intermedios que ya son de la paleta (violeta, ciruela, cobre,
-   blush). No es un degradado decorativo; es la transición que justifica que
-   la apertura fuera oscura.
-
-   La frase se coloca arriba, del lado oscuro, porque una promesa de luz se
-   dice antes de que llegue la luz. El texto de apoyo y los cinco adjetivos
-   caen del lado claro, que es donde ya se puede leer con calma.        */
-.concepto {
-  text-align: center;
-  overflow: hidden;
-  /* La transición se completa pronto —a dos tercios— y no al final. Si
-     terminara abajo, el texto de apoyo caería sobre los tonos intermedios,
-     que son preciosos de mirar e ilegibles para leer encima. Arriba va lo
-     que se dice a oscuras; el resto de la sección ya es crema. */
-  background: linear-gradient(180deg,
-    var(--abismo) 0%,
-    #141A2B      10%,
-    #2A2038      22%,
-    #5C3F4A      34%,
-    #9C6A63      44%,
-    #D9B3A6      53%,
-    var(--nude)  60%,
-    var(--crema) 68%);
-  padding-block: clamp(6rem, 13vw, 11rem) var(--seccion-y);
-}
-
-/* La etiqueta y la frase viven en el lado oscuro. */
-/* El velo de esta sección cae sobre la mitad oscura, y el degradado rosa
-   pensado para crema se lee ahí como una mancha gris. Se apaga: el amanecer
-   del fondo ya aporta todo el color que la sección necesita. */
-.concepto .velo { display: none; }
-
-.concepto .etiqueta { color: var(--tenue-iris); }
-.concepto .etiqueta::before,
-.concepto .etiqueta::after { background: var(--iris-azul); }
+.concepto { text-align: center; overflow: hidden; }
 
 .concepto__frase {
   font-family: var(--serif);
-  font-size: clamp(2.1rem, 5.2vw, 4.25rem);
+  font-size: clamp(1.85rem, 4vw, 3.15rem);
   font-style: italic;
-  font-weight: 300;
-  line-height: 1.08;
-  letter-spacing: -0.015em;
-  color: var(--iris-perla);
-  max-width: 15ch;
+  line-height: 1.32;
+  color: var(--caoba);
+  max-width: 17ch;
   margin-inline: auto;
-  margin-bottom: clamp(5rem, 11vw, 9rem);
-  text-wrap: balance;
+  margin-bottom: var(--e-6);
 }
 
 .concepto__texto {

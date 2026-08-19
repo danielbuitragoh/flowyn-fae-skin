@@ -49,47 +49,9 @@
      distingue los tonos lee "Pagado" igual. */
   --verde-ok:       #4B6B4F;
 
-  /* ---- La apertura oscura ----------------------------------------------
-     La paleta de arriba es de packaging: se diseñó mirando el frasco en
-     la mano, sobre papel. En pantalla tiene un problema que en papel no
-     tiene — el rasgo que define al producto según su propia ficha técnica
-     es la "interferencia iridiscente perla → lavanda → azul → verde", y
-     la interferencia sólo existe cuando hay oscuridad contra la que
-     brillar. Sobre crema, el vidrio opalino se lee como vidrio
-     transparente: el producto pierde en la web justo lo que lo distingue
-     en el estante.
-
-     De ahí la apertura: la página empieza a oscuras, donde la iridiscencia
-     es la única luz, y va aclarando hasta llegar a la crema de la marca.
-     No es una paleta alternativa — es la primera mitad de una frase cuyo
-     final sigue siendo la paleta de Gabriela. La promesa escrita en el
-     manual es "una niebla que devuelve la luz natural de la piel"; la
-     página hace eso literalmente antes de decirlo.                      */
-  --abismo:      #0C1018;   /* negro con azul dentro, nunca negro puro */
-  --abismo-alto: #161C28;   /* superficie elevada sobre el abismo */
-  --texto-iris:  #DCD8E2;   /* cuerpo sobre el abismo — 13.4:1 */
-  --tenue-iris:  #A7A2B4;   /* secundario sobre el abismo — 6.6:1 */
-
-  /* Los cuatro tonos de la interferencia, literales de la ficha del
-     envase. No se eligieron: se leyeron. */
-  --iris-perla:   #F2EDE6;
-  --iris-lavanda: #C3B2E6;
-  --iris-azul:    #8CB4E8;
-  --iris-verde:   #9BD8C2;
-
   /* ---- Degradados ----------------------------------------------------- */
   --grad-oro:   linear-gradient(135deg, #D9A9A4 0%, #C79191 45%, #A78584 100%);
   --grad-velo:  linear-gradient(160deg, rgba(233,210,204,.55) 0%, rgba(250,245,242,0) 70%);
-
-  /* La interferencia, viva. Se recorre sola: el vidrio real cambia de
-     color al girarlo, así que aquí el color tampoco se queda quieto. */
-  --grad-iris: linear-gradient(100deg,
-    var(--iris-perla)   0%,
-    var(--iris-lavanda) 22%,
-    var(--iris-azul)    44%,
-    var(--iris-verde)   64%,
-    var(--oro-rosa)     82%,
-    var(--iris-perla)   100%);
 
   /* ---- Tipografía ------------------------------------------------------
      Display: serif de alto contraste, siempre en versales con tracking
@@ -102,10 +64,6 @@
   --track-titular:  0.08em;   /* titulares display */
 
   /* ---- Escala tipográfica (fluida) ------------------------------------ */
-  /* El titular de apertura juega en otra liga que el resto: es lo único
-     que compite en tamaño con el frasco, y esa competencia es el hero.
-     A 2.4rem —lo que medía antes— el texto pedía permiso. */
-  --t-hero:    clamp(2.9rem, 8.6vw, 7.5rem);
   --t-display: clamp(2.75rem, 7vw, 6rem);
   --t-titular: clamp(2rem, 4.4vw, 3.4rem);
   --t-sub:     clamp(1.25rem, 2.2vw, 1.75rem);

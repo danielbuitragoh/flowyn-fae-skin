@@ -113,30 +113,3 @@
   .nav__enlaces { display: none; }
   .nav__marca svg { width: 78px; }
 }
-
-/* --- La barra sobre la apertura oscura --------------------------------------
-   El hero arranca en el abismo y la barra arranca transparente encima, así
-   que hasta que se compacta tiene que leerse en claro. En cuanto se
-   compacta vuelve a ser la barra crema de siempre, porque a esa altura la
-   página ya ha vuelto a la luz.
-
-   Va con `:not(.compacta)` en vez de con una clase propia para que no haya
-   un tercer estado que mantener: la barra sigue teniendo dos.          */
-.nav:not(.compacta) .nav__marca { color: var(--iris-perla); }
-.nav:not(.compacta) .nav__marca svg path { fill: currentColor; }
-.nav:not(.compacta) .nav__iso { color: var(--iris-lavanda); }
-
-.nav:not(.compacta) .nav__enlaces a { color: var(--tenue-iris); }
-.nav:not(.compacta) .nav__enlaces a:hover { color: var(--iris-perla); }
-.nav:not(.compacta) .nav__enlaces a::after { background: var(--iris-azul); }
-
-.nav:not(.compacta) .nav__carrito,
-.nav:not(.compacta) .nav__perfil {
-  color: var(--iris-perla);
-  border-color: rgba(220, 216, 226, .28);
-}
-.nav:not(.compacta) .nav__carrito:hover,
-.nav:not(.compacta) .nav__perfil:hover {
-  border-color: rgba(220, 216, 226, .55);
-  background: rgba(220, 216, 226, .08);
-}
