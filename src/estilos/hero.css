@@ -13,9 +13,18 @@
   place-items: center;
   padding-block: clamp(6rem, 12vh, 9rem) var(--e-8);
   overflow: hidden;
+  /* La escena arranca a oscuras porque es la única forma de que se vea lo
+     que hace especial al frasco: el opalino sólo interfiere la luz cuando
+     hay oscuridad detrás. Las dos manchas de color son la interferencia
+     misma, muy diluida — el resplandor no viene de un foco, viene del
+     vidrio. */
   background:
-    radial-gradient(120% 90% at 78% 42%, rgba(252, 248, 237, .95) 0%, rgba(250, 245, 242, 0) 60%),
-    var(--crema);
+    linear-gradient(to bottom, rgba(12,16,24,0) 78%, var(--abismo) 100%),
+    radial-gradient(58% 46% at 72% 44%, rgba(140, 180, 232, .16) 0%, rgba(12, 16, 24, 0) 72%),
+    radial-gradient(46% 40% at 78% 66%, rgba(155, 216, 194, .13) 0%, rgba(12, 16, 24, 0) 70%),
+    radial-gradient(70% 60% at 68% 30%, rgba(195, 178, 230, .12) 0%, rgba(12, 16, 24, 0) 74%),
+    var(--abismo);
+  color: var(--texto-iris);
 }
 
 .hero__rejilla {
@@ -23,38 +32,93 @@
   z-index: 2;
   /* Más estrecho que el contenedor general a propósito: el aire tiene que
      rodear la composición por fuera, no abrir un hueco en medio de ella. */
-  width: min(100% - 2.5rem, 1080px);
+  width: min(100% - 2.5rem, 1240px);
   display: grid;
-  grid-template-columns: 1fr 0.82fr;
+  /* El frasco deja de ser la columna pequeña. Antes medía 0.82 contra 1 y
+     se leía como ilustración de acompañamiento; aquí pesa lo mismo que el
+     titular, que es lo que pasa cuando el producto es uno solo. */
+  grid-template-columns: 1.02fr 0.98fr;
   align-items: center;
-  gap: clamp(1.5rem, 3vw, 3rem);
+  gap: clamp(1rem, 2vw, 2.5rem);
 }
 
 /* --- Columna de texto ----------------------------------------------------- */
-.hero__marca { max-width: 30rem; }
+.hero__marca { max-width: 34rem; }
 
 .hero__logo {
-  width: clamp(15rem, 26vw, 23rem);
+  width: clamp(11rem, 17vw, 15rem);
   height: auto;
-  margin-bottom: var(--e-4);
+  margin-bottom: var(--e-3);
 }
-.hero__logo path { fill: var(--caoba); }
+.hero__logo path { fill: var(--iris-perla); }
+
+/* Nombre del producto en versalitas: la única línea de la apertura que se
+   comporta como etiqueta, y el contrapunto de escala que hace que el
+   titular se lea enorme. */
+.hero__firma {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 var(--e-3);
+  font-family: var(--sans);
+  font-size: var(--t-etiqueta);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--tenue-iris);
+}
+.hero__firma i {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--oro-rosa);
+}
 
 .hero__claim {
   font-family: var(--serif);
-  font-size: clamp(1.6rem, 2.9vw, 2.4rem);
+  font-size: var(--t-hero);
   font-style: italic;
-  line-height: 1.28;
-  color: var(--caoba);
-  letter-spacing: 0.01em;
-  margin: 0 0 var(--e-3);
-  max-width: 18ch;
+  font-weight: 300;
+  line-height: 0.98;
+  color: var(--iris-perla);
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--e-4);
+  max-width: 13ch;
+  text-wrap: balance;
 }
 
 .hero__texto {
-  color: var(--taupe);
-  max-width: 34ch;
+  color: var(--tenue-iris);
+  max-width: 32ch;
   margin-bottom: var(--e-6);
+}
+
+/* --- La interferencia, viva ------------------------------------------------
+   Ésta es la única idea decorativa de toda la apertura, y por eso está
+   sola: el resto del hero se mantiene callado para que se note.
+
+   La ficha del envase describe el acabado como una interferencia que va de
+   perla a lavanda, azul y verde según cómo le dé la luz. Es un color que
+   no se está quieto. Ponerlo quieto en la web sería describirlo mal, así
+   que aquí recorre — despacio, dieciocho segundos por vuelta, que es el
+   ritmo de algo que respira y no de algo que parpadea.
+
+   Va sobre "la luz" y sobre nada más. La marca promete devolver la luz;
+   la palabra que lo dice es la que tiene la luz dentro.               */
+.iris {
+  font-style: inherit;
+  color: var(--iris-lavanda);
+}
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .iris {
+    background: var(--grad-iris);
+    background-size: 260% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: iris-deriva 18s linear infinite;
+  }
+}
+@keyframes iris-deriva {
+  to { background-position: 260% 0; }
 }
 
 .hero__acciones {
@@ -69,14 +133,14 @@
   align-items: baseline;
   gap: 0.4rem;
   font-family: var(--serif);
-  color: var(--caoba);
+  color: var(--iris-perla);
 }
 .hero__precio span {
   font-family: var(--sans);
   font-size: var(--t-etiqueta);
   letter-spacing: var(--track-etiqueta);
   text-transform: uppercase;
-  color: var(--cobre-texto);
+  color: var(--tenue-iris);
 }
 .hero__precio strong { font-weight: 400; font-size: 1.7rem; letter-spacing: 0.02em; }
 
@@ -90,28 +154,43 @@
   min-height: min(74svh, 640px);
 }
 
+/* El halo deja de ser un foco blanco detrás del frasco y pasa a ser lo que
+   de verdad ocurre con este vidrio: la luz que lo atraviesa sale teñida.
+   Por eso son tres manchas de distinto color y no una sola blanca. */
 .hero__halo {
   position: absolute;
-  inset: auto auto 8% 50%;
+  inset: auto auto 10% 50%;
   translate: -50% 0;
-  width: min(46vw, 460px);
+  width: min(52vw, 540px);
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle,
-    rgba(255, 252, 246, .95) 0%,
-    rgba(244, 235, 230, .72) 34%,
-    rgba(233, 210, 204, .30) 58%,
-    rgba(250, 245, 242, 0) 74%);
-  filter: blur(6px);
+  background:
+    radial-gradient(circle at 42% 38%, rgba(195, 178, 230, .30) 0%, rgba(12,16,24,0) 58%),
+    radial-gradient(circle at 62% 60%, rgba(155, 216, 194, .24) 0%, rgba(12,16,24,0) 56%),
+    radial-gradient(circle at 50% 50%, rgba(140, 180, 232, .26) 0%, rgba(12,16,24,0) 66%);
+  filter: blur(18px);
   animation: latido 9s var(--curva-suave) infinite;
 }
 
 .hero__frasco {
   position: relative;
   z-index: 2;
-  height: min(72svh, 620px);
+  /* Más grande que antes: en la apertura de una tienda de un solo producto,
+     el producto puede permitirse ocupar la pantalla. */
+  height: min(84svh, 760px);
   width: auto;
-  filter: drop-shadow(0 40px 48px rgba(139, 90, 75, .16));
+  /* La sombra ya no es marrón. Un objeto iluminado por su propia
+     iridiscencia proyecta esa iridiscencia, no un marrón de estudio. */
+  filter:
+    drop-shadow(0 30px 60px rgba(140, 180, 232, .20))
+    drop-shadow(0 10px 24px rgba(12, 16, 24, .55));
+  /* El recorte original dejaba una cola del reflejo del suelo del estudio
+     debajo de la base. Sobre crema no se veía; sobre el abismo era una
+     mancha blanca con el borde dentado. Se limpió en el propio PNG, y aquí
+     queda sólo un desvanecido corto que hace lo que además queríamos: que
+     el frasco emerja de la oscuridad en vez de estar pegado encima. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 94%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 94%, transparent 100%);
   animation: derivar 11s ease-in-out infinite;
 }
 
@@ -123,8 +202,8 @@
   translate: -50% 0;
   width: 46%;
   height: 26px;
-  background: radial-gradient(ellipse at center, rgba(199, 145, 145, .26) 0%, rgba(250, 245, 242, 0) 72%);
-  filter: blur(7px);
+  background: radial-gradient(ellipse at center, rgba(155, 216, 194, .22) 0%, rgba(12, 16, 24, 0) 72%);
+  filter: blur(9px);
   z-index: 1;
 }
 
@@ -154,7 +233,9 @@
   width: var(--tam, 5px);
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(233,210,204,.5) 55%, transparent 72%);
+  /* Sobre el abismo la bruma por fin se ve: son motas de luz, no puntos
+     blancos sobre un fondo casi blanco como antes. */
+  background: radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(195,178,230,.45) 52%, transparent 74%);
   opacity: 0;
   animation: ascender var(--vel, 13s) linear infinite;
   animation-delay: var(--retraso, 0s);
@@ -169,6 +250,9 @@
 @media (prefers-reduced-motion: reduce) {
   .hero__frasco, .hero__halo, .particula { animation: none; }
   .particula { opacity: .4; }
+  /* La interferencia se queda quieta, pero no se apaga: el degradado
+     sigue ahí, sólo deja de recorrer. */
+  .iris { animation: none; }
 }
 
 /* --- Destellos sembrados --------------------------------------------------- */
@@ -197,14 +281,14 @@
   font-size: var(--t-etiqueta);
   letter-spacing: var(--track-etiqueta);
   text-transform: uppercase;
-  color: var(--cobre-texto);
+  color: var(--tenue-iris);
   text-decoration: none;
 }
 .hero__scroll i {
   display: block;
   width: 1px;
   height: 46px;
-  background: linear-gradient(to bottom, var(--rosa-borde), transparent);
+  background: linear-gradient(to bottom, var(--iris-azul), transparent);
   animation: caer 2.6s var(--curva-suave) infinite;
 }
 @keyframes caer {
@@ -215,20 +299,39 @@
 
 /* --- Adaptación ------------------------------------------------------------ */
 @media (max-width: 900px) {
-  /* En vertical el frasco cede protagonismo: si ocupa media pantalla, el
-     claim y el precio caen por debajo del pliegue y la primera impresión
-     se convierte en una foto de producto sin contexto. */
-  .hero { min-height: auto; padding-block: 5rem var(--e-6); }
-  .hero__rejilla { grid-template-columns: 1fr; text-align: center; gap: var(--e-4); }
+  /* En vertical la composición se apila: primero el frasco, después la
+     palabra. Lo que no cambia es cuál de los dos manda — el titular seguía
+     midiendo 1.9rem aquí, más pequeño que el propio párrafo que va debajo,
+     y con el logotipo a 17rem encima. Leído de arriba abajo eso decía que
+     lo importante era el logo, y lo importante es la frase. */
+  .hero { min-height: auto; padding-block: 4.5rem var(--e-6); }
+  .hero__rejilla { grid-template-columns: 1fr; text-align: center; gap: var(--e-3); }
   .hero__marca { max-width: none; margin-inline: auto; }
-  .hero__logo { width: min(72vw, 17rem); margin-inline: auto var(--e-3); margin-inline: auto; }
-  .hero__claim { font-size: clamp(1.35rem, 5.6vw, 1.9rem); max-width: 20ch; margin-inline: auto; }
-  .hero__texto { max-width: 36ch; margin-inline: auto; margin-bottom: var(--e-4); }
-  .hero__acciones { justify-content: center; flex-direction: column; gap: var(--e-2); }
+
+  .hero__logo { width: min(42vw, 10rem); margin-inline: auto; margin-bottom: var(--e-2); }
+  .hero__firma { justify-content: center; font-size: 0.625rem; letter-spacing: 0.24em; }
+
+  .hero__claim {
+    font-size: clamp(2.5rem, 12.5vw, 4rem);
+    max-width: 11ch;
+    margin-inline: auto;
+    margin-bottom: var(--e-3);
+  }
+
+  .hero__texto { max-width: 34ch; margin-inline: auto; margin-bottom: var(--e-4); }
+  .hero__acciones { justify-content: center; gap: var(--e-3); }
   .hero__producto { order: -1; min-height: auto; }
-  .hero__frasco { height: min(36svh, 320px); }
-  .hero__halo { width: min(64vw, 300px); bottom: 2%; }
+  .hero__frasco { height: min(46svh, 400px); }
+  .hero__halo { width: min(78vw, 380px); bottom: 2%; }
   .hero__scroll { display: none; }
+
+  /* El vaho se queda corto y cerca: con 390 px de ancho, una deriva de
+     260 px sale de la pantalla por el lado. */
+  .hero__vaho i:nth-child(1) { --dx:  -74px; --dy:  30px; }
+  .hero__vaho i:nth-child(2) { --dx:   54px; --dy: -12px; }
+  .hero__vaho i:nth-child(3) { --dx: -104px; --dy:  62px; }
+  .hero__vaho i:nth-child(4) { --dx:   88px; --dy:  44px; }
+  .hero__vaho i:nth-child(5) { --dx:  -46px; --dy:  92px; }
   /* El frasco ya mide un tercio en vertical: el mismo desplazamiento en
      píxeles que en escritorio se leería como si la tapa saliera volando. */
   .hero__flotante[data-tapa-abierta] .hero__tapa {
@@ -239,7 +342,7 @@
 }
 
 @media (max-width: 420px) {
-  .hero__frasco { height: min(30svh, 260px); }
+  .hero__frasco { height: min(42svh, 340px); }
 }
 
 /* --- Frasco en 3D -----------------------------------------------------------
@@ -285,7 +388,7 @@
   font-size: var(--t-etiqueta);
   letter-spacing: var(--track-etiqueta);
   text-transform: uppercase;
-  color: var(--cobre-texto);
+  color: var(--tenue-iris);
   opacity: 0;
   animation: aparecer-pista 800ms var(--curva) 1200ms forwards;
   pointer-events: none;
@@ -316,6 +419,17 @@
 /* Las capas de fondo no necesitan seguir el puntero al milisegundo: una
    transición suave basta y ahorra escrituras en cada fotograma. */
 .velo { transition: translate 700ms var(--curva); }
+
+/* Los velos son un degradado rosa pensado para flotar sobre crema. Sobre
+   el abismo se leen como una mancha turbia, así que dentro del hero se
+   cambian por el mismo gesto en el rango de la interferencia. */
+.hero .velo {
+  background: linear-gradient(160deg, rgba(140, 180, 232, .16) 0%, rgba(12, 16, 24, 0) 70%);
+  opacity: .9;
+}
+.hero .velo--inf-izq {
+  background: linear-gradient(160deg, rgba(195, 178, 230, .14) 0%, rgba(12, 16, 24, 0) 68%);
+}
 
 .hero__flotante {
   position: relative;
@@ -388,7 +502,12 @@
 /* El pase inicial: la tapa llega puesta, no aparece ya puesta. Es la
    primera demostración del gesto, antes de que nadie haya tocado nada. */
 .hero__tapa {
-  animation: tapa-armar 1100ms var(--curva) 900ms both;
+  /* `backwards` y no `both`: con `both` la animación conserva su fotograma
+     final cuando termina, y en la cascada una animación gana a cualquier
+     regla normal — así que el `:hover` de abajo no podía mover la tapa
+     nunca más. Con `backwards` sólo se adelanta el estado inicial durante
+     el retardo, y al acabar la tapa vuelve a obedecer al CSS. */
+  animation: tapa-armar 1100ms var(--curva) 900ms backwards;
 }
 @keyframes tapa-armar {
   from {
@@ -435,4 +554,95 @@
    una sombra real cuando el objeto se ladea. */
 .hero__reflejo {
   translate: calc(-50% + var(--par-x, 0px) * -0.6) 0;
+}
+
+
+/* --- El CTA sobre la apertura oscura ----------------------------------------
+   El caoba de marca es tinta para fondos claros: sobre el abismo se apaga y
+   el botón principal acaba pareciendo uno deshabilitado. El oro rosa es el
+   otro material real del producto —la tapa, el collarín, el atomizador— y
+   sobre oscuro es lo único cálido, así que atrae el ojo sin gritar.
+
+   No se usa perla: un botón blanco sería lo más brillante de la pantalla y
+   le robaría el papel a "la luz", que es donde vive la idea.            */
+.hero .boton--principal {
+  background: var(--grad-oro);
+  color: var(--abismo);
+  box-shadow: 0 14px 34px -12px rgba(199, 145, 145, .5);
+}
+.hero .boton--principal:hover {
+  background: var(--grad-oro);
+  filter: brightness(1.08);
+}
+
+/* --- El vaho ----------------------------------------------------------------
+   Al quitar la tapa sale bruma. Es lo que hace el producto, y es lo que
+   convierte el gesto de destapar en algo más que una animación: enseña el
+   atomizador funcionando.
+
+   La primera versión mandaba el vaho recto hacia arriba y no se veía nada:
+   el frasco ocupa casi toda la altura de la pantalla, así que encima del
+   atomizador no queda aire — la bruma salía directamente fuera del encuadre.
+   Ahora sale en diagonal, hacia el hueco que hay entre el frasco y el
+   titular, que es el único sitio de la composición donde puede leerse. De
+   paso hace algo que la versión vertical no hacía: cruza la distancia entre
+   el producto y la frase, y los deja unidos mientras dura.
+
+   Cinco motas escalonadas, no una nube: lo que dispersa este envase es
+   "bruma ultrafina", y una nube sólida se leería como humo.            */
+.hero__vaho {
+  position: absolute;
+  top: 3%;
+  left: 49.8%;
+  translate: -50% 0;
+  width: 1px;
+  height: 1px;
+  z-index: 4;
+  pointer-events: none;
+}
+.hero__vaho i {
+  position: absolute;
+  left: 0; top: 0;
+  width: 120px; height: 120px;
+  margin: -60px 0 0 -60px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(255, 255, 255, .78) 0%,
+    rgba(214, 202, 240, .42) 38%,
+    rgba(140, 180, 232, 0) 70%);
+  filter: blur(8px);
+  opacity: 0;
+}
+
+/* Cada mota lleva su deriva, su altura y su tamaño final propios. Iguales
+   se leerían como una fila de círculos, no como algo dispersándose. */
+.hero__vaho i:nth-child(1) { --dx: -190px; --dy:  40px; --escala: 2.6; animation-delay: 0s;    }
+.hero__vaho i:nth-child(2) { --dx: -120px; --dy: -18px; --escala: 2.1; animation-delay: .5s;   }
+.hero__vaho i:nth-child(3) { --dx: -268px; --dy: 116px; --escala: 3.2; animation-delay: 1s;    }
+.hero__vaho i:nth-child(4) { --dx:  -78px; --dy:  74px; --escala: 1.8; animation-delay: 1.5s;  }
+.hero__vaho i:nth-child(5) { --dx: -226px; --dy: 186px; --escala: 2.9; animation-delay: 2s;    }
+
+@media (hover: hover) and (pointer: fine) {
+  .hero__flotante:hover .hero__vaho i,
+  .hero__flotante:focus-within .hero__vaho i {
+    animation: vaho 3.2s ease-out infinite;
+  }
+}
+.hero__flotante[data-tapa-abierta] .hero__vaho i {
+  animation: vaho 3.2s ease-out infinite;
+}
+
+/* Sube rápido al salir y se frena: es lo que hace un aerosol cuando pierde
+   la presión del disparo y lo empieza a mandar el aire. */
+@keyframes vaho {
+  0%   { opacity: 0;   transform: translate(0, 0) scale(.3); }
+  14%  { opacity: .9;  }
+  55%  { opacity: .55; }
+  100% { opacity: 0;   transform: translate(var(--dx), var(--dy)) scale(var(--escala)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__flotante:hover .hero__vaho i,
+  .hero__flotante:focus-within .hero__vaho i,
+  .hero__flotante[data-tapa-abierta] .hero__vaho i { animation: none; }
 }

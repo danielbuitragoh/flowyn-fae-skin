@@ -82,6 +82,19 @@ const PARES = [
   ['borde-ui',     'crema',        3.0, 'Bordes de campos y foco'],
   ['borde-ui',     'nude',         3.0, 'Bordes sobre tarjeta'],
 
+  // --- La apertura oscura ------------------------------------------------
+  // El hero y la mitad alta del concepto invierten el sistema, así que la
+  // paleta oscura necesita las mismas garantías que la clara. Si algún día
+  // alguien aclara el abismo para "que se vea más", esto lo avisa.
+  ['texto-iris',   'abismo',       4.5, 'Cuerpo sobre la apertura oscura'],
+  ['tenue-iris',   'abismo',       4.5, 'Texto secundario sobre el abismo'],
+  ['iris-perla',   'abismo',       4.5, 'Titular del hero'],
+  ['iris-lavanda', 'abismo',       4.5, '«la luz» sin recorte de degradado'],
+  ['iris-azul',    'abismo',       4.5, 'Tono más oscuro de la interferencia'],
+  ['iris-verde',   'abismo',       4.5, 'Tono medio de la interferencia'],
+  ['oro-rosa',     'abismo',       3.0, 'Relleno del botón sobre el abismo'],
+  ['abismo',       'oro-rosa',     4.5, 'Texto del botón principal del hero'],
+
   // Estado de pedido. Único color fuera de la paleta: se mide igual.
   ['verde-ok',     'nude',         4.5, 'Estado «Pagado» en el historial'],
 ];

@@ -65,23 +65,28 @@
       <div class="hero__rejilla">
 
         <div class="hero__marca">
-          <h1 id="hero-titulo" class="solo-lectores">
-            flowyn · FAE SKIN — Ethereal Skin Mist, bruma facial de tratamiento
-          </h1>
-
           <div class="hero__logo revelar" data-logo aria-hidden="true"></div>
 
-          <p class="hero__claim revelar" style="--retardo:120ms">
-            Una niebla de frescura que devuelve la luz natural de la piel.
+          <p class="hero__firma revelar" style="--retardo:80ms">
+            FAE SKIN <i aria-hidden="true"></i> Ethereal Skin Mist
           </p>
 
-          <p class="hero__texto revelar" style="--retardo:220ms">
-            Bruma facial ultrafina de tratamiento, diseñada para refrescar,
-            hidratar y devolver luminosidad durante todo el día.
+          <!-- El titular es el h1: es la frase de la marca, y esconderla
+               tras un h1 invisible para enseñar la misma idea debajo era
+               duplicar el mensaje. El nombre del producto lo lleva delante
+               en una línea que sólo oye el lector de pantalla. -->
+          <h1 id="hero-titulo" class="hero__claim revelar" style="--retardo:160ms">
+            <span class="solo-lectores">flowyn FAE SKIN, bruma facial de tratamiento. </span>
+            Una niebla que devuelve <em class="iris">la&nbsp;luz</em>
+          </h1>
+
+          <p class="hero__texto revelar" style="--retardo:280ms">
+            Bruma ultrafina de tratamiento. Refresca, hidrata y despierta la
+            luminosidad que la piel ya tiene.
           </p>
 
-          <div class="hero__acciones revelar" style="--retardo:320ms">
-            <a class="boton boton--principal" href="#ritual">Descubrir</a>
+          <div class="hero__acciones revelar" style="--retardo:380ms">
+            <a class="boton boton--principal" href="#comprar">Comprar</a>
             <p class="hero__precio">
               <span>100 ml · COP</span>
               <strong>$89.900</strong>
@@ -110,6 +115,14 @@
               alt=""
               aria-hidden="true"
               width="219" height="285" data-tapa />
+
+            <!-- El vaho sale del atomizador cuando se quita la tapa. Es la
+                 única razón por la que el gesto de destapar merece existir:
+                 el producto es una bruma, y hasta ahora la bruma no salía
+                 por ninguna parte. -->
+            <span class="hero__vaho" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i>
+            </span>
           </div>
 
           <div class="hero__lienzo" data-frasco-3d aria-hidden="true"></div>

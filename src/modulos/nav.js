@@ -28,8 +28,14 @@ export function montarNav() {
   const centinela = document.querySelector('[data-centinela]');
   if (!centinela || !('IntersectionObserver' in window)) return;
 
+  // El centinela va al final del hero, así que "no se ve" significa dos
+  // cosas opuestas: que todavía no hemos llegado (está debajo del pliegue)
+  // o que ya lo pasamos (está encima). Con `isIntersecting` a secas las dos
+  // daban lo mismo, y la barra arrancaba compacta desde el primer píxel —
+  // justo encima del hero, que es donde tenía que ser transparente. El
+  // signo de `top` distingue los dos casos.
   const observador = new IntersectionObserver(
-    ([entrada]) => nav.classList.toggle('compacta', !entrada.isIntersecting),
+    ([entrada]) => nav.classList.toggle('compacta', entrada.boundingClientRect.top <= 0),
     { threshold: 0 }
   );
   observador.observe(centinela);
