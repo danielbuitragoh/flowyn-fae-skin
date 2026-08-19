@@ -41,7 +41,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.ingrediente h3 {
+.ingrediente h4 {
   font-family: var(--serif);
   font-size: 1.5rem;
   letter-spacing: 0.02em;
@@ -63,7 +63,7 @@
 .ingrediente p { font-size: 0.9375rem; margin: 0; }
 
 /* --- Complementarios: mismo sistema, menor peso --------------------------- */
-.formula__complementarios h3 {
+.formula__complementarios h4 {
   font-family: var(--sans);
   font-size: var(--t-etiqueta);
   font-weight: 400;
@@ -194,7 +194,7 @@
   gap: var(--e-2);
   margin-bottom: var(--e-2);
 }
-.nota__tipo h3 {
+.nota__tipo h4 {
   font-family: var(--sans);
   font-size: var(--t-etiqueta);
   font-weight: 400;

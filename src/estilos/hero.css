@@ -521,3 +521,30 @@
   .hero__flotante:focus-within .hero__vaho i,
   .hero__flotante[data-tapa-abierta] .hero__vaho i { animation: none; }
 }
+
+
+/* --- El titular, palabra por palabra ----------------------------------------
+   Cada palabra entra desenfocada y sube un poco. El desenfoque es lo que lo
+   convierte en niebla condensándose en lugar de en texto deslizándose, y es
+   la única razón por la que este efecto pertenece a esta marca y no a
+   cualquier otra.
+
+   Sin JS el titular se ve entero y quieto: las palabras sólo existen si el
+   módulo las creó, y el estado inicial vive en `[data-palabras-listo]`, que
+   sólo aparece cuando ya están hechas. Nunca queda un titular invisible por
+   un script que no cargó.                                               */
+.hero__claim[data-palabras-listo] .palabra {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(9px);
+  transform: translateY(0.35em);
+  animation: palabra-entra 900ms var(--curva) var(--retardo-palabra, 0ms) forwards;
+}
+
+@keyframes palabra-entra {
+  to { opacity: 1; filter: blur(0); transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__claim[data-palabras-listo] .palabra { animation: none; opacity: 1; filter: none; transform: none; }
+}

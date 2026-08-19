@@ -26,6 +26,11 @@
     <nav aria-label="Secciones">
       <ul class="nav__enlaces">
         <li><a href="#ritual">El ritual</a></li>
+        <!-- Estos dos ya no son secciones sino pestañas dentro de #producto.
+             Los enlaces se conservan igual: `pestanas.js` reconoce el
+             fragmento, baja a la sección y abre la pestaña que toca. Un
+             enlace que alguien pudo guardar o compartir sigue llevando al
+             mismo sitio. -->
         <li><a href="#formula">La fórmula</a></li>
         <li><a href="#aroma">El aroma</a></li>
         <li><a href="#comprar">Comprar</a></li>
@@ -71,7 +76,7 @@
 
           <div class="hero__logo revelar" data-logo aria-hidden="true"></div>
 
-          <p class="hero__claim revelar" style="--retardo:120ms">
+          <p class="hero__claim" data-palabras>
             Una niebla de frescura que devuelve la luz natural de la piel.
           </p>
 
@@ -169,60 +174,200 @@
       </div>
     </section>
 
-    <!-- ====================================================================
-         03 · ANATOMÍA DEL FRASCO
+        <!-- ====================================================================
+         03 · EL PRODUCTO (tres miradas, en pestañas)
+         Antes eran tres secciones seguidas —el objeto, la fórmula y el aroma—
+         y sumaban un tercio del largo de la página con el mismo ritmo cada
+         una. Van en pestañas y no en scroll porque no son tres pasos de un
+         relato: son tres formas de mirar el mismo frasco, y quien viene por
+         los ingredientes no tiene por qué recorrer el envase primero.
+         El resto de la página sigue siendo scroll, que es lo que lleva a un
+         desconocido de "qué es esto" a "lo compro" sin pedirle decisiones.
          ==================================================================== -->
-    <section class="seccion seccion--nude anatomia" id="frasco" aria-labelledby="frasco-titulo">
+    <section class="seccion seccion--nude producto" id="producto"
+             aria-labelledby="producto-titulo" data-pestanas>
       <div class="contenedor">
 
-        <div class="anatomia__cabecera">
-          <p class="etiqueta revelar">El objeto</p>
-          <h2 id="frasco-titulo" class="titular revelar revelar--titular" style="--retardo:100ms">
+        <h2 class="solo-lectores" id="producto-titulo">El producto</h2>
+        <p class="etiqueta producto__etiqueta revelar">Conoce el producto</p>
+
+        <div class="pestanas" role="tablist" aria-label="Conocer el producto">
+          <button type="button" role="tab" class="pestana"
+                  id="pestana-objeto" aria-controls="panel-objeto"
+                  aria-selected="true" tabindex="0">El objeto</button>
+          <button type="button" role="tab" class="pestana"
+                  id="pestana-formula" aria-controls="panel-formula"
+                  aria-selected="false" tabindex="-1">La fórmula</button>
+          <button type="button" role="tab" class="pestana"
+                  id="pestana-aroma" aria-controls="panel-aroma"
+                  aria-selected="false" tabindex="-1">El aroma</button>
+        </div>
+
+        <!-- ---- El objeto ------------------------------------------------ -->
+        <div class="panel" role="tabpanel" id="panel-objeto"
+             aria-labelledby="pestana-objeto" tabindex="0">
+
+          <h3 class="titular panel__titular">
             Una gota de agua <em>convertida en objeto</em>
-          </h2>
+          </h3>
+
+          <div class="anatomia__lamina">
+
+            <div class="anatomia__columna anatomia__columna--izq">
+              <div class="anatomia__punto">
+                <h4>Atomizador fino</h4>
+                <p>Mecanismo de alta calidad que genera una bruma ultraligera y constante, para una aplicación uniforme.</p>
+              </div>
+              <div class="anatomia__punto">
+                <h4>Diseño orgánico</h4>
+                <p>Inspirado en la Hoja Fae. Silueta escultórica que refleja fluidez, naturaleza y elegancia.</p>
+              </div>
+              <div class="anatomia__punto">
+                <h4>Detalles en oro rosa</h4>
+                <p>Tapa, collarín y atomizador en metal con acabado satinado, con el grabado de la estrella flowyn.</p>
+              </div>
+            </div>
+
+            <img class="anatomia__pieza"
+                 src="/assets/frasco-completo.png"
+                 alt="Frasco de FAE SKIN cerrado, con su tapa cilíndrica en oro rosa sobre el cuerpo de vidrio opalino"
+                 width="587" height="1641" loading="lazy" />
+
+            <div class="anatomia__columna anatomia__columna--der">
+              <div class="anatomia__punto">
+                <h4>Acabado opalescente</h4>
+                <p>Vidrio opalino con interferencia iridiscente: pasa de perla a lavanda, azul y verde según la luz.</p>
+              </div>
+              <div class="anatomia__punto">
+                <h4>Tubo dip interno</h4>
+                <p>Conduce el líquido desde el fondo del envase hasta el atomizador, preservando la pureza de la fórmula.</p>
+              </div>
+              <div class="anatomia__punto">
+                <h4>Formato</h4>
+                <p>100 ml · 17,5 × 5,8 cm aprox. Base ovalada de vidrio que aporta estabilidad.</p>
+              </div>
+            </div>
+
+          </div>
         </div>
 
-        <div class="anatomia__lamina">
+        <!-- ---- La fórmula ----------------------------------------------- -->
+        <div class="panel" role="tabpanel" id="panel-formula"
+             aria-labelledby="pestana-formula" tabindex="0" hidden>
 
-          <div class="anatomia__columna anatomia__columna--izq">
-            <div class="anatomia__punto revelar">
-              <h3>Atomizador fino</h3>
-              <p>Mecanismo de alta calidad que genera una bruma ultraligera y constante, para una aplicación uniforme.</p>
-            </div>
-            <div class="anatomia__punto revelar" style="--retardo:120ms">
-              <h3>Diseño orgánico</h3>
-              <p>Inspirado en la Hoja Fae. Silueta escultórica que refleja fluidez, naturaleza y elegancia.</p>
-            </div>
-            <div class="anatomia__punto revelar" style="--retardo:240ms">
-              <h3>Detalles en oro rosa</h3>
-              <p>Tapa, collarín y atomizador en metal con acabado satinado, con el grabado de la estrella flowyn.</p>
-            </div>
+          <h3 class="titular panel__titular">
+            Agua, <em>y cuatro razones para volver</em>
+          </h3>
+
+          <div class="formula__protagonistas">
+
+            <article class="ingrediente">
+              <span class="ingrediente__numero">01</span>
+              <div>
+                <h4>Ácido hialurónico</h4>
+                <span class="ingrediente__inci">Sodium Hyaluronate</span>
+                <p>Ingrediente humectante que aporta hidratación y contribuye a una apariencia de piel más flexible y confortable.</p>
+              </div>
+            </article>
+
+            <article class="ingrediente">
+              <span class="ingrediente__numero">02</span>
+              <div>
+                <h4>Pantenol</h4>
+                <span class="ingrediente__inci">Panthenol</span>
+                <p>Provitamina B5. Asociada a la hidratación y al soporte de la barrera cutánea: confort y suavidad.</p>
+              </div>
+            </article>
+
+            <article class="ingrediente">
+              <span class="ingrediente__numero">03</span>
+              <div>
+                <h4>Niacinamida</h4>
+                <span class="ingrediente__inci">Niacinamide</span>
+                <p>Activo multifuncional en concentración moderada, coherente con un producto de uso frecuente. Contribuye a una apariencia más uniforme y luminosa.</p>
+              </div>
+            </article>
+
+            <article class="ingrediente">
+              <span class="ingrediente__numero">04</span>
+              <div>
+                <h4>Ectoína</h4>
+                <span class="ingrediente__inci">Ectoin</span>
+                <p>Osmoprotector. Refuerza el concepto de protección y equilibrio de la barrera, y es el diferenciador de la fórmula.</p>
+              </div>
+            </article>
+
           </div>
 
-          <img class="anatomia__pieza revelar" style="--retardo:60ms"
-               src="/assets/frasco-completo.png"
-               alt="Frasco de FAE SKIN cerrado, con su tapa cilíndrica en oro rosa sobre el cuerpo de vidrio opalino"
-               width="587" height="1641" loading="lazy" />
-
-          <div class="anatomia__columna anatomia__columna--der">
-            <div class="anatomia__punto revelar" style="--retardo:180ms">
-              <h3>Acabado opalescente</h3>
-              <p>Vidrio opalino con interferencia iridiscente: pasa de perla a lavanda, azul y verde según la luz.</p>
-            </div>
-            <div class="anatomia__punto revelar" style="--retardo:300ms">
-              <h3>Tubo dip interno</h3>
-              <p>Conduce el líquido desde el fondo del envase hasta el atomizador, preservando la pureza de la fórmula.</p>
-            </div>
-            <div class="anatomia__punto revelar" style="--retardo:420ms">
-              <h3>Formato</h3>
-              <p>100 ml · 17,5 × 5,8 cm aprox. Base ovalada de vidrio que aporta estabilidad.</p>
-            </div>
+          <div class="formula__complementarios">
+            <h4>Sistema complementario</h4>
+            <ul class="formula__lista">
+              <li><strong>Glicerina</strong><span>Glycerin</span><em>Atrae y mantiene agua en la superficie de la piel.</em></li>
+              <li><strong>Propanediol</strong><span>Propanediol</span><em>Complementa la hidratación y afina la textura de la bruma.</em></li>
+              <li><strong>Beta-glucano</strong><span>Beta-Glucan</span><em>Refuerza la sensación de calma y suavidad.</em></li>
+              <li><strong>Agua</strong><span>Aqua</span><em>Base acuosa: el vehículo que mantiene la fórmula ultraligera.</em></li>
+            </ul>
           </div>
 
+          <p class="formula__nota">
+            La formulación presentada es una propuesta conceptual desarrollada para
+            el proyecto de marca. Las concentraciones definitivas, el pH, la
+            estabilidad, el sistema conservante y la compatibilidad con el envase
+            deben ser determinados y validados por profesionales de formulación
+            cosmética mediante los estudios técnicos correspondientes.
+          </p>
         </div>
+
+        <!-- ---- El aroma -------------------------------------------------- -->
+        <div class="panel" role="tabpanel" id="panel-aroma"
+             aria-labelledby="pestana-aroma" tabindex="0" hidden>
+
+          <h3 class="titular panel__titular">Ethereal <em>Cotton</em></h3>
+
+          <div class="aroma__rejilla">
+
+            <div class="aroma__intro">
+              <p class="aroma__frase">
+                No huele a caramelo. Huele a una nube dulce flotando en el aire.
+              </p>
+              <p>
+                Dulce, limpio y aireado, reinterpretado desde una perspectiva
+                sofisticada. De baja intensidad, para que acompañe el cuidado de
+                la piel sin convertirse en un perfume.
+              </p>
+              <p class="aroma__recorrido">
+                <span>Fresco</span><span>Floral</span><span>Dulce</span><span>Limpio</span>
+              </p>
+            </div>
+
+            <div class="aroma__piramide">
+
+              <article class="nota nota--salida">
+                <div class="nota__tipo"><h4>Notas de salida</h4><em>Frescura</em></div>
+                <ul><li>Pera acuosa</li><li>Bergamota suave</li><li>Acorde de aire limpio</li></ul>
+              </article>
+
+              <article class="nota nota--corazon">
+                <div class="nota__tipo"><h4>Notas de corazón</h4><em>Etéreo</em></div>
+                <ul><li>Peonía blanca</li><li>Flor de algodón</li><li>Jazmín suave</li></ul>
+              </article>
+
+              <article class="nota nota--fondo">
+                <div class="nota__tipo"><h4>Notas de fondo</h4><em>Dulzura</em></div>
+                <ul><li>Algodón de azúcar</li><li>Vainilla ligera</li><li>Musk blanco</li></ul>
+              </article>
+
+              <p class="aroma__aviso">
+                Como desarrollo futuro, flowyn contempla una versión sin fragancia
+                para quienes prefieran productos faciales <em>fragrance-free</em>.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </section>
-
     <!-- ====================================================================
          04 · BENEFICIOS
          ==================================================================== -->
@@ -342,135 +487,7 @@
     </section>
 
 
-    <!-- ====================================================================
-         06 · LA FÓRMULA
-         ==================================================================== -->
-    <section class="seccion seccion--nude" id="formula" aria-labelledby="formula-titulo">
-      <div class="contenedor">
-
-        <div class="formula__cabecera">
-          <p class="etiqueta revelar">La fórmula</p>
-          <h2 id="formula-titulo" class="titular revelar revelar--titular" style="--retardo:100ms">
-            Agua, <em>y cuatro razones para volver</em>
-          </h2>
-        </div>
-
-        <div class="formula__protagonistas">
-
-          <article class="ingrediente revelar">
-            <span class="ingrediente__numero">01</span>
-            <div>
-              <h3>Ácido hialurónico</h3>
-              <span class="ingrediente__inci">Sodium Hyaluronate</span>
-              <p>Ingrediente humectante que aporta hidratación y contribuye a una apariencia de piel más flexible y confortable.</p>
-            </div>
-          </article>
-
-          <article class="ingrediente revelar" style="--retardo:90ms">
-            <span class="ingrediente__numero">02</span>
-            <div>
-              <h3>Pantenol</h3>
-              <span class="ingrediente__inci">Panthenol</span>
-              <p>Provitamina B5. Asociada a la hidratación y al soporte de la barrera cutánea: confort y suavidad.</p>
-            </div>
-          </article>
-
-          <article class="ingrediente revelar" style="--retardo:180ms">
-            <span class="ingrediente__numero">03</span>
-            <div>
-              <h3>Niacinamida</h3>
-              <span class="ingrediente__inci">Niacinamide</span>
-              <p>Activo multifuncional en concentración moderada, coherente con un producto de uso frecuente. Contribuye a una apariencia más uniforme y luminosa.</p>
-            </div>
-          </article>
-
-          <article class="ingrediente revelar" style="--retardo:270ms">
-            <span class="ingrediente__numero">04</span>
-            <div>
-              <h3>Ectoína</h3>
-              <span class="ingrediente__inci">Ectoin</span>
-              <p>Osmoprotector. Refuerza el concepto de protección y equilibrio de la barrera, y es el diferenciador de la fórmula.</p>
-            </div>
-          </article>
-
-        </div>
-
-        <div class="formula__complementarios revelar">
-          <h3>Sistema complementario</h3>
-          <ul class="formula__lista">
-            <li><strong>Glicerina</strong><span>Glycerin</span><em>Atrae y mantiene agua en la superficie de la piel.</em></li>
-            <li><strong>Propanediol</strong><span>Propanediol</span><em>Complementa la hidratación y afina la textura de la bruma.</em></li>
-            <li><strong>Beta-glucano</strong><span>Beta-Glucan</span><em>Refuerza la sensación de calma y suavidad.</em></li>
-            <li><strong>Agua</strong><span>Aqua</span><em>Base acuosa: el vehículo que mantiene la fórmula ultraligera.</em></li>
-          </ul>
-        </div>
-
-        <p class="formula__nota revelar">
-          La formulación presentada es una propuesta conceptual desarrollada para
-          el proyecto de marca. Las concentraciones definitivas, el pH, la
-          estabilidad, el sistema conservante y la compatibilidad con el envase
-          deben ser determinados y validados por profesionales de formulación
-          cosmética mediante los estudios técnicos correspondientes.
-        </p>
-
-      </div>
-    </section>
-
-    <!-- ====================================================================
-         07 · ETHEREAL COTTON
-         ==================================================================== -->
-    <section class="seccion aroma" id="aroma" aria-labelledby="aroma-titulo">
-      <div class="velo velo--sup-der" aria-hidden="true"></div>
-
-      <div class="contenedor sobre-velo">
-        <div class="aroma__rejilla">
-
-          <div class="aroma__intro">
-            <p class="etiqueta revelar">El aroma</p>
-            <h2 id="aroma-titulo" class="titular revelar revelar--titular" style="--retardo:100ms">
-              Ethereal <em>Cotton</em>
-            </h2>
-            <p class="aroma__frase revelar" style="--retardo:180ms">
-              No huele a caramelo. Huele a una nube dulce flotando en el aire.
-            </p>
-            <p class="revelar" style="--retardo:240ms">
-              Dulce, limpio y aireado, reinterpretado desde una perspectiva
-              sofisticada. De baja intensidad, para que acompañe el cuidado de
-              la piel sin convertirse en un perfume.
-            </p>
-            <p class="aroma__recorrido revelar" style="--retardo:300ms">
-              <span>Fresco</span><span>Floral</span><span>Dulce</span><span>Limpio</span>
-            </p>
-          </div>
-
-          <div class="aroma__piramide">
-
-          <article class="nota nota--salida revelar">
-            <div class="nota__tipo"><h3>Notas de salida</h3><em>Frescura</em></div>
-            <ul><li>Pera acuosa</li><li>Bergamota suave</li><li>Acorde de aire limpio</li></ul>
-          </article>
-
-          <article class="nota nota--corazon revelar" style="--retardo:110ms">
-            <div class="nota__tipo"><h3>Notas de corazón</h3><em>Etéreo</em></div>
-            <ul><li>Peonía blanca</li><li>Flor de algodón</li><li>Jazmín suave</li></ul>
-          </article>
-
-          <article class="nota nota--fondo revelar" style="--retardo:220ms">
-            <div class="nota__tipo"><h3>Notas de fondo</h3><em>Dulzura</em></div>
-            <ul><li>Algodón de azúcar</li><li>Vainilla ligera</li><li>Musk blanco</li></ul>
-          </article>
-
-            <p class="aroma__aviso revelar">
-              Como desarrollo futuro, flowyn contempla una versión sin fragancia
-              para quienes prefieran productos faciales <em>fragrance-free</em>.
-            </p>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ====================================================================
+        <!-- ====================================================================
          08 · MOMENTOS DE USO
          ==================================================================== -->
     <section class="seccion seccion--calida" id="momentos" aria-labelledby="momentos-titulo">

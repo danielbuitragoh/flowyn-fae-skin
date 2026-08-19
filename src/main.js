@@ -32,6 +32,8 @@ import { montarFrasco3D } from './modulos/frasco3d.js';
 import { iniciarProfundidad } from './modulos/profundidad.js';
 import { iniciarArmado } from './modulos/armado.js';
 import { iniciarRegreso } from './modulos/regreso.js';
+import { iniciarPestanas } from './modulos/pestanas.js';
+import { iniciarPalabras } from './modulos/palabras.js';
 import { montarCarrito } from './modulos/carrito-ui.js';
 import { montarFicha } from './modulos/ficha.js';
 import { montarCuenta } from './modulos/cuenta-ui.js';
@@ -63,6 +65,8 @@ function iniciar() {
   iniciarRegreso();
   iniciarSesionModulo();
 
+  iniciarPestanas();
+  iniciarPalabras();
   iniciarRevelado();
 
   // El 3D se monta aparte y sin bloquear: three.js viaja en su propio

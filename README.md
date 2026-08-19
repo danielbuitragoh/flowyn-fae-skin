@@ -63,6 +63,8 @@ Así que el hero sirve la fotografía y le da dimensión tratando la escena como
 
 **Las fuentes las servimos nosotros.** Cormorant Garamond y Jost van autoalojadas en lugar de pedirlas al CDN de Google: una petición menos a un tercero, ningún dato del visitante saliendo fuera, y el texto no parpadea si ese CDN va lento.
 
+**El producto va en pestañas; el resto, en scroll.** *El objeto*, *la fórmula* y *el aroma* eran tres secciones seguidas y sumaban un tercio del largo de la página con el mismo ritmo cada una. Ahora comparten una sección con pestañas, y la página bajó de 12.000 a 10.000 píxeles. La regla que decidió dónde sí y dónde no: las pestañas sirven cuando el contenido son alternativas paralelas —tres formas de mirar el mismo frasco— y estorban cuando es una secuencia. El recorrido de venta sigue siendo scroll, porque lleva a un desconocido de "qué es esto" a "lo compro" sin pedirle ni una decisión, y cada decisión que se le pide es gente que se va. Los enlaces `#formula` y `#aroma` siguen funcionando: el módulo reconoce el fragmento, baja a la sección y abre la pestaña.
+
 **Nada aparece de golpe.** El desplazamiento del revelado es corto a propósito. Largo se lee como "animación web"; corto se lee como bruma asentándose. Y quien pida menos movimiento en su sistema recibe menos movimiento: la identidad de la marca es la calma, así que apagar las animaciones no le quita nada esencial.
 
 ## Cómo está armado
@@ -89,6 +91,8 @@ Así que el hero sirve la fotografía y le da dimensión tratando la escena como
 | `supabase/funciones/wompi-eventos/` | Recibe el aviso firmado de Wompi. El único sitio que marca un pedido como pagado |
 | `src/servicios/pago.js` | Pide el pedido al servidor y devuelve a dónde ir. No calcula nada |
 | `src/modulos/regreso.js` | La vuelta de la pasarela: consulta el estado, no lo decide |
+| `src/modulos/pestanas.js` | Las tres miradas al producto, con el patrón de pestañas de WAI-ARIA |
+| `src/modulos/palabras.js` | El titular del hero, condensándose palabra por palabra |
 
 El estado del carrito y su interfaz están separados, y el almacén donde se
 guarda es intercambiable. Sin sesión es `localStorage`; con sesión es la

@@ -105,7 +105,7 @@
 .anatomia__columna--izq { justify-items: end; text-align: right; }
 
 .anatomia__punto { max-width: 27ch; }
-.anatomia__punto h3 {
+.anatomia__punto h4 {
   font-family: var(--sans);
   font-size: var(--t-etiqueta);
   font-weight: 400;
@@ -203,4 +203,92 @@
 @media (max-width: 560px) {
   .beneficios__rejilla { grid-template-columns: 1fr; }
   .concepto__frase { max-width: none; }
+}
+
+/* ==========================================================================
+   PESTAÑAS DEL PRODUCTO
+   Tres miradas al mismo frasco. La fila se lee como un índice, no como tres
+   botones: sin relleno, sin cajas, sólo el filete que subraya la activa. Es
+   el mismo gesto que ya usan las etiquetas de sección, y por eso no parece
+   un control importado de otro sitio.
+   ========================================================================== */
+
+/* `.contenedor` es rejilla, así que la etiqueta se encoge a su contenido y
+   `justify-content` no tenía nada que centrar. Con el ancho completo, sí. */
+.producto__etiqueta {
+  width: 100%;
+  justify-content: center;
+  margin-bottom: var(--e-4);
+}
+.producto__etiqueta::before { display: none; }
+
+.pestanas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1.25rem, 4vw, 3rem);
+  margin-bottom: var(--e-12);
+  border-bottom: 1px solid var(--rosa-borde);
+}
+
+.pestana {
+  position: relative;
+  padding: 0 0 var(--e-3);
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+  font-style: italic;
+  color: var(--taupe-texto);
+  transition: color var(--dur-media) var(--curva);
+}
+.pestana:hover { color: var(--caoba); }
+
+/* El subrayado crece desde el centro. Aparecer de golpe se lee como un
+   cambio de estado; crecer se lee como que algo se movió hasta ahí. */
+.pestana::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
+  background: var(--oro-rosa);
+  transform: scaleX(0);
+  transition: transform var(--dur-media) var(--curva);
+}
+.pestana[aria-selected='true'] { color: var(--caoba); }
+.pestana[aria-selected='true']::after { transform: scaleX(1); }
+
+/* El foco del teclado se ve, pero sólo cuando se navega con teclado. */
+.pestana:focus-visible {
+  outline: 2px solid var(--oro-rosa);
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+
+/* El panel no lleva `.revelar`: un panel oculto nunca interseca con el
+   viewport, así que su contenido se quedaría en opacidad cero para siempre y
+   la pestaña se abriría vacía. Entra con su propia animación al mostrarse. */
+.panel { animation: panel-entra var(--dur-media) var(--curva) both; }
+.panel:focus-visible { outline: none; }
+
+@keyframes panel-entra {
+  from { opacity: 0; transform: translateY(10px); filter: blur(5px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+
+.panel__titular {
+  text-align: center;
+  max-width: 22ch;
+  margin: 0 auto var(--e-12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel { animation: none; }
+  .pestana::after { transition: none; }
+}
+
+@media (max-width: 560px) {
+  .pestanas { gap: var(--e-3); }
+  .pestana { font-size: 1rem; }
 }
