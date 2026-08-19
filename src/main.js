@@ -30,6 +30,7 @@ import { montarIconos } from './modulos/iconos.js';
 import { iniciarRitual } from './modulos/ritual.js';
 import { montarFrasco3D } from './modulos/frasco3d.js';
 import { iniciarProfundidad } from './modulos/profundidad.js';
+import { iniciarArmado } from './modulos/armado.js';
 import { montarCarrito } from './modulos/carrito-ui.js';
 import { montarFicha } from './modulos/ficha.js';
 import { montarCuenta } from './modulos/cuenta-ui.js';
@@ -44,6 +45,7 @@ function iniciar() {
   sembrarDestellos(document.querySelector('[data-destellos]'));
   iniciarRitual();
   iniciarProfundidad();
+  iniciarArmado();
 
   // La tienda va antes que el revelado: el carrito tiene que pintar su
   // contenido guardado aunque el visitante no haya hecho scroll todavía.

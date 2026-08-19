@@ -31,7 +31,11 @@ export const PRODUCTO = {
   precio: 89900,
   moneda: 'COP',
   posicionamiento: 'Skincare premium accesible',
-  imagen: '/assets/packshot-frasco-recortado.png',
+  // `BASE_URL` en vez de una ruta fija: en el hero esto lo resuelve Vite
+  // solo porque procesa el `src` del HTML, pero aquí es una cadena dentro
+  // de un archivo de datos, y sin el prefijo del repositorio la miniatura
+  // del carrito se rompe en GitHub Pages aunque funcione en local.
+  imagen: `${import.meta.env.BASE_URL}assets/packshot-frasco-recortado.png`,
   alt: 'Frasco de FAE SKIN, bruma facial de 100 ml en vidrio opalescente',
   // Cinco pilares de valor, literales del documento.
   valor: [
