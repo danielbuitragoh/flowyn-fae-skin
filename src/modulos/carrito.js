@@ -226,6 +226,21 @@ export function fijarCiudad(id) {
   avisar('ciudad');
 }
 
+/**
+ * Vacía la bandeja porque el pedido ya se pagó.
+ *
+ * Se distingue de `desconectarAlmacen()`, que también la vacía pero al cerrar
+ * sesión: allí el motivo es que el carrito era de otra persona; aquí, que ya
+ * se convirtió en pedido. La ciudad se conserva — la clienta sigue viviendo
+ * donde vivía, y volver a preguntársela en la siguiente compra sería tratarla
+ * como a una desconocida.
+ */
+export function vaciar() {
+  if (!estado.lineas.length) return;
+  estado.lineas = [];
+  avisar('vaciar');
+}
+
 /** Devuelve la función para dejar de escuchar, que es lo que evita fugas
  *  cuando un componente desaparece. */
 export function alCambiar(oyente) {

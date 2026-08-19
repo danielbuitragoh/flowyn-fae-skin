@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "verificar:contraste": "node scripts/verificar-contraste.mjs",
-    "verificar": "npm run verificar:contraste && npm run build"
+    "verificar": "npm run verificar:contraste && npm run verificar:pedido && npm run build",
+    "verificar:pedido": "node scripts/verificar-pedido.mjs"
   },
   "keywords": [],
   "author": "",

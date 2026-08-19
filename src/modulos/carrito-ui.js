@@ -18,6 +18,7 @@ import {
   fijarCantidad, quitar, fijarCiudad, alCambiar,
 } from './carrito.js';
 import { crearModal, conFocoPreservado } from './modal.js';
+import { irAPagar } from '../servicios/pago.js';
 
 export function montarCarrito() {
   const panel = document.querySelector('[data-carrito]');
@@ -125,7 +126,9 @@ export function montarCarrito() {
       </div>
 
       <button type="button" class="boton boton--principal" data-ir-al-pago>Finalizar pedido</button>
-      <p class="carrito__aviso">El pago llega en la siguiente fase del proyecto.</p>`;
+      <p class="carrito__aviso" data-malo="false" aria-live="polite">
+        Pago seguro con Wompi. El total se calcula en el servidor.
+      </p>`;
   }
 
   function pintar() {
@@ -185,15 +188,48 @@ export function montarCarrito() {
     if (e.target.matches('[data-ciudad]')) fijarCiudad(e.target.value);
   });
 
-  pie.addEventListener('click', (e) => {
-    if (!e.target.closest('[data-ir-al-pago]')) return;
-    // Marcador de la Fase 4. Mejor decirlo que simular un pago que no
-    // existe: una tienda que finge cobrar es peor que una que avisa.
+  pie.addEventListener('click', async (e) => {
+    const boton = e.target.closest('[data-ir-al-pago]');
+    if (!boton) return;
+
     const aviso = pie.querySelector('.carrito__aviso');
-    if (aviso) {
-      aviso.textContent = 'El checkout con Wompi llega en la Fase 4 del proyecto.';
-      aviso.style.color = 'var(--caoba-hondo)';
+    const decir = (texto, malo = false) => {
+      if (!aviso) return;
+      aviso.textContent = texto;
+      aviso.dataset.malo = malo ? 'true' : 'false';
+    };
+
+    // El botón se bloquea mientras dura la petición. Sin esto, dos clics
+    // seguidos crean dos pedidos con dos referencias distintas y la clienta
+    // acaba pagando el que no era.
+    boton.disabled = true;
+    const textoOriginal = boton.textContent;
+    boton.textContent = 'Preparando el pago…';
+    decir('Estamos creando tu pedido.');
+
+    const resultado = await irAPagar({ lineas: obtenerLineas(), ciudad: obtenerCiudad() });
+
+    if (resultado.ok) {
+      // La referencia se guarda antes de salir: al volver de Wompi la página
+      // se carga de cero y es lo único que queda para saber qué pedido era.
+      try { sessionStorage.setItem('flowyn:pedido', resultado.referencia); } catch { /* modo privado */ }
+      decir('Te llevamos a la pasarela de pago…');
+      window.location.assign(resultado.url);
+      return;
     }
+
+    boton.disabled = false;
+    boton.textContent = textoOriginal;
+
+    if (resultado.motivo === 'sin_sesion') {
+      decir('Entra en tu cuenta para poder guardar el pedido.', true);
+      // La puerta se abre sola en vez de sólo decir dónde está.
+      cerrar();
+      document.querySelector('[data-abrir-cuenta]')?.click();
+      return;
+    }
+
+    decir(resultado.mensaje, true);
   });
 
   /* --- Enlace con el estado ---------------------------------------------------- */

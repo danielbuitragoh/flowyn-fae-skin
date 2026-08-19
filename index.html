@@ -612,6 +612,21 @@
     <p class="solo-lectores" data-cuenta-anuncio role="status" aria-live="polite"></p>
   </aside>
 
+  <!-- ======================================================================
+       REGRESO DEL PAGO
+       Se abre solo cuando la clienta vuelve de Wompi con una referencia en la
+       dirección. El resto del tiempo no existe para nadie: ni para el ratón,
+       ni para el teclado, ni para el lector de pantalla.
+       ====================================================================== -->
+  <div class="velo-carrito" data-velo-regreso aria-hidden="true"></div>
+
+  <aside class="regreso" data-regreso role="dialog" aria-modal="true"
+         aria-labelledby="regreso-titulo" data-abierto="false">
+    <button type="button" class="carrito__cerrar regreso__cerrar" data-cerrar
+            aria-label="Cerrar">×</button>
+    <div class="regreso__cuerpo" data-regreso-cuerpo></div>
+  </aside>
+
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>

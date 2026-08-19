@@ -84,6 +84,11 @@ Así que el hero sirve la fotografía y le da dimensión tratando la escena como
 | `docs/credenciales.md` | Cómo sacar las llaves de Google y dónde va cada una |
 | `public/assets/` | Logotipo y isotipo vectorizados, packshots y fotografía de campaña |
 | `scripts/verificar-contraste.mjs` | Mide la paleta contra WCAG AA y falla si algo no cumple |
+| `scripts/verificar-pedido.mjs` | Intenta engañar al cálculo del servidor y comprueba que no se deje |
+| `supabase/funciones/crear-pedido/` | Crea el pedido y firma el cobro. El total se decide aquí, nunca en el navegador |
+| `supabase/funciones/wompi-eventos/` | Recibe el aviso firmado de Wompi. El único sitio que marca un pedido como pagado |
+| `src/servicios/pago.js` | Pide el pedido al servidor y devuelve a dónde ir. No calcula nada |
+| `src/modulos/regreso.js` | La vuelta de la pasarela: consulta el estado, no lo decide |
 
 El estado del carrito y su interfaz están separados, y el almacén donde se
 guarda es intercambiable. Sin sesión es `localStorage`; con sesión es la
@@ -115,14 +120,17 @@ Este repositorio está en construcción. Lo que ya funciona y lo que falta:
 - [x] **Fase 1** — Secciones de producto, ritual, fórmula y aroma
 - [x] **Fase 2** — Ficha de compra, carrito y cálculo de envío por ciudad
 - [x] **Fase 3** — Cuenta con Google, carrito en la nube, historial de pedidos
-- [ ] **Fase 4** — Checkout con firma del pago en servidor
+- [x] **Fase 4** — Checkout con firma del pago en servidor *(código listo y desplegado; faltan las llaves de Wompi)*
 - [ ] **Fase 5** — Accesibilidad, responsive y despliegue
 
-De la Fase 3 queda un cabo suelto honesto: el esquema, las políticas y el
-código están hechos y comprobados, pero el recorrido completo de Google no
-se ha podido ejecutar de punta a punta porque el proveedor necesita unas
-credenciales que sólo puede crear el dueño de la cuenta. Es la primera
-prueba que hay que hacer al abrir el proyecto con el `.env` puesto.
+De la Fase 4 queda el mismo tipo de cabo suelto que tuvo la Fase 3, y por la
+misma razón. Las dos funciones de servidor están escritas, desplegadas y
+activas; el cálculo del pedido está probado contra manipulación del cliente
+con `npm run verificar`. Lo que falta son las llaves de Wompi, que sólo puede
+crear el dueño del comercio. Hasta que estén, el botón de pagar contesta
+"los pagos todavía no están configurados" en lugar de romperse — que es el
+comportamiento correcto, no un pendiente disfrazado. Los pasos exactos están
+en `docs/credenciales.md`.
 
 ## Sobre los pagos
 

@@ -309,3 +309,105 @@
 @media (prefers-reduced-motion: reduce) {
   .linea--nueva { animation: none; }
 }
+
+/* El aviso del pie cambia de tono cuando lo que cuenta es un problema, no un
+   dato. El color no es lo único que lo dice: el texto ya cambia entero. */
+.carrito__aviso[data-malo='true'] { color: var(--caoba-hondo); }
+
+/* ==========================================================================
+   REGRESO DEL PAGO
+   El carrito y la cuenta entran por el lado porque son cajones: se abren, se
+   consultan y se cierran. Esto no — es el final de un recorrido, y llega al
+   centro. Es el único diálogo del sitio que interrumpe a propósito.
+   ========================================================================== */
+.regreso {
+  position: fixed;
+  z-index: 90;
+  top: 50%;
+  left: 50%;
+  width: min(100% - 2rem, 30rem);
+  padding: var(--e-6) var(--e-4) var(--e-4);
+  border-radius: var(--radio-suave);
+  background: var(--crema);
+  box-shadow: var(--sombra-media);
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  translate: -50% -50%;
+  scale: 0.96;
+  transition: opacity var(--dur-media) var(--curva),
+              scale var(--dur-media) var(--curva),
+              visibility 0s linear var(--dur-media);
+}
+.regreso[data-abierto='true'] {
+  opacity: 1;
+  visibility: visible;
+  scale: 1;
+  transition: opacity var(--dur-media) var(--curva),
+              scale var(--dur-media) var(--curva),
+              visibility 0s;
+}
+
+.regreso__cerrar { position: absolute; top: var(--e-2); right: var(--e-2); }
+
+.regreso__etiqueta {
+  margin: 0 0 var(--e-2);
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+}
+.regreso__titulo {
+  margin: 0 0 var(--e-2);
+  font-family: var(--serif);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  line-height: 1.15;
+  color: var(--caoba);
+}
+.regreso__texto {
+  margin: 0 auto var(--e-4);
+  max-width: 34ch;
+  font-size: var(--t-pequeno);
+  line-height: 1.7;
+  color: var(--taupe);
+}
+
+.regreso__datos {
+  display: grid;
+  gap: 0;
+  margin: 0 0 var(--e-4);
+  text-align: left;
+  border-top: 1px solid var(--rosa-borde);
+}
+.regreso__datos > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--e-2);
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--rosa-borde);
+}
+.regreso__datos dt {
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+}
+.regreso__datos dd {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: var(--t-pequeno);
+  color: var(--caoba);
+}
+/* El color acompaña al texto, nunca lo sustituye: quien no distingue los
+   tonos lee "Pagado" igual. */
+.regreso__datos dd[data-estado='aprobado'] { color: var(--verde-ok); }
+.regreso__datos dd[data-estado='rechazado'],
+.regreso__datos dd[data-estado='anulado']  { color: var(--caoba-hondo); }
+
+.regreso .boton { width: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .regreso { transition: opacity var(--dur-corta) linear, visibility 0s linear var(--dur-corta); scale: 1; }
+  .regreso[data-abierto='true'] { transition: opacity var(--dur-corta) linear, visibility 0s; }
+}

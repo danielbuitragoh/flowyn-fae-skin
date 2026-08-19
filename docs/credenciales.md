@@ -171,3 +171,92 @@ publicable no es un secreto, hay dos caminos igual de válidos:
   nada que no vaya a estar en el paquete de todas formas.
 
 Lo montamos en la Fase 5, junto con el resto del despliegue.
+
+---
+
+# Fase 4 · Los pagos (Wompi)
+
+El código del checkout ya está desplegado y funcionando en tu Supabase. Lo
+único que falta son cuatro valores que sólo puedes crear tú.
+
+**Importante: todo va en modo de pruebas.** flowyn es una marca de proyecto,
+no una sociedad con NIT, así que no puede ni debe recibir dinero real. Las
+llaves de prueba empiezan por `pub_test_`, `prv_test_`, `test_integrity_` y
+`test_events_`. Si alguna vez ves una que empieza por `prod_`, párate: ésa
+cobra de verdad.
+
+## 1. Sacar las llaves en Wompi
+
+1. Entra en tu comercio en <https://comercios.wompi.co>.
+2. Ve a **Configuración → Llaves API** (o "Desarrolladores").
+3. Cambia al **ambiente de pruebas** (sandbox) si no estás ya en él.
+4. Copia estos tres valores:
+   - **Llave pública** — empieza por `pub_test_`
+   - **Secreto de integridad** — empieza por `test_integrity_`
+   - **Secreto de eventos** — empieza por `test_events_`
+
+La llave privada (`prv_test_`) no hace falta para este flujo. Si no la
+necesitas, no la copies: una llave que no está en ningún sitio no se puede
+filtrar.
+
+## 2. Guardarlas en Supabase (no en el proyecto)
+
+Ninguna de estas llaves va en el código ni en el `.env` del sitio. El `.env`
+del sitio termina dentro del JavaScript que descarga cualquier visitante, y
+el secreto de integridad es justo lo que permite firmar un cobro: si viajara
+al navegador, cualquiera podría firmar un cobro de mil pesos por un frasco de
+89.900. Por eso viven en el servidor y sólo ahí.
+
+En <https://supabase.com/dashboard> → tu proyecto → **Edge Functions →
+Secrets** (o *Project Settings → Edge Functions*), añade:
+
+| Nombre | Valor |
+|---|---|
+| `WOMPI_LLAVE_PUBLICA` | tu `pub_test_…` |
+| `WOMPI_SECRETO_INTEGRIDAD` | tu `test_integrity_…` |
+| `WOMPI_SECRETO_EVENTOS` | tu `test_events_…` |
+| `URL_REGRESO` | `http://localhost:5173/` mientras pruebas en local |
+
+`URL_REGRESO` es a dónde vuelve la clienta después de pagar. Cuando
+publiquemos el sitio hay que cambiarla por la dirección real de GitHub Pages,
+o Wompi devolverá a la gente a tu computador.
+
+Hasta que pongas las dos primeras, el botón de pagar responde *"Los pagos
+todavía no están configurados"* en lugar de fallar con un error feo. Es el
+estado normal, no un bug.
+
+## 3. Decirle a Wompi dónde avisar
+
+En el panel de Wompi, en **Configuración → Eventos** (o "URL de eventos"),
+pon:
+
+```
+https://etnmbgvdjymduujhlgvp.supabase.co/functions/v1/wompi-eventos
+```
+
+Esto es lo que marca un pedido como pagado. Sin esto el cobro funciona, pero
+el pedido se queda en "pendiente" para siempre, porque el sitio **nunca** da
+un pago por bueno sólo porque la clienta haya vuelto a la página: eso lo
+podría falsificar cualquiera escribiendo la dirección a mano. El único aviso
+que se cree es el que llega firmado desde Wompi a esa URL.
+
+## 4. Probarlo
+
+1. Arranca el sitio (`npm run dev`), entra con Google y añade un frasco.
+2. Pulsa **Finalizar pedido**. Debe llevarte a la pasarela de Wompi.
+3. Paga con una de las **tarjetas de prueba** que Wompi publica en su
+   documentación (hay una que aprueba y otra que rechaza — prueba las dos).
+4. Al volver deberías ver el panel de confirmación con la referencia.
+5. Abre tu cuenta en la tienda: el pedido tiene que aparecer en el historial
+   con su estado.
+
+Si el estado se queda en "pendiente" más de un par de minutos, casi siempre
+es el paso 3 de arriba: la URL de eventos no está puesta o está mal escrita.
+
+## Qué pasa si alguien intenta hacer trampa
+
+El navegador sólo manda **qué producto y cuántos**. Nunca el precio, ni el
+subtotal, ni el total. El servidor recalcula la cuenta entera desde su propia
+copia del catálogo y firma ese total, no el que le digan. `npm run verificar`
+incluye una prueba que intenta colar precios falsos, productos inventados,
+cantidades absurdas y líneas repetidas, y comprueba que todas se rechacen.
