@@ -260,3 +260,79 @@ subtotal, ni el total. El servidor recalcula la cuenta entera desde su propia
 copia del catálogo y firma ese total, no el que le digan. `npm run verificar`
 incluye una prueba que intenta colar precios falsos, productos inventados,
 cantidades absurdas y líneas repetidas, y comprueba que todas se rechacen.
+
+---
+
+# Fase 5 · El correo de confirmación
+
+Cuando un pago se aprueba salen dos correos: la confirmación a la clienta y
+un aviso a ti con todo lo necesario para rellenar la guía de la
+transportadora. Sin configurar esto, el pago funciona igual — sólo que nadie
+recibe nada, y en el registro de la función queda un aviso.
+
+## Por qué Gmail y no Resend
+
+Casi todos los servicios de correo transaccional exigen un dominio propio
+verificado para poder escribirle a cualquiera:
+
+| Servicio | Sin dominio propio |
+|---|---|
+| Resend | sólo escribe a tu propia dirección de registro; a cualquier otra, 403 |
+| Postmark | prohíbe expresamente Gmail como remitente |
+| Brevo | te deja ponerlo, y los correos **no llegan y no rebotan** |
+| SendGrid | retiró el plan gratuito en mayo de 2025 |
+| Correo nativo de Supabase | 2 por hora y sólo a miembros del proyecto |
+
+Gmail funciona porque el remitente es una dirección de Google enviada desde
+servidores de Google: SPF y DKIM cuadran solos.
+
+Es una solución de arranque. Un correo de pedido que llega desde una @gmail
+contradice el posicionamiento de la marca, así que cuando compres un dominio
+(unos 10 USD al año en Cloudflare) conviene pasar a Resend. El cambio es de
+unas líneas: todo el envío pasa por `enviarCorreo()` en
+`supabase/funciones/_compartido/correo.ts`.
+
+## Qué tienes que hacer
+
+**1. Crear una contraseña de aplicación de Google.**
+
+No sirve la contraseña normal de la cuenta. Hace falta:
+
+1. Tener la verificación en dos pasos activada en la cuenta de Google.
+2. Ir a <https://myaccount.google.com/apppasswords>.
+3. Crear una para "flowyn" y copiar los 16 caracteres que salen.
+
+Si te sale el error `535 5.7.8 Username and Password not accepted` en el
+registro de la función, es exactamente esto: se puso la contraseña normal.
+
+**2. Poner tres variables en Supabase.**
+
+En el panel del proyecto → *Edge Functions* → *Secrets*:
+
+| Variable | Valor |
+|---|---|
+| `CORREO_USUARIO` | tu dirección de Gmail completa |
+| `CORREO_CLAVE` | los 16 caracteres de la contraseña de aplicación |
+| `CORREO_AVISO` | dónde quieres recibir el aviso de pedido nuevo (opcional; si no la pones, va a `CORREO_USUARIO`) |
+
+La contraseña de aplicación **no** va en el repositorio ni en `.env`: el
+frontend es público en GitHub Pages.
+
+**3. Probarlo.**
+
+Con las llaves de Wompi puestas, haz un pedido de prueba y págalo con una
+tarjeta de sandbox. Deberían llegarte los dos correos. Si no llegan, mira el
+registro de `wompi-eventos` en el panel de Supabase: los fallos de correo se
+registran ahí y **no** tumban el pedido, que queda aprobado igual.
+
+## Qué se manda
+
+- **A la clienta:** referencia, líneas, envío, total, dirección completa,
+  plazo de entrega y el aviso del derecho de retracto. Tablas con estilos en
+  línea, porque los clientes de correo no entienden CSS moderno.
+- **A ti:** los mismos datos en formato de ficha, pensado para copiar a la
+  guía de la transportadora sin abrir la base de datos.
+
+Sólo se manda cuando el pedido pasa de "pendiente" a "aprobado" de verdad.
+Wompi reenvía cada evento hasta tres veces si no recibe un `200`, y sin esa
+comprobación la clienta recibiría la confirmación por triplicado.
