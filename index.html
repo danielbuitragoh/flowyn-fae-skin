@@ -128,28 +128,36 @@
                nadie se queda sin ver el producto por no tener aceleración
                gráfica. -->
           <div class="hero__flotante" data-capa="frasco">
-            <img
-              class="hero__frasco"
-              src="/assets/packshot-frasco-recortado.webp"
-              alt="Frasco de FAE SKIN, bruma facial de 100 ml en vidrio opalescente con atomizador en oro rosa"
-              width="587" height="1648" fetchpriority="high" data-frasco-plano />
-            <!-- La tapa es una foto aparte, no un recorte del mismo frasco: por
-                 eso se puede levantar de verdad al bajar por la página, en vez
-                 de fingirlo con una animación genérica. -->
-            <img
-              class="hero__tapa"
-              src="/assets/tapa-frasco.webp"
-              alt=""
-              aria-hidden="true"
-              width="219" height="285" data-tapa />
+            <!-- Este envoltorio existe por un fallo concreto: la animación de
+                 flotación (`derivar`) estaba puesta sobre la fotografía del
+                 frasco y sobre nada más. El frasco subía y bajaba 16 px y
+                 giraba 0,7°, y la tapa se quedaba quieta — así que las dos
+                 piezas se despegaban y se volvían a juntar cada once
+                 segundos. De ahí venían las dos cosas que se veían raras: la
+                 tapa "bugueada", y el atomizador asomando por encima de ella
+                 cuando el frasco estaba en la parte alta de su recorrido.
+                 Ahora flota el conjunto, no una de las dos piezas. -->
+            <div class="hero__deriva">
+              <img
+                class="hero__frasco"
+                src="/assets/packshot-frasco-recortado.webp"
+                alt="Frasco de FAE SKIN, bruma facial de 100 ml en vidrio opalescente con atomizador en oro rosa"
+                width="587" height="1648" fetchpriority="high" data-frasco-plano />
 
-            <!-- El vaho sale del atomizador al quitar la tapa. Es la razón
-                 por la que el gesto de destapar merece existir: el producto
-                 es una bruma y hasta ahora la bruma no salía por ningún
-                 lado. -->
-            <span class="hero__vaho" aria-hidden="true">
-              <i></i><i></i><i></i><i></i><i></i>
-            </span>
+              <!-- El vaho va detrás de la tapa y delante del frasco: sale del
+                   atomizador, así que tiene que pasar por delante del vidrio
+                   pero por detrás de la pieza que se acaba de levantar. -->
+              <canvas class="hero__vaho" data-vaho aria-hidden="true"></canvas>
+
+              <!-- La tapa es una foto aparte, no un recorte del mismo frasco:
+                   por eso se puede levantar de verdad, en vez de fingirlo. -->
+              <img
+                class="hero__tapa"
+                src="/assets/tapa-frasco.webp"
+                alt=""
+                aria-hidden="true"
+                width="219" height="285" data-tapa />
+            </div>
           </div>
 
           <div class="hero__lienzo" data-frasco-3d aria-hidden="true"></div>
