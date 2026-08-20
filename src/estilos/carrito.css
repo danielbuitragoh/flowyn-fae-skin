@@ -89,8 +89,10 @@
 .carrito__iso { width: 20px; height: auto; color: var(--oro-rosa); }
 
 .carrito__cerrar {
-  width: 40px;
-  height: 40px;
+  /* 44 px: el mínimo táctil de las HIG. Cerrar es la acción que más se
+     usa en un panel y estaba cuatro píxeles por debajo. */
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
   border: 1px solid transparent;
@@ -183,7 +185,17 @@
 }
 
 .linea .cantidad { padding: 0.2rem; }
-.linea .cantidad button { width: 30px; height: 30px; font-size: 0.95rem; }
+/* Dentro de la línea del carrito los botones se ven pequeños, pero la zona
+   sensible al dedo llega a 44 px por fuera del borde visible con un
+   pseudoelemento. Se puede acertar sin que el control engorde. */
+.linea .cantidad button { width: 30px; height: 30px; font-size: 0.95rem; position: relative; }
+.linea .cantidad button::after {
+  content: '';
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 44px; height: 44px;
+  transform: translate(-50%, -50%);
+}
 .linea .cantidad output { font-size: 1rem; }
 
 .linea__quitar {

@@ -23,7 +23,13 @@
       <span data-nav-logo aria-hidden="true"></span>
     </a>
 
-    <nav aria-label="Secciones">
+    <!-- En pantallas estrechas esta fila se guarda detrás del botón de
+         menú; en anchas el botón no existe y la fila está siempre visible.
+         Es un `disclosure` normal y corriente, no un menú de rol ARIA: lo
+         que se abre es una lista de enlaces, y anunciarla como "menú"
+         prometería a un lector de pantalla flechas y submenús que aquí no
+         hay. -->
+    <nav aria-label="Secciones" id="nav-secciones">
       <ul class="nav__enlaces">
         <li><a href="#ritual">El ritual</a></li>
         <!-- Estos dos ya no son secciones sino pestañas dentro de #producto.
@@ -38,6 +44,12 @@
     </nav>
 
     <div class="nav__acciones">
+      <button class="nav__menu" type="button" data-menu
+              aria-expanded="false" aria-controls="nav-secciones">
+        <span class="nav__trazos" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="solo-lectores" data-menu-etiqueta>Abrir el menú</span>
+      </button>
+
       <!-- Oculto hasta que el módulo de sesión confirme que hay cuentas
            configuradas y sepa si hay alguien dentro. Aparecer diciendo
            "Entrar" y cambiar a un nombre medio segundo después es un
@@ -152,11 +164,20 @@
       <div class="velo velo--sup-der" aria-hidden="true"></div>
 
       <div class="contenedor sobre-velo">
-        <p class="etiqueta revelar" style="justify-content:center" id="concepto-titulo">El concepto</p>
+        <p class="etiqueta etiqueta--centrada revelar">El concepto</p>
 
-        <p class="concepto__frase revelar revelar--titular" style="--retardo:100ms">
-          Una niebla de frescura que devuelve la luz natural de la piel.
-        </p>
+        <!-- Antes esta frase era, palabra por palabra, la misma del hero. Dos
+             pantallas seguidas diciendo lo mismo: la segunda no aportaba nada
+             y el visitante llegaba al tercer scroll sin haber avanzado. Ahora
+             el hero promete y esta sección explica en qué consiste la
+             promesa, que es lo que ya decía el párrafo de debajo.
+             Y es un `h2` de verdad: era el titular visible de la sección
+             pero estaba marcado como párrafo, así que en el índice de un
+             lector de pantalla la sección no tenía título propio. -->
+        <h2 id="concepto-titulo" class="concepto__frase revelar revelar--titular"
+            style="--retardo:100ms">
+          No transforma tu piel. <em>Revela la que ya tienes.</em>
+        </h2>
 
         <p class="concepto__texto revelar" style="--retardo:200ms">
           FAE SKIN no busca transformar la apariencia de la piel con un efecto
@@ -189,7 +210,7 @@
       <div class="contenedor">
 
         <h2 class="solo-lectores" id="producto-titulo">El producto</h2>
-        <p class="etiqueta producto__etiqueta revelar">Conoce el producto</p>
+        <p class="etiqueta etiqueta--centrada producto__etiqueta revelar">Conoce el producto</p>
 
         <div class="pestanas" role="tablist" aria-label="Conocer el producto">
           <button type="button" role="tab" class="pestana"
@@ -420,9 +441,14 @@
       <div class="contenedor sobre-velo">
 
         <div class="ritual__cabecera">
-          <p class="etiqueta revelar">El ritual</p>
+          <p class="etiqueta etiqueta--centrada revelar">El ritual</p>
           <h2 id="ritual-titulo" class="titular revelar revelar--titular" style="--retardo:100ms">
-            Hydrate. <em>Refresh.</em> Reveal.
+            <!-- Marcado como inglés dentro de una página en español: sin
+                 esto un lector de pantalla lo pronuncia con fonética
+                 castellana y la frase se vuelve incomprensible. La frase
+                 es de la marca y se respeta tal cual; lo que se arregla es
+                 cómo suena. -->
+            <span lang="en">Hydrate. <em>Refresh.</em> Reveal.</span>
           </h2>
         </div>
 
@@ -494,7 +520,7 @@
       <div class="contenedor">
 
         <div class="momentos__cabecera">
-          <p class="etiqueta revelar">Cuándo</p>
+          <p class="etiqueta etiqueta--centrada revelar">Cuándo</p>
           <h2 id="momentos-titulo" class="titular revelar revelar--titular" style="--retardo:100ms">
             Cabe en <em>cualquier momento</em>
           </h2>
@@ -582,6 +608,32 @@
         </div>
       </div>
     </section>
+
+    <!-- ====================================================================
+         BARRA DE COMPRA PERSISTENTE
+         El único botón de compra de toda la página estaba al 96 % del alto:
+         y = 9.530 de 9.954 px. Quien se convencía en la segunda pantalla
+         tenía que bajar nueve mil píxeles para poder pagar, o volver arriba
+         y encontrar el enlace "Comprar" del menú. Esta barra aparece cuando
+         el visitante ya ha visto el producto y desaparece al llegar a la
+         ficha, para no repetir el mismo botón dos veces en pantalla.
+         Es el patrón de las páginas de producto de Apple, y está aquí por
+         la misma razón: la decisión de comprar no ocurre siempre en el
+         mismo punto de la página.
+         ==================================================================== -->
+    <div class="barra-compra" data-barra-compra hidden>
+      <div class="barra-compra__interior">
+        <img class="barra-compra__foto" src="/assets/packshot-frasco-recortado.png"
+             alt="" aria-hidden="true" width="587" height="1648" loading="lazy" />
+        <p class="barra-compra__datos">
+          <strong>FAE SKIN</strong>
+          <span>100 ml · $ 89.900 COP</span>
+        </p>
+        <button type="button" class="boton boton--principal barra-compra__accion" data-barra-agregar>
+          Añadir a la bandeja
+        </button>
+      </div>
+    </div>
 
   </main>
 

@@ -34,6 +34,7 @@ import { iniciarArmado } from './modulos/armado.js';
 import { iniciarRegreso } from './modulos/regreso.js';
 import { iniciarPestanas } from './modulos/pestanas.js';
 import { iniciarPalabras } from './modulos/palabras.js';
+import { iniciarBarraCompra } from './modulos/barra-compra.js';
 import { montarCarrito } from './modulos/carrito-ui.js';
 import { montarFicha } from './modulos/ficha.js';
 import { montarCuenta } from './modulos/cuenta-ui.js';
@@ -67,6 +68,9 @@ function iniciar() {
 
   iniciarPestanas();
   iniciarPalabras();
+  // Después de montar el carrito: la barra añade unidades y necesita que
+  // el estado del carrito ya exista.
+  iniciarBarraCompra();
   iniciarRevelado();
 
   // El 3D se monta aparte y sin bloquear: three.js viaja en su propio

@@ -11,6 +11,8 @@
 .nav__perfil {
   display: inline-flex;
   align-items: center;
+  /* 44 px de alto: el mínimo táctil de las HIG. Medía 34. */
+  min-height: 44px;
   gap: 0.5rem;
   padding: 0.5rem 1rem 0.5rem 0.5rem;
   border: 1px solid transparent;

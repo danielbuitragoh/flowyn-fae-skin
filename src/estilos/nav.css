@@ -33,6 +33,9 @@
 .nav__marca {
   display: inline-flex;
   align-items: center;
+  /* El logotipo es un enlace a la portada, y como enlace tiene que poder
+     tocarse: medía 27 px de alto. */
+  min-height: 44px;
   gap: 0.6rem;
   color: var(--caoba);
   text-decoration: none;
@@ -48,13 +51,19 @@
   margin: 0;
   padding: 0;
 }
+/* 44 px de alto mínimo. No es un capricho de maquetación: es la medida que
+   las Human Interface Guidelines fijan como zona táctil mínima, y estos
+   enlaces medían 27. La diferencia no se ve —el texto no cambia de sitio—
+   pero es la diferencia entre acertar y no acertar con el pulgar. */
 .nav__enlaces a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-size: var(--t-etiqueta);
   letter-spacing: var(--track-etiqueta);
   text-transform: uppercase;
   color: var(--taupe-texto);
   text-decoration: none;
-  padding-block: 0.35rem;
   position: relative;
   transition: color var(--dur-corta) var(--curva);
 }
@@ -64,7 +73,7 @@
 .nav__enlaces a::after {
   content: '';
   position: absolute;
-  left: 0; bottom: 0;
+  left: 0; bottom: 9px;
   width: 100%; height: 1px;
   background: var(--oro-rosa);
   transform: scaleX(0);
@@ -78,6 +87,8 @@
 .nav__carrito {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-height: 44px;
   gap: 0.55rem;
   padding: 0.6rem 1.15rem;
   border: 1px solid var(--rosa-borde);
@@ -109,7 +120,79 @@
 }
 .nav__cuenta[data-vacio='true'] { display: none; }
 
+/* --- Botón de menú -------------------------------------------------------
+   Sólo existe en pantallas estrechas. En anchas la fila de enlaces ya está
+   visible y un botón que abra lo que ya se ve sería ruido.               */
+.nav__menu {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 0.9rem;
+  border: 1px solid var(--rosa-borde);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--caoba);
+  font-family: var(--sans);
+  font-size: var(--t-etiqueta);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+/* Tres trazos que se convierten en aspa. El gesto dice qué va a pasar al
+   pulsar de nuevo, que es justo lo que un icono de menú debe decir. */
+.nav__trazos { position: relative; width: 16px; height: 10px; flex: none; }
+.nav__trazos i {
+  position: absolute; left: 0; right: 0; height: 1px;
+  background: currentColor;
+  transition: transform var(--dur-corta) var(--curva),
+              opacity var(--dur-corta) var(--curva);
+}
+.nav__trazos i:nth-child(1) { top: 0; }
+.nav__trazos i:nth-child(2) { top: 50%; }
+.nav__trazos i:nth-child(3) { top: 100%; }
+.nav__menu[aria-expanded='true'] .nav__trazos i:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+.nav__menu[aria-expanded='true'] .nav__trazos i:nth-child(2) { opacity: 0; }
+.nav__menu[aria-expanded='true'] .nav__trazos i:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
+
 @media (max-width: 760px) {
-  .nav__enlaces { display: none; }
   .nav__marca svg { width: 78px; }
+  .nav__menu { display: inline-flex; }
+
+  /* Los enlaces no desaparecen: se guardan. Antes se ocultaban con
+     `display:none` y sin ninguna alternativa, así que en el móvil —donde
+     está la mayoría de las visitas— no había forma de llegar al ritual,
+     a la fórmula ni a comprar salvo bajar 10.000 px a mano. */
+  .nav nav {
+    position: absolute;
+    inset: 100% 0 auto 0;
+    background: rgba(250, 245, 242, 0.97);
+    backdrop-filter: blur(16px) saturate(1.1);
+    border-bottom: 1px solid var(--rosa-borde);
+    /* `visibility` además de la opacidad: sin ella el panel cerrado sigue
+       siendo alcanzable con el tabulador aunque no se vea. */
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity var(--dur-corta) var(--curva),
+                transform var(--dur-corta) var(--curva),
+                visibility var(--dur-corta);
+  }
+  .nav[data-menu-abierto='true'] nav {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+  }
+
+  .nav__enlaces {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: var(--e-1) clamp(1.25rem, 5vw, 2.5rem) var(--e-3);
+  }
+  .nav__enlaces li + li { border-top: 1px solid var(--rosa-borde); }
+  .nav__enlaces a { min-height: 52px; width: 100%; }
+  .nav__enlaces a::after { display: none; }
 }

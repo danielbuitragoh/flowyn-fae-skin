@@ -61,6 +61,14 @@ a { color: inherit; }
      de la sección queda escondido debajo de ella. */
   scroll-margin-top: 5rem;
 }
+
+/* Dos secciones seguidas sumaban su relleno: 158 px abajo + 158 px arriba,
+   316 px de vacío idéntico en los siete límites de la página. Casi el 20 %
+   del alto total era aire sin función, y —peor— aire siempre igual: cuando
+   toda separación mide lo mismo, la separación deja de decir nada. El
+   relleno de arriba se recorta cuando ya hay uno debajo, así que el hueco
+   entre secciones se lee como un intervalo y no como dos apilados. */
+.seccion + .seccion { padding-block-start: calc(var(--seccion-y) * 0.6); }
 .seccion--nude { background: var(--nude); }
 .seccion--calida { background: var(--crema-calida); }
 
@@ -76,6 +84,13 @@ a { color: inherit; }
   text-transform: uppercase;
   color: var(--cobre-texto);
   margin: 0 0 var(--e-3);
+  /* Sin esto, la etiqueta hereda el `max-width: 62ch` de los párrafos. Y
+     `ch` se mide sobre la fuente del propio elemento: a 11 px, 62ch son
+     372 px, no los 1280 del contenedor. El resultado era que la etiqueta
+     quedaba anclada a la izquierda mientras su titular iba centrado —
+     medio metro de desalineación en tres secciones. Una etiqueta no es
+     texto corrido, así que la medida de lectura no le aplica. */
+  max-width: none;
 }
 .etiqueta::before {
   content: '';
@@ -85,7 +100,28 @@ a { color: inherit; }
   flex: none;
 }
 
-.titular { font-size: var(--t-titular); text-transform: uppercase; }
+/* Cuando la sección va centrada, la etiqueta también — y con filete a los
+   dos lados. Un filete solo a la izquierda dentro de un bloque centrado
+   desequilibra la línea y delata que el centrado es un parche. */
+.etiqueta--centrada { justify-content: center; }
+.etiqueta--centrada::after {
+  content: '';
+  width: 44px;
+  height: 1px;
+  background: var(--rosa-borde);
+  flex: none;
+}
+
+/* `text-wrap: balance` reparte las líneas en vez de llenar cada una hasta
+   el borde. Sin él, «Una gota de agua convertida en objeto» caía en tres
+   líneas dejando "objeto" solo en la última: una línea huérfana en el
+   titular más grande de la sección. El navegador sólo lo aplica a textos
+   cortos, que es exactamente donde hace falta. */
+.titular {
+  font-size: var(--t-titular);
+  text-transform: uppercase;
+  text-wrap: balance;
+}
 .titular em { font-style: italic; text-transform: none; letter-spacing: 0.02em; }
 
 .entradilla {

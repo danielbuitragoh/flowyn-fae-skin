@@ -37,13 +37,28 @@ export const PRODUCTO = {
   // del carrito se rompe en GitHub Pages aunque funcione en local.
   imagen: `${import.meta.env.BASE_URL}assets/packshot-frasco-recortado.png`,
   alt: 'Frasco de FAE SKIN, bruma facial de 100 ml en vidrio opalescente',
-  // Cinco pilares de valor, literales del documento.
+  // Los cinco pilares de valor del Marketing MIX, con el dato real detrás
+  // de cada uno.
+  //
+  // Los titulares son los de Gabriela y no se tocan. Lo que cambia es la
+  // segunda línea: "Ingredientes de calidad", "Diseño premium y
+  // diferenciador", "Estético, elegante y funcional"… son adjetivos que
+  // cualquier marca de cualquier categoría podría firmar sin cambiar una
+  // coma, y en una ficha de producto —donde alguien está decidiendo si
+  // gasta 89.900 pesos— no responden a ninguna pregunta. Las HIG lo dicen
+  // en una línea: claridad antes que ingenio, y fuera las palabras que no
+  // hacen falta.
+  //
+  // No hay nada inventado aquí. Los activos salen del panel de fórmula, las
+  // medidas y los acabados del despiece técnico que envió Gabriela, y el
+  // aroma de la pirámide olfativa. Son los mismos datos que ya están en la
+  // página; lo único nuevo es que ahora también están donde se compra.
   valor: [
-    ['Formulación', 'Ingredientes de calidad'],
-    ['Packaging', 'Diseño premium y diferenciador'],
-    ['Diseño', 'Estético, elegante y funcional'],
-    ['Experiencia', 'Sensorial, fresca y placentera'],
-    ['Portabilidad', 'Fácil de llevar y usar a diario'],
+    ['Formulación', 'Ácido hialurónico, pantenol, niacinamida y ectoína'],
+    ['Packaging', 'Vidrio opalino iridiscente, atomizador y tapa en oro rosa'],
+    ['Diseño', '17,5 × 5,8 cm · base ovalada, estable sobre el lavamanos'],
+    ['Experiencia', 'Bruma ultrafina · aroma Ethereal Cotton, de baja intensidad'],
+    ['Portabilidad', '100 ml — el máximo que se puede subir al avión en cabina'],
   ],
 };
 

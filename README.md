@@ -65,6 +65,23 @@ Así que el hero sirve la fotografía y le da dimensión tratando la escena como
 
 **El producto va en pestañas; el resto, en scroll.** *El objeto*, *la fórmula* y *el aroma* eran tres secciones seguidas y sumaban un tercio del largo de la página con el mismo ritmo cada una. Ahora comparten una sección con pestañas, y la página bajó de 12.000 a 10.000 píxeles. La regla que decidió dónde sí y dónde no: las pestañas sirven cuando el contenido son alternativas paralelas —tres formas de mirar el mismo frasco— y estorban cuando es una secuencia. El recorrido de venta sigue siendo scroll, porque lleva a un desconocido de "qué es esto" a "lo compro" sin pedirle ni una decisión, y cada decisión que se le pide es gente que se va. Los enlaces `#formula` y `#aroma` siguen funcionando: el módulo reconoce el fragmento, baja a la sección y abre la pestaña.
 
+**Una revisión con las Human Interface Guidelines en la mano.** Pasé la página entera por el criterio de diseño de Apple —claridad, deferencia al contenido, y las reglas medibles de zona táctil, tipografía y jerarquía— midiendo con el navegador en vez de a ojo. Lo que salió, y lo que se hizo:
+
+| Lo que había | Cómo se vio | Qué se hizo |
+|---|---|---|
+| Un solo botón de compra, en el píxel 9.530 de 9.954 | Midiendo la posición de todos los botones de la página | Barra de compra que aparece al pasar el producto y se retira al llegar a la ficha |
+| En móvil no había navegación: los cuatro enlaces se ocultaban con `display:none` y no los sustituía nada | Los cuatro enlaces con ancho 0 a 390 px | Menú desplegable con Escape, cierre al elegir destino y devolución del foco |
+| Zonas táctiles de 27–38 px | Medidas contra el mínimo de 44×44 de las HIG | Nav, cuenta, carrito, cantidad y cierre a 44 px |
+| Las etiquetas de sección a la izquierda y sus titulares centrados | 454 px de desalineación en tres secciones | Ver abajo: la causa no era el centrado |
+| 316 px de vacío idéntico entre cada dos secciones | Sumando el relleno inferior y el superior en los siete límites | El relleno superior se recorta cuando ya hay uno debajo |
+| El claim del hero repetido palabra por palabra como titular del concepto | Buscando frases duplicadas en el documento | Titular nuevo, y marcado como `h2` de verdad — antes era un párrafo |
+| Cinco pilares de valor con adjetivos intercambiables | Leyéndolos | Los titulares de marca se quedan; debajo va el dato real |
+| `npm run preview` servía 404 en todo el JavaScript | Al intentar revisar la construcción antes de publicar | `base` decidida por `mode` y no por `command` |
+
+**La desalineación de las etiquetas no era un problema de centrado.** Tres secciones tenían la etiqueta pegada a la izquierda mientras su titular iba centrado, y el intento anterior —`width: 100%` más `justify-content: center`— no había servido de nada. La causa estaba a cuatro archivos de distancia: `p { max-width: 62ch }`. La unidad `ch` se mide sobre la fuente del propio elemento, y una etiqueta va a 11 px, así que sus 62ch eran 372 px y no los 1.280 del contenedor. El `width: 100%` se aplicaba obedientemente sobre un bloque contenedor de 372 px. Es el tipo de fallo que no se encuentra mirando la pantalla: aparece midiendo, y sólo si uno se pregunta por qué un `width: 100%` no mide el 100 %.
+
+**La barra de compra no usa `IntersectionObserver`, y ese es el detalle.** Era la herramienta obvia, y la primera versión la usaba. Pero el observador sólo avisa cuando `isIntersecting` cambia de valor: al cargar, la sección de producto está debajo del pliegue y entrega `false`; si el visitante salta de golpe más abajo —un ancla, la tecla Fin, recargar conservando la posición—, la sección pasa a estar por encima de la ventana, que también es `false`. Mismo valor, ninguna notificación, y la barra no aparecía nunca. Se detectó saltando directamente al píxel 3.600. Ahora lee dos rectángulos en los fotogramas en que hubo scroll, agrupados en un `requestAnimationFrame`. Es el mismo fallo que ya había tenido el centinela de la barra de navegación, con la misma forma.
+
 **Nada aparece de golpe.** El desplazamiento del revelado es corto a propósito. Largo se lee como "animación web"; corto se lee como bruma asentándose. Y quien pida menos movimiento en su sistema recibe menos movimiento: la identidad de la marca es la calma, así que apagar las animaciones no le quita nada esencial.
 
 ## Cómo está armado

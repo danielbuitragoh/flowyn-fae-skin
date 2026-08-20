@@ -37,6 +37,7 @@
   line-height: 1.32;
   color: var(--caoba);
   max-width: 17ch;
+  text-wrap: balance;
   margin-inline: auto;
   margin-bottom: var(--e-6);
 }
@@ -102,7 +103,13 @@
 }
 
 .anatomia__columna { display: grid; gap: var(--e-8); }
+/* La columna izquierda se alinea contra el frasco —así los filetes apuntan
+   al objeto desde los dos lados—, pero sólo el rótulo va alineado a la
+   derecha. El párrafo no: un texto en bandera izquierda obliga al ojo a
+   buscar dónde empieza cada línea, y a cuatro líneas eso ya se nota. La
+   simetría es del dibujo técnico; la lectura manda por encima. */
 .anatomia__columna--izq { justify-items: end; text-align: right; }
+.anatomia__columna--izq .anatomia__punto p { text-align: left; }
 
 .anatomia__punto { max-width: 27ch; }
 .anatomia__punto h4 {
@@ -280,7 +287,11 @@
 .panel__titular {
   text-align: center;
   max-width: 22ch;
-  margin: 0 auto var(--e-12);
+  /* Era `--e-12` (96 px) entre el titular y el contenido del panel, encima
+     de los 96 px que ya dejaban las pestañas. Dos huecos idénticos seguidos
+     hacen que el titular no parezca de nadie: ni de las pestañas ni de lo
+     que viene debajo. */
+  margin: 0 auto var(--e-8);
 }
 
 @media (prefers-reduced-motion: reduce) {
