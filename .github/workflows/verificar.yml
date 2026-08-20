@@ -15,7 +15,20 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+
       # El contraste va primero: si la paleta se rompió, no tiene sentido
       # gastar tiempo construyendo un sitio que no se puede leer.
       - run: npm run verificar:contraste
+
+      # Las treinta pruebas de manipulación de pedido: precios inyectados
+      # desde el navegador, cantidades fuera de rango, líneas repetidas para
+      # saltarse el tope, ciudades que no existen. Y la comprobación de que
+      # el catálogo del cliente y el del servidor siguen diciendo lo mismo.
+      #
+      # Faltaban aquí. El script existía desde la Fase 4 y se corría a mano,
+      # que es como decir que no se corría: justo la parte del proyecto donde
+      # un fallo cuesta dinero era la única sin red. Si alguien cambia un
+      # precio en un solo lado de los dos catálogos, esto lo para.
+      - run: npm run verificar:pedido
+
       - run: npm run build

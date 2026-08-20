@@ -35,7 +35,9 @@ export const PRODUCTO = {
   // solo porque procesa el `src` del HTML, pero aquí es una cadena dentro
   // de un archivo de datos, y sin el prefijo del repositorio la miniatura
   // del carrito se rompe en GitHub Pages aunque funcione en local.
-  imagen: `${import.meta.env.BASE_URL}assets/packshot-frasco-recortado.png`,
+  // La miniatura y no el packshot: en el carrito esta imagen se pinta a 80 px
+  // y estaba descargando un PNG de 1 MB para hacerlo. La miniatura pesa 26 KB.
+  imagen: `${import.meta.env.BASE_URL}assets/frasco-miniatura.webp`,
   alt: 'Frasco de FAE SKIN, bruma facial de 100 ml en vidrio opalescente',
   // Los cinco pilares de valor del Marketing MIX, con el dato real detrás
   // de cada uno.
