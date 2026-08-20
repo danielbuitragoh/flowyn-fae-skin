@@ -7,9 +7,9 @@
  * del pago no valdría de nada. El total que se ve en el panel es informativo;
  * el que se cobra lo decide `supabase/funciones/crear-pedido`.
  *
- * Tampoco se manda el precio, ni el subtotal, ni el envío. Sólo qué producto
- * y cuántos, más la ciudad. Cuanto menos viaje desde aquí, menos hay que
- * desconfiar allí.
+ * Tampoco se manda el precio, ni el subtotal, ni el coste del envío. Sólo qué
+ * producto y cuántos, la ciudad, y los datos de a dónde llevarlo. Cuanto
+ * menos viaje desde aquí, menos hay que desconfiar allí.
  */
 
 import { nube, hayNube } from './nube.js';
@@ -26,7 +26,7 @@ export function urlDeRegreso() {
  * `motivo` está pensado para que la interfaz decida qué hacer —mandar a
  * entrar, por ejemplo— sin tener que leer el texto del mensaje.
  */
-export async function irAPagar({ lineas, ciudad }) {
+export async function irAPagar({ lineas, ciudad, envio }) {
   if (!hayNube()) {
     return { ok: false, motivo: 'sin_nube', mensaje: 'La tienda todavía no está conectada.' };
   }
@@ -53,6 +53,10 @@ export async function irAPagar({ lineas, ciudad }) {
       body: {
         lineas: lineas.map((l) => ({ id: l.id, cantidad: l.cantidad })),
         ciudad,
+        // A dónde se manda. Lo valida el servidor otra vez: aquí se revisa
+        // para poder avisar junto al campo, allí para que no entre un pedido
+        // pagado con una dirección que no sirve.
+        envio,
       },
     });
 

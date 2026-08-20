@@ -19,7 +19,7 @@
  */
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
-import { calcularPedido, sha256Hex } from '../_compartido/catalogo.ts';
+import { calcularPedido, sha256Hex, validarEnvio, ENVIOS } from '../_compartido/catalogo.ts';
 
 const CHECKOUT = 'https://checkout.wompi.co/p/';
 const MONEDA = 'COP';
@@ -98,7 +98,7 @@ Deno.serve(async (peticion) => {
   }
 
   // --- Qué pide ------------------------------------------------------------
-  let cuerpo: { lineas?: unknown; ciudad?: unknown };
+  let cuerpo: { lineas?: unknown; ciudad?: unknown; envio?: unknown };
   try {
     cuerpo = await peticion.json();
   } catch {
@@ -108,6 +108,16 @@ Deno.serve(async (peticion) => {
   const calculo = calcularPedido(cuerpo.lineas, cuerpo.ciudad);
   if ('error' in calculo) return responder({ error: calculo.error }, 400, origen);
   const { cuenta } = calculo;
+
+  // Los datos de envío se validan aquí y no sólo en el formulario. El
+  // formulario es una cortesía para quien escribe; esto es lo que impide que
+  // llegue un pedido pagado con la dirección en blanco, que es un pedido que
+  // no se puede despachar y que sólo se descubre cuando ya cobraste.
+  const revision = validarEnvio(cuerpo.envio, cuenta.ciudad);
+  if ('error' in revision) {
+    return responder({ error: revision.error, codigo: 'envio_invalido' }, 400, origen);
+  }
+  const { envio } = revision;
 
   // --- Guardar el pedido ---------------------------------------------------
   const servidor = createClient(URL_SUPABASE, LLAVE_SERVICIO, {
@@ -126,6 +136,13 @@ Deno.serve(async (peticion) => {
       envio: cuenta.envio,
       total: cuenta.total,
       ciudad: cuenta.ciudad,
+      destinatario: envio.destinatario,
+      telefono:     envio.telefono,
+      departamento: envio.departamento,
+      direccion:    envio.direccion,
+      complemento:  envio.complemento || null,
+      barrio:       envio.barrio || null,
+      indicaciones: envio.indicaciones || null,
     })
     .select('id, referencia')
     .single();
@@ -161,6 +178,31 @@ Deno.serve(async (peticion) => {
     'signature:integrity': firma,
   });
   if (URL_REGRESO) parametros.set('redirect-url', `${URL_REGRESO}?ref=${referencia}`);
+
+  // Se le pasan a Wompi los datos que ya tenemos para que su checkout aparezca
+  // relleno. No es cosmético: sin esto la clienta escribe su nombre, su
+  // teléfono y su dirección dos veces seguidas —una aquí y otra allí— y ese
+  // segundo formulario en blanco es donde se cae la mitad de los carritos.
+  parametros.set('customer-data:email', user.email ?? '');
+  parametros.set('customer-data:full-name', envio.destinatario);
+  parametros.set('customer-data:phone-number', envio.telefono);
+  parametros.set('customer-data:phone-number-prefix', '+57');
+  parametros.set('shipping-address:address-line-1', envio.direccion);
+  if (envio.complemento) parametros.set('shipping-address:address-line-2', envio.complemento);
+  // `cuenta.ciudad` es el identificador ('bogota'), no lo que hay que
+  // enseñarle a nadie. Y con "otra ciudad" el nombre del catálogo no sirve
+  // como destino, así que vale lo que escribió la clienta.
+  const esOtra = cuenta.ciudad === 'otras';
+  const ciudadVisible = esOtra ? envio.departamento : ENVIOS[cuenta.ciudad].nombre;
+  parametros.set('shipping-address:city', ciudadVisible);
+  parametros.set('shipping-address:region', envio.departamento || ciudadVisible);
+  parametros.set('shipping-address:country', 'CO');
+  parametros.set('shipping-address:phone-number', envio.telefono);
+  parametros.set('shipping-address:name', envio.destinatario);
+  // Si la clienta paga por PSE hace falta su documento. En vez de pedírselo a
+  // todo el mundo por si acaso, lo pide el checkout de Wompi sólo a quien
+  // elige ese método.
+  parametros.set('collect-customer-legal-id', 'true');
 
   return responder({
     referencia,

@@ -126,3 +126,96 @@ export async function sha256Hex(texto: string): Promise<string> {
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('');
 }
+
+/* ==========================================================================
+   DATOS DE ENVÍO
+   Se validan en el servidor por la misma razón que los precios: lo que llega
+   del navegador es una propuesta, no un hecho. Un pedido con la dirección en
+   blanco o con un teléfono de cuatro dígitos es un pedido que no se puede
+   despachar, y descubrirlo después de cobrar es peor que rechazarlo antes.
+   ========================================================================== */
+
+/** El departamento de cada ciudad que atendemos. Wompi lo pide como `region`. */
+export const DEPARTAMENTOS: Record<string, string> = {
+  bogota:       'Bogotá D.C.',
+  medellin:     'Antioquia',
+  cali:         'Valle del Cauca',
+  barranquilla: 'Atlántico',
+  cartagena:    'Bolívar',
+  bucaramanga:  'Santander',
+  otras:        '',   // lo escribe la clienta; ver `validarEnvio`
+};
+
+export type Envio = {
+  destinatario: string;
+  telefono: string;
+  departamento: string;
+  direccion: string;
+  complemento: string;
+  barrio: string;
+  indicaciones: string;
+};
+
+const limpiar = (v: unknown, tope: number) =>
+  typeof v === 'string' ? v.replace(/\s+/g, ' ').trim().slice(0, tope) : '';
+
+/**
+ * Valida y normaliza los datos de envío.
+ *
+ * El teléfono se compara contra `^3\d{9}$`: en Colombia todos los celulares
+ * empiezan por 3 y tienen diez dígitos. Se aceptan espacios y guiones al
+ * escribirlo y se quitan aquí, porque rechazar "310 555 1234" por el espacio
+ * es maltratar a quien lo escribió bien.
+ *
+ * No se pide código postal —es opcional en Colombia y casi nadie lo sabe— ni
+ * cédula del destinatario: la exigen del remitente, y para PSE la pide el
+ * propio checkout de Wompi.
+ */
+export function validarEnvio(bruto: unknown, ciudadId: string):
+  { envio: Envio } | { error: string } {
+
+  if (!bruto || typeof bruto !== 'object') {
+    return { error: 'Faltan los datos de envío.' };
+  }
+  const d = bruto as Record<string, unknown>;
+
+  const destinatario = limpiar(d.destinatario, 90);
+  if (destinatario.length < 3) {
+    return { error: 'Escribe el nombre de quien recibe el pedido.' };
+  }
+
+  const telefono = limpiar(d.telefono, 24).replace(/[\s()-]/g, '').replace(/^\+?57/, '');
+  if (!/^3\d{9}$/.test(telefono)) {
+    return { error: 'El celular debe tener diez dígitos y empezar por 3.' };
+  }
+
+  const direccion = limpiar(d.direccion, 160);
+  if (direccion.length < 6) {
+    return { error: 'Escribe la dirección completa, con número.' };
+  }
+
+  // Para las seis ciudades con tarifa propia el departamento lo sabemos
+  // nosotros y no se acepta el que mande el navegador: si viniera "Bogotá" con
+  // departamento "Amazonas", el paquete se despacharía mal por un dato que
+  // teníamos correcto. Sólo "otra ciudad" lo escribe la clienta, porque ahí
+  // somos nosotros los que no lo sabemos.
+  let departamento = DEPARTAMENTOS[ciudadId] ?? '';
+  if (ciudadId === 'otras') {
+    departamento = limpiar(d.departamento, 60);
+    if (departamento.length < 3) {
+      return { error: 'Dinos el departamento y el municipio.' };
+    }
+  }
+
+  return {
+    envio: {
+      destinatario,
+      telefono,
+      departamento,
+      direccion,
+      complemento: limpiar(d.complemento, 80),
+      barrio: limpiar(d.barrio, 80),
+      indicaciones: limpiar(d.indicaciones, 160),
+    },
+  };
+}

@@ -142,6 +142,78 @@ afirmar('SHA-256 en hexadecimal de 64 caracteres',
 afirmar('La firma cambia si cambia el monto',
   firma !== await servidor.sha256Hex('REF-123' + '10280001' + 'COP' + 'secreto_de_prueba'));
 
+/* --- 5. Los datos de envío ---------------------------------------------------
+   Un pedido pagado con la dirección en blanco es un pedido que no se puede
+   despachar, y eso sólo se descubre cuando ya cobraste. Estas comprobaciones
+   son al validador de envío lo que las de arriba son al de precios.        */
+console.log('\n  Datos de envío');
+
+const bueno = {
+  destinatario: 'Gabriela Chávez',
+  telefono: '3105551234',
+  direccion: 'Calle 45 # 12-34',
+  complemento: 'Apto 501',
+  barrio: 'Chapinero Alto',
+  indicaciones: 'Portería azul',
+};
+const con = (cambios) => ({ ...bueno, ...cambios });
+const acepta = (nombre, datos, ciudad = 'bogota') => {
+  const r = servidor.validarEnvio(datos, ciudad);
+  afirmar(nombre, !('error' in r), 'error' in r ? r.error : '');
+  return r;
+};
+const rechaza = (nombre, datos, ciudad = 'bogota') => {
+  const r = servidor.validarEnvio(datos, ciudad);
+  afirmar(nombre, 'error' in r, 'lo aceptó');
+};
+
+const completo = acepta('Unos datos completos pasan', bueno);
+
+// El departamento NO se acepta del navegador para las ciudades que conocemos:
+// si llegara "Bogotá" con departamento "Amazonas", el paquete se despacharía
+// mal por un dato que teníamos correcto.
+afirmar('El departamento lo pone el servidor, no el navegador',
+  !('error' in completo) && completo.envio.departamento === 'Bogotá D.C.',
+  !('error' in completo) ? completo.envio.departamento : '');
+const inyectado = servidor.validarEnvio(con({ departamento: 'Amazonas' }), 'medellin');
+afirmar('Un departamento inyectado se ignora',
+  !('error' in inyectado) && inyectado.envio.departamento === 'Antioquia',
+  !('error' in inyectado) ? inyectado.envio.departamento : '');
+
+// El teléfono se normaliza en vez de rechazarse por cómo se escribió.
+for (const [escrito, esperado] of [
+  ['310 555 1234', '3105551234'],
+  ['+57 310 555 1234', '3105551234'],
+  ['310-555-1234', '3105551234'],
+]) {
+  const r = servidor.validarEnvio(con({ telefono: escrito }), 'cali');
+  afirmar(`"${escrito}" se normaliza a ${esperado}`,
+    !('error' in r) && r.envio.telefono === esperado,
+    'error' in r ? r.error : r.envio.telefono);
+}
+
+rechaza('Sin nombre de quien recibe', con({ destinatario: '' }));
+rechaza('Nombre de dos letras', con({ destinatario: 'Ab' }));
+rechaza('Teléfono fijo, no celular', con({ telefono: '6012345678' }));
+rechaza('Teléfono de nueve dígitos', con({ telefono: '310555123' }));
+rechaza('Teléfono con letras', con({ telefono: '31055512ab' }));
+rechaza('Dirección vacía', con({ direccion: '' }));
+rechaza('Dirección demasiado corta', con({ direccion: 'Cll 1' }));
+rechaza('Datos que no son un objeto', 'Calle 45');
+rechaza('Datos nulos', null);
+rechaza('"Otra ciudad" sin municipio', con({ departamento: '' }), 'otras');
+
+const otra = servidor.validarEnvio(con({ departamento: 'Manizales, Caldas' }), 'otras');
+afirmar('"Otra ciudad" sí acepta el municipio escrito a mano',
+  !('error' in otra) && otra.envio.departamento === 'Manizales, Caldas',
+  'error' in otra ? otra.error : otra.envio.departamento);
+
+// Los campos largos se recortan en vez de reventar la restricción de la base.
+const largo = servidor.validarEnvio(con({ direccion: 'C'.repeat(400) }), 'bogota');
+afirmar('Una dirección larguísima se recorta a 160',
+  !('error' in largo) && largo.envio.direccion.length === 160,
+  'error' in largo ? largo.error : String(largo.envio.direccion.length));
+
 /* --- Cierre ---------------------------------------------------------------- */
 if (fallos) {
   console.log(`\n  ${fallos} comprobación(es) fallaron.\n`);

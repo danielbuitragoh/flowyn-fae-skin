@@ -423,3 +423,85 @@
   .regreso { transition: opacity var(--dur-corta) linear, visibility 0s linear var(--dur-corta); scale: 1; }
   .regreso[data-abierto='true'] { transition: opacity var(--dur-corta) linear, visibility 0s; }
 }
+
+/* ==========================================================================
+   DATOS DE ENVÍO
+   Segundo paso del panel. Mismo material que el resto —crema, filetes rosa,
+   etiquetas en versales— para que no se lea como un formulario importado de
+   otro sitio. Un checkout que cambia de idioma visual a mitad de camino es
+   donde la gente empieza a dudar de si está pagando en el sitio correcto.
+   ========================================================================== */
+
+.envio-datos { display: grid; gap: var(--e-3); }
+
+.envio-datos__titulo {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  color: var(--caoba);
+  letter-spacing: 0.02em;
+}
+
+.campo { display: grid; gap: 0.35rem; margin: 0; max-width: none; }
+
+.campo label {
+  font-size: var(--t-etiqueta);
+  letter-spacing: var(--track-etiqueta);
+  text-transform: uppercase;
+  color: var(--cobre-texto);
+}
+/* Lo opcional se marca en el propio rótulo. La alternativa habitual —marcar
+   lo obligatorio con un asterisco— obliga a buscar la leyenda del asterisco,
+   y aquí sólo tres campos de siete son obligatorios. */
+.campo label em { font-style: normal; text-transform: none; letter-spacing: 0; opacity: .72; }
+
+.campo input {
+  /* 44 px: el mínimo táctil, igual que el resto de controles de la tienda. */
+  min-height: 44px;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--rosa-borde);
+  border-radius: 10px;
+  background: var(--crema);
+  color: var(--caoba-hondo);
+  font-family: var(--sans);
+  font-size: 1rem;
+  transition: border-color var(--dur-corta) var(--curva);
+}
+.campo input::placeholder { color: var(--taupe-texto); opacity: .7; }
+.campo input:hover { border-color: var(--borde-ui); }
+.campo input:focus-visible { outline: 2px solid var(--cobre-texto); outline-offset: 2px; }
+
+.campo__ayuda { font-size: var(--t-pequeno); color: var(--taupe-texto); }
+
+/* El error va junto al campo y no en una lista arriba: leer "hay 2 errores"
+   y tener que buscarlos es trabajo que la página puede ahorrarse. */
+.campo--malo input { border-color: var(--caoba-hondo); }
+.campo__error { font-size: var(--t-pequeno); color: var(--caoba-hondo); }
+
+.resumen--compacto { margin-top: var(--e-1); }
+
+.envio-datos__acciones {
+  display: flex;
+  gap: var(--e-2);
+  margin-top: var(--e-1);
+}
+/* El `width: 100%` general del pie es para cuando hay un solo botón. Aquí
+   hay dos en fila, y sin anularlo el primero se comía el ancho entero y
+   empujaba "Ir a pagar" fuera del panel — con lo que no se podía pagar. */
+.envio-datos__acciones .boton {
+  width: auto;
+  flex: 1;
+  justify-content: center;
+  text-align: center;
+}
+.envio-datos__acciones .boton--fantasma { flex: 0 1 auto; }
+
+/* Obligatorio por la Ley 2439 de 2024: hay que informar del plazo de entrega
+   y del derecho de retracto antes de cobrar, no después. Va en pequeño y en
+   la paleta, así que informa sin gritar. */
+.envio-datos__legal {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--taupe-texto);
+}

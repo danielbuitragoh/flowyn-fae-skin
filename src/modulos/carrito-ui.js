@@ -19,6 +19,7 @@ import {
 } from './carrito.js';
 import { crearModal, conFocoPreservado } from './modal.js';
 import { irAPagar } from '../servicios/pago.js';
+import { leerEnvio, guardarEnvio, revisarEnvio } from './envio-datos.js';
 
 export function montarCarrito() {
   const panel = document.querySelector('[data-carrito]');
@@ -31,6 +32,13 @@ export function montarCarrito() {
   if (iso) iso.innerHTML = isotipo;
 
   let recienAgregado = false;
+  // El panel tiene dos pasos: la bandeja y los datos de envío. Se hace en dos
+  // y no todo junto porque siete campos en la primera pantalla del carrito
+  // convierten "mira lo que llevas" en "rellena un formulario", y eso se
+  // paga en carritos abandonados. Se piden cuando ya hay una decisión.
+  let paso = 'bandeja';
+  let datos = leerEnvio();
+  let fallos = {};
 
   const { abrir, cerrar } = crearModal({ panel, velo });
 
@@ -113,6 +121,94 @@ export function montarCarrito() {
       </div>`;
   }
 
+
+  /** Un campo del formulario de envío. */
+  function campo(id, etiqueta, opciones = {}) {
+    const { tipo = 'text', pista = '', ayuda = '', modo = '', auto = '', obligatorio = false } = opciones;
+    const malo = fallos[id];
+    return `
+      <p class="campo${malo ? ' campo--malo' : ''}">
+        <label for="envio-${id}">${etiqueta}${obligatorio ? '' : ' <em>(opcional)</em>'}</label>
+        <input id="envio-${id}" name="${id}" type="${tipo}"
+               ${modo ? `inputmode="${modo}"` : ''} ${auto ? `autocomplete="${auto}"` : ''}
+               value="${(datos[id] || '').replace(/"/g, '&quot;')}"
+               placeholder="${pista}"
+               ${malo ? `aria-invalid="true" aria-describedby="envio-${id}-error"` : ''} />
+        ${malo
+          ? `<span class="campo__error" id="envio-${id}-error">${malo}</span>`
+          : (ayuda ? `<span class="campo__ayuda">${ayuda}</span>` : '')}
+      </p>`;
+  }
+
+  /**
+   * Los campos van en el cuerpo del panel y los botones en el pie.
+   *
+   * La primera versión metió el formulario entero en el pie, que es lo que
+   * ya sostenía el resumen y el botón de pagar. El pie no hace scroll —es la
+   * franja fija de abajo—, así que con siete campos dentro "Ir a pagar"
+   * quedaba por debajo del borde de la pantalla y no había forma de llegar
+   * a él: la tienda entera se volvía inservible en cuanto alguien intentaba
+   * comprar. Se detectó porque la prueba no consiguió pulsar el botón.
+   *
+   * Partido así, además, el total y el botón quedan siempre a la vista
+   * mientras se rellena, que es como se comporta cualquier checkout serio.
+   */
+  function pintarFormulario() {
+    const esOtra = obtenerCiudad() === 'otras';
+    cuerpo.innerHTML = `
+      <form class="envio-datos" id="form-envio" data-form-envio novalidate>
+        <p class="envio-datos__titulo">¿A dónde lo enviamos?</p>
+
+        ${campo('destinatario', 'Quién recibe', {
+          pista: 'Nombre y apellido', auto: 'name', obligatorio: true })}
+        ${campo('telefono', 'Celular', {
+          tipo: 'tel', modo: 'numeric', pista: '300 123 4567', auto: 'tel-national',
+          ayuda: 'Para avisarte cuando el mensajero esté abajo.', obligatorio: true })}
+        ${esOtra ? campo('departamento', 'Municipio y departamento', {
+          pista: 'Manizales, Caldas', obligatorio: true }) : ''}
+        ${campo('direccion', 'Dirección', {
+          pista: 'Calle 45 # 12-34', auto: 'street-address', obligatorio: true })}
+        ${campo('complemento', 'Apartamento, torre o interior', {
+          pista: 'Apto 501, Torre B' })}
+        ${campo('barrio', 'Barrio', { pista: 'Chapinero Alto',
+          ayuda: 'No lo pide la transportadora, pero es lo que usa el mensajero.' })}
+        ${campo('indicaciones', 'Cómo llegar', { pista: 'Portería azul, timbre 3' })}
+      </form>`;
+
+    const t = totales();
+    pie.innerHTML = `
+      <div class="resumen">
+        <div><span>Envío${t.envioGratis ? '' : ` · ${t.zona.nombre}`}</span>
+             <span class="${t.envioGratis ? 'gratis' : ''}">${t.envioGratis ? 'Gratis' : formatearPrecio(t.envio)}</span></div>
+        <div class="resumen__total"><span>Total</span><span>${formatearPrecio(t.total)}</span></div>
+      </div>
+
+      <div class="envio-datos__acciones">
+        <button type="button" class="boton boton--fantasma" data-volver-bandeja>Volver</button>
+        <button type="submit" form="form-envio" class="boton boton--principal" data-ir-al-pago>Ir a pagar</button>
+      </div>
+
+      <p class="carrito__aviso" data-malo="false" aria-live="polite">
+        Pago seguro con Wompi. El total se calcula en el servidor.
+      </p>
+      <p class="envio-datos__legal">
+        Entrega en el plazo indicado. Tienes cinco días hábiles desde que lo
+        recibes para retractarte, y devolvemos el dinero en máximo quince días
+        calendario.
+      </p>`;
+  }
+
+  /** Lee el formulario tal y como está escrito ahora mismo. */
+  function recogerFormulario() {
+    const form = panel.querySelector('[data-form-envio]');
+    if (!form) return datos;
+    const leidos = { ...datos };
+    for (const input of form.querySelectorAll('input[name]')) {
+      leidos[input.name] = input.value;
+    }
+    return leidos;
+  }
+
   function pintarResumen() {
     const t = totales();
     pie.innerHTML = `
@@ -125,9 +221,9 @@ export function montarCarrito() {
         <div class="resumen__total"><span>Total</span><span>${formatearPrecio(t.total)}</span></div>
       </div>
 
-      <button type="button" class="boton boton--principal" data-ir-al-pago>Finalizar pedido</button>
+      <button type="button" class="boton boton--principal" data-continuar>Continuar</button>
       <p class="carrito__aviso" data-malo="false" aria-live="polite">
-        Pago seguro con Wompi. El total se calcula en el servidor.
+        Siguiente paso: a dónde te lo enviamos.
       </p>`;
   }
 
@@ -140,6 +236,7 @@ export function montarCarrito() {
       () => { if (estaVacio()) pintarVacio(); else pintarLineas(); },
       { menos: 'mas', mas: 'menos', quitar: 'mas' },
     );
+    if (paso === 'envio' && !estaVacio()) pintarFormulario();
     actualizarContadores();
     anunciar();
   }
@@ -185,12 +282,59 @@ export function montarCarrito() {
   });
 
   cuerpo.addEventListener('change', (e) => {
-    if (e.target.matches('[data-ciudad]')) fijarCiudad(e.target.value);
+    if (!e.target.matches('[data-ciudad]')) return;
+    fijarCiudad(e.target.value);
+    // Cambiar de ciudad cambia qué campos hacen falta: con "otra ciudad"
+    // aparece el del municipio. Si el formulario está abierto, se repinta.
+    if (paso === 'envio') pintarFormulario();
   });
 
-  pie.addEventListener('click', async (e) => {
-    const boton = e.target.closest('[data-ir-al-pago]');
+  // Paso 1 -> paso 2. El foco entra al primer campo: quien navega con teclado
+  // acaba de pulsar un botón que cambió todo el pie del panel, y dejarle el
+  // foco en un botón que ya no existe lo manda al principio del documento.
+  pie.addEventListener('click', (e) => {
+    if (e.target.closest('[data-continuar]')) {
+      paso = 'envio';
+      fallos = {};
+      pintarFormulario();
+      cuerpo.querySelector('input')?.focus();
+    }
+    if (e.target.closest('[data-volver-bandeja]')) {
+      // Lo escrito no se tira por volver atrás a mirar el total.
+      datos = recogerFormulario();
+      guardarEnvio(datos);
+      paso = 'bandeja';
+      pintarLineas();
+      pintarResumen();
+      pie.querySelector('[data-continuar]')?.focus();
+    }
+  });
+
+  panel.addEventListener('submit', async (e) => {
+    if (!e.target.matches('[data-form-envio]')) return;
+    e.preventDefault();
+    const boton = pie.querySelector('[data-ir-al-pago]');
     if (!boton) return;
+
+    datos = recogerFormulario();
+    guardarEnvio(datos);
+
+    // Se revisa aquí antes de crear nada. El servidor lo vuelve a revisar —lo
+    // que llega del navegador es una propuesta— pero enterarte de que falta
+    // el número de la casa después de que la página te haya mandado a la
+    // pasarela es una experiencia pésima.
+    const habiaFallos = Object.keys(fallos).length > 0;
+    fallos = revisarEnvio(datos, obtenerCiudad());
+    if (Object.keys(fallos).length) {
+      pintarFormulario();
+      cuerpo.querySelector('[aria-invalid="true"]')?.focus();
+      return;
+    }
+    // Si en el intento anterior había errores, hay que repintar aunque ahora
+    // esté todo bien: si no, los mensajes en rojo del intento anterior siguen
+    // en pantalla junto a campos que la clienta ya corrigió, y parece que la
+    // página no se ha enterado.
+    if (habiaFallos) pintarFormulario();
 
     const aviso = pie.querySelector('.carrito__aviso');
     const decir = (texto, malo = false) => {
@@ -207,7 +351,9 @@ export function montarCarrito() {
     boton.textContent = 'Preparando el pago…';
     decir('Estamos creando tu pedido.');
 
-    const resultado = await irAPagar({ lineas: obtenerLineas(), ciudad: obtenerCiudad() });
+    const resultado = await irAPagar({
+      lineas: obtenerLineas(), ciudad: obtenerCiudad(), envio: datos,
+    });
 
     if (resultado.ok) {
       // La referencia se guarda antes de salir: al volver de Wompi la página
@@ -220,6 +366,11 @@ export function montarCarrito() {
 
     boton.disabled = false;
     boton.textContent = textoOriginal;
+
+    if (resultado.motivo === 'envio_invalido') {
+      decir(resultado.mensaje, true);
+      return;
+    }
 
     if (resultado.motivo === 'sin_sesion') {
       decir('Entra en tu cuenta para poder guardar el pedido.', true);
