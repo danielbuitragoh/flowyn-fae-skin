@@ -174,16 +174,32 @@ Lo montamos en la Fase 5, junto con el resto del despliegue.
 
 ---
 
-# Fase 4 · Los pagos (Wompi)
+# Fase 4 · Los pagos (Wompi) — decidido no activar
 
-El código del checkout ya está desplegado y funcionando en tu Supabase. Lo
-único que falta son cuatro valores que sólo puedes crear tú.
+**Estado: cerrado, a propósito.** El código del checkout está desplegado,
+probado y funcionando en tu Supabase — no le falta nada. Lo que se decidió
+fue no terminar de activar la cuenta de comercio en Wompi, porque su
+registro actual (agosto 2026) exige, incluso solo para llegar a las llaves
+de sandbox: dirección real, dos redes sociales activas de la marca y una
+cuenta bancaria personal vinculada. Es el mismo nivel de verificación que le
+pedirían a un negocio real cobrando de verdad, y no tiene sentido pagar ese
+costo —ni en tiempo ni en exponer una cuenta bancaria propia— por un
+proyecto de portafolio que nunca va a facturar ni generar ingresos.
 
-**Importante: todo va en modo de pruebas.** flowyn es una marca de proyecto,
-no una sociedad con NIT, así que no puede ni debe recibir dinero real. Las
-llaves de prueba empiezan por `pub_test_`, `prv_test_`, `test_integrity_` y
-`test_events_`. Si alguna vez ves una que empieza por `prod_`, párate: ésa
-cobra de verdad.
+El botón de pagar se queda respondiendo *"Los pagos todavía no están
+configurados"*, que es el comportamiento correcto y honesto, no un pendiente
+a medias. Si en algún momento cambia el cálculo —por ejemplo, si el proyecto
+deja de ser sólo portafolio— el resto de esta sección sigue siendo la guía
+para activarlo. Mientras tanto, no hay ninguna acción pendiente aquí.
+
+<details>
+<summary>Cómo se activaría si algún día hiciera falta</summary>
+
+**Importante: todo iría en modo de pruebas.** flowyn es una marca de
+proyecto, no una sociedad con NIT, así que no puede ni debe recibir dinero
+real. Las llaves de prueba empiezan por `pub_test_`, `prv_test_`,
+`test_integrity_` y `test_events_`. Si alguna vez ves una que empieza por
+`prod_`, párate: ésa cobra de verdad.
 
 ## 1. Sacar las llaves en Wompi
 
@@ -261,9 +277,23 @@ copia del catálogo y firma ese total, no el que le digan. `npm run verificar`
 incluye una prueba que intenta colar precios falsos, productos inventados,
 cantidades absurdas y líneas repetidas, y comprueba que todas se rechacen.
 
+</details>
+
 ---
 
-# Fase 5 · El correo de confirmación
+# Fase 5 · El correo de confirmación — también cerrado, por la misma razón
+
+**Estado: cerrado.** Este correo sólo se dispara cuando `wompi-eventos`
+recibe el aviso de que un pago quedó aprobado (Fase 4). Como se decidió no
+activar Wompi, este correo nunca se va a disparar tampoco — no hay ningún
+pedido que vaya a pasar de verdad a "aprobado". Configurar la contraseña de
+aplicación de Gmail ahora sería trabajo sin nada que probarlo. El código
+queda escrito, desplegado y documentado —es una pieza real de la
+arquitectura, no un relleno— a la espera de que la Fase 4 se active algún
+día.
+
+<details>
+<summary>Cómo se activaría si algún día hiciera falta</summary>
 
 Cuando un pago se aprueba salen dos correos: la confirmación a la clienta y
 un aviso a ti con todo lo necesario para rellenar la guía de la
@@ -337,6 +367,8 @@ Sólo se manda cuando el pedido pasa de "pendiente" a "aprobado" de verdad.
 Wompi reenvía cada evento hasta tres veces si no recibe un `200`, y sin esa
 comprobación la clienta recibiría la confirmación por triplicado.
 
+</details>
+
 ---
 
 # Fase 6 · Publicar en GitHub Pages
@@ -387,22 +419,19 @@ Con eso, cada `git push` a `main` reconstruye el sitio y lo publica solo
 forma que en la-mesa): corre las 66 pruebas automáticas y sólo si todas
 pasan sube el resultado a Pages.
 
-## 3. Las llaves que siguen pendientes
+## 3. Lo que no hace falta hacer
 
-Estas ya están documentadas arriba, pero repetidas aquí porque son lo único
-que falta para que la tienda cobre y avise de verdad:
-
-| Dónde | Variables | Para qué |
-|---|---|---|
-| Supabase → Edge Functions → Secrets | `WOMPI_LLAVE_PUBLICA`, `WOMPI_SECRETO_INTEGRIDAD`, `WOMPI_SECRETO_EVENTOS` | que el botón de pagar funcione |
-| Supabase → Edge Functions → Secrets | `URL_REGRESO` | cambiarla de `http://localhost:5173/` a `https://danielbuitragoh.github.io/flowyn-fae-skin/` |
-| Supabase → Edge Functions → Secrets | `CORREO_USUARIO`, `CORREO_CLAVE` (contraseña de aplicación de Gmail) | el correo de confirmación |
-| Wompi → Configuración → Eventos | URL de eventos apuntando a `wompi-eventos` | que el pedido pase de "pendiente" a "aprobado" |
+Wompi y el correo de confirmación (Fases 4 y 5) quedaron **decididas como
+cerradas, no como pendientes** — ver el detalle en esas secciones si quieres
+el porqué completo. No hay ninguna llave de Wompi ni de Gmail que configurar
+para dar por terminado el proyecto. El botón de pagar respondiendo "los
+pagos todavía no están configurados" en la URL real es el resultado
+esperado, no un error.
 
 ## 4. Probar en la URL real
 
-Con todo lo anterior puesto: entrar con Google, agregar un frasco, llenar
-los datos de envío, pagar con una tarjeta de sandbox, y confirmar que llegan
-los dos correos y que el pedido queda "aprobado" en el historial de la
-cuenta — ya no en `localhost`, sino en
-`https://danielbuitragoh.github.io/flowyn-fae-skin/`.
+Con el repo publicado: entrar con Google, agregar un frasco al carrito,
+llenar los datos de envío, y confirmar que el resumen y el botón de pagar se
+comportan igual que en local — ya no en `localhost`, sino en
+`https://danielbuitragoh.github.io/flowyn-fae-skin/`. Eso es todo lo que
+queda por verificar; no hay un pago real que completar.

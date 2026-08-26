@@ -166,20 +166,25 @@ Este repositorio está en construcción. Lo que ya funciona y lo que falta:
 - [x] **Fase 1** — Secciones de producto, ritual, fórmula y aroma
 - [x] **Fase 2** — Ficha de compra, carrito y cálculo de envío por ciudad
 - [x] **Fase 3** — Cuenta con Google, carrito en la nube, historial de pedidos
-- [x] **Fase 4** — Checkout con firma del pago en servidor, datos de envío y correo de confirmación *(código listo y desplegado; faltan las llaves de Wompi y la contraseña de Gmail)*
+- [x] **Fase 4** — Checkout con firma del pago en servidor, datos de envío y correo de confirmación *(código completo y probado; Wompi queda deliberadamente sin activar — ver más abajo)*
 - [x] **Fase 5** — Accesibilidad (Human Interface Guidelines), responsive y limpieza de assets
 - [ ] **Fase 6** — Despliegue en GitHub Pages *(workflow listo; falta crear el repositorio y activar Pages — ver `docs/credenciales.md`)*
 
-De la Fase 4 queda el mismo tipo de cabo suelto que tuvo la Fase 3, y por la
-misma razón. Las funciones de servidor están escritas, desplegadas y activas
-—incluida la del correo de confirmación—; el cálculo del pedido y de los
+La Fase 4 no tiene ningún cabo suelto de código: las dos funciones de
+servidor están escritas y desplegadas, y el cálculo del pedido y de los
 datos de envío está probado contra manipulación del cliente con
-`npm run verificar`. Lo que falta son las llaves de Wompi y la contraseña de
-aplicación de Gmail, que sólo puede crear el dueño de esas cuentas. Hasta que
-estén, el botón de pagar contesta "los pagos todavía no están configurados"
-en lugar de romperse, y un pedido aprobado sin correo configurado se registra
-en el log sin tumbar el pedido — comportamiento correcto en los dos casos,
-no un pendiente disfrazado.
+`npm run verificar`. Lo que sí se decidió, a propósito, fue no terminar de
+activar la cuenta de comercio de Wompi. El registro actual exige dirección
+real, redes sociales activas de la marca y cuenta bancaria propia vinculada
+—el mismo nivel de verificación que pediría a un negocio real cobrando de
+verdad—, y eso no tiene sentido para una marca de proyecto que jamás va a
+recibir un pago real ni generar ingresos: el costo de completar ese trámite
+superaba lo que aportaba. El botón de pagar sigue contestando honestamente
+"los pagos todavía no están configurados" en vez de fingir un checkout que
+nunca se va a poder cobrar. Como el correo de confirmación sólo se dispara
+cuando Wompi avisa que un pedido quedó aprobado, tampoco tiene sentido
+activarlo sin lo anterior — las dos piezas quedan como arquitectura
+demostrada, no como funciones en vivo.
 
 De la Fase 6 no hay nada de código pendiente: el repositorio simplemente no
 existe todavía en GitHub. Los pasos —crear el repo, activar Pages con
@@ -188,9 +193,9 @@ orden.
 
 ## Sobre los pagos
 
-Cuando llegue el checkout irá contra el **entorno de pruebas de Wompi**, no contra producción. El motivo es simple: flowyn es una marca de proyecto, no una sociedad con NIT, y no puede ni debe recibir dinero real. El flujo es idéntico al de producción y se puede recorrer entero con las tarjetas de prueba que Wompi publica.
+El checkout está construido contra el **entorno de pruebas de Wompi**, nunca contra producción — flowyn es una marca de proyecto, no una sociedad con NIT, y no puede ni debe recibir dinero real. Eso seguía siendo cierto incluso para el sandbox: activar una cuenta de comercio en Wompi hoy pide, sí o sí, dirección real, redes sociales activas de la marca y una cuenta bancaria personal vinculada — el mismo trámite que le pedirían a cualquier negocio real, independientemente de si va a mover dinero de verdad o no. Para un proyecto de portafolio que jamás va a facturar, ese costo no se justificaba, así que la cuenta se quedó sin activar a propósito.
 
-La firma de integridad se calculará en una función de servidor, no en el navegador. Es la diferencia entre tener un checkout y entender por qué un checkout se firma del lado del servidor: quien tenga el código del cliente puede leer cualquier cosa que viva en él, así que el monto a cobrar nunca se confía desde ahí.
+Lo que sí queda completo, probado y desplegado es la parte que de verdad importa mostrar: la firma de integridad se calcula en una función de servidor, no en el navegador. Es la diferencia entre tener un checkout y entender por qué un checkout se firma del lado del servidor: quien tenga el código del cliente puede leer cualquier cosa que viva en él, así que el monto a cobrar nunca se confía desde ahí. `npm run verificar` incluye las pruebas que confirman que ese cálculo no se deja manipular, con o sin llaves de Wompi puestas.
 
 ---
 
