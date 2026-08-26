@@ -28,7 +28,6 @@ import { montarLogo } from './modulos/marca.js';
 import { montarNav } from './modulos/nav.js';
 import { montarIconos } from './modulos/iconos.js';
 import { iniciarRitual } from './modulos/ritual.js';
-import { montarFrasco3D } from './modulos/frasco3d.js';
 import { iniciarProfundidad } from './modulos/profundidad.js';
 import { iniciarRegreso } from './modulos/regreso.js';
 import { iniciarPestanas } from './modulos/pestanas.js';
@@ -70,18 +69,6 @@ function iniciar() {
   // el estado del carrito ya exista.
   iniciarBarraCompra();
   iniciarRevelado();
-
-  // El 3D se monta aparte y sin bloquear: three.js viaja en su propio
-  // fragmento, así que la página ya es usable mucho antes de que llegue.
-  montarFrasco3D(document.querySelector('[data-frasco-3d]'))
-    .then((instancia) => {
-      if (!instancia) return;
-      const producto = document.querySelector('.hero__producto');
-      if (producto) producto.dataset.modo = '3d';
-      const pista = document.querySelector('[data-pista-3d]');
-      if (pista) pista.hidden = false;
-    })
-    .catch(() => { /* sin 3D nos quedamos con el packshot: nada que avisar */ });
 }
 
 if (document.readyState === 'loading') {

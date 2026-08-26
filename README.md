@@ -55,9 +55,22 @@ compra de otra.
 
 **Lo que es dato de marca y lo que es decisión mía está separado.** El precio (COP $89.900), el posicionamiento y los cinco pilares de valor salen literalmente del Marketing MIX. Las tarifas de envío, los plazos y el umbral de envío gratis no aparecen en ningún documento —el manual sólo promete "envíos seguros y rápidos" y sitúa al público en "ciudades principales de Colombia", sin nombrarlas ni poner cifras—, así que los definí para el proyecto y están marcados como tales en el código. Un hueco identificado vale más que un dato inventado que parezca oficial.
 
-**El frasco del hero: la foto, con profundidad.** El manual describe el envase como "vidrio translúcido con reflejos iridiscentes", y esa cualidad pedía 3D. Modelé el frasco por código a partir del perfil medido sobre el canal alfa del packshot —de ahí salen su proporción real, 2.45 por 1, la sección aplanada y la torsión del eje— pero no llegó al nivel del producto: lo que hace bello a ese envase son las nervaduras de vidrio refractando la luz, no su silueta, y aproximar eso con fórmulas siempre daba algo parecido pero peor.
+**El frasco del hero: la foto, con profundidad, no un modelo 3D.** Se probó
+modelar el frasco por código —a partir del perfil medido sobre el canal alfa
+del packshot, con su proporción real de 2.45 por 1— pero nunca llegó al
+nivel del producto real: lo que hace bello a ese envase son las nervaduras
+de vidrio refractando la luz, no su silueta, y aproximar eso con fórmulas
+siempre daba algo parecido pero peor. Se decidió no perseguirlo más —queda
+descartado, no en pausa— y se sacó el código entero (`three.js` incluido:
+734 kB menos en el paquete construido).
 
-Así que el hero sirve la fotografía y le da dimensión tratando la escena como capas a distinta distancia: velo, halo, frasco y destellos se desplazan en proporción a su profundidad al mover el puntero, y el frasco gira unos grados hacia el lado al que se inclina. El seguimiento interpola en cada fotograma en lugar de saltar al cursor — un objeto con masa no se teletransporta, y ese retraso es lo que separa la sensación de peso de la de temblor. El modelo 3D sigue en el repositorio tras `?forzar3d=1`, a la espera del archivo original del envase o de una secuencia de giro renderizada.
+En su lugar el hero sirve la fotografía real y le da dimensión tratando la
+escena como capas a distinta distancia: velo, halo, frasco y destellos se
+desplazan en proporción a su profundidad al mover el puntero, y el frasco
+gira unos grados hacia el lado al que se inclina. El seguimiento interpola
+en cada fotograma en lugar de saltar al cursor — un objeto con masa no se
+teletransporta, y ese retraso es lo que separa la sensación de peso de la
+de temblor.
 
 **La paleta no se tocó, se separó.** El manual de marca es monocromo cálido: crema, nude, cobre, caoba. Precioso en muestras grandes, pero medí los pares y tres fallaban WCAG AA en texto pequeño — el cobre de las etiquetas daba 3.01:1 sobre crema, cuando el mínimo es 4.5:1. La salida fácil habría sido oscurecer la marca. En vez de eso, los tonos originales se quedan para superficies, filetes y acentos, y para texto hay variantes más profundas del mismo color. Un verificador corre en cada push y falla la construcción si alguien rompe el equilibrio.
 

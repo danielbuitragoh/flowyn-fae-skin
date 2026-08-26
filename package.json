@@ -20,8 +20,7 @@
   "dependencies": {
     "@fontsource/cormorant-garamond": "^5.3.0",
     "@fontsource/jost": "^5.3.0",
-    "@supabase/supabase-js": "^2.112.3",
-    "three": "^0.185.1"
+    "@supabase/supabase-js": "^2.112.3"
   },
   "private": true,
   "type": "module"
