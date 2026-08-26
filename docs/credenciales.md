@@ -383,8 +383,9 @@ En el repo ya en GitHub → **Settings**:
   hablarle.
 
 Con eso, cada `git push` a `main` reconstruye el sitio y lo publica solo
-(`.github/workflows/publicar.yml`), pero sólo si `Verificar` pasó primero en
-ese mismo commit.
+(`.github/workflows/desplegar-paginas.yml`, con el mismo nombre y la misma
+forma que en la-mesa): corre las 66 pruebas automáticas y sólo si todas
+pasan sube el resultado a Pages.
 
 ## 3. Las llaves que siguen pendientes
 
