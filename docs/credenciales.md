@@ -336,3 +336,72 @@ registran ahí y **no** tumban el pedido, que queda aprobado igual.
 Sólo se manda cuando el pedido pasa de "pendiente" a "aprobado" de verdad.
 Wompi reenvía cada evento hasta tres veces si no recibe un `200`, y sin esa
 comprobación la clienta recibiría la confirmación por triplicado.
+
+---
+
+# Fase 6 · Publicar en GitHub Pages
+
+El proyecto vive hoy sólo en este espacio de trabajo: no hay repositorio
+remoto (`git remote -v` no devuelve nada). Nada de lo de abajo se puede
+saltar en el orden — cada paso depende del anterior.
+
+## 1. Subirlo a GitHub
+
+Esto se hace desde tu computador, no desde aquí — subir código es algo que
+te toca autenticar a ti con tus credenciales de GitHub, no algo que yo deba
+hacer por ti con un token tuyo.
+
+1. En <https://github.com/new> crea un repositorio llamado exactamente
+   `flowyn-fae-skin`, **vacío** (sin README, sin .gitignore, sin licencia —
+   ya los trae el proyecto).
+2. Descomprime el zip del proyecto (ya trae el historial de Git, no hace
+   falta `git init`).
+3. En cmd, dentro de esa carpeta:
+   ```
+   git remote add origin https://github.com/danielbuitragoh/flowyn-fae-skin.git
+   git push -u origin main
+   ```
+   (si tu usuario de GitHub no es `danielbuitragoh`, cambia esa parte de la
+   URL). Te va a pedir iniciar sesión en GitHub — sigue las instrucciones que
+   te dé la terminal.
+
+## 2. Activar Pages y los dos secretos de Actions
+
+En el repo ya en GitHub → **Settings**:
+
+- **Settings → Pages → Build and deployment → Source**: elige **GitHub
+  Actions** (no "Deploy from a branch").
+- **Settings → Secrets and variables → Actions → New repository secret**,
+  dos veces:
+  | Nombre | Valor |
+  |---|---|
+  | `VITE_SUPABASE_URL` | el mismo de tu `.env` local |
+  | `VITE_SUPABASE_ANON_KEY` | el mismo de tu `.env` local |
+
+  Sin esto el sitio publicado se ve igual pero el botón de entrar no
+  aparece — el paquete se construye sin saber a qué proyecto de Supabase
+  hablarle.
+
+Con eso, cada `git push` a `main` reconstruye el sitio y lo publica solo
+(`.github/workflows/publicar.yml`), pero sólo si `Verificar` pasó primero en
+ese mismo commit.
+
+## 3. Las llaves que siguen pendientes
+
+Estas ya están documentadas arriba, pero repetidas aquí porque son lo único
+que falta para que la tienda cobre y avise de verdad:
+
+| Dónde | Variables | Para qué |
+|---|---|---|
+| Supabase → Edge Functions → Secrets | `WOMPI_LLAVE_PUBLICA`, `WOMPI_SECRETO_INTEGRIDAD`, `WOMPI_SECRETO_EVENTOS` | que el botón de pagar funcione |
+| Supabase → Edge Functions → Secrets | `URL_REGRESO` | cambiarla de `http://localhost:5173/` a `https://danielbuitragoh.github.io/flowyn-fae-skin/` |
+| Supabase → Edge Functions → Secrets | `CORREO_USUARIO`, `CORREO_CLAVE` (contraseña de aplicación de Gmail) | el correo de confirmación |
+| Wompi → Configuración → Eventos | URL de eventos apuntando a `wompi-eventos` | que el pedido pase de "pendiente" a "aprobado" |
+
+## 4. Probar en la URL real
+
+Con todo lo anterior puesto: entrar con Google, agregar un frasco, llenar
+los datos de envío, pagar con una tarjeta de sandbox, y confirmar que llegan
+los dos correos y que el pedido queda "aprobado" en el historial de la
+cuenta — ya no en `localhost`, sino en
+`https://danielbuitragoh.github.io/flowyn-fae-skin/`.
