@@ -114,14 +114,7 @@
   filter: drop-shadow(0 40px 48px rgba(139, 90, 75, .16));
 }
 
-/* La flotación va aquí y no sobre la fotografía del frasco.
-   Estaba sobre `.hero__frasco`, que es sólo una de las dos piezas: el
-   cuerpo subía 16 px y giraba 0,7° mientras la tapa se quedaba clavada en
-   su sitio, así que las dos se separaban y se volvían a encontrar cada
-   once segundos. Medido: con el frasco en lo alto de su recorrido, el
-   atomizador asomaba 14 px por encima de la tapa. Los dos síntomas que se
-   veían —la tapa "bugueada" y algo saliendo por arriba— eran el mismo
-   fallo. Flotando el conjunto, las piezas ya no pueden desalinearse. */
+/* La nube que se supone flota, no un frasco posado en una mesa. */
 .hero__deriva {
   position: relative;
   display: grid;
@@ -280,8 +273,7 @@
 
 /* El PNG cede el sitio pero no desaparece del todo: sigue aportando la
    sombra proyectada que el modelo no calcula. */
-.hero__producto[data-modo='3d'] .hero__frasco,
-.hero__producto[data-modo='3d'] .hero__tapa {
+.hero__producto[data-modo='3d'] .hero__frasco {
   opacity: 0;
   transition: opacity 900ms var(--curva);
   pointer-events: none;
@@ -335,10 +327,6 @@
 .hero__flotante {
   position: relative;
   z-index: 2;
-  /* `width: max-content` es lo que hace posible la tapa de abajo: sin
-     esto, el envoltorio hereda el ancho de la celda del grid —más ancha
-     que la fotografía— y un hijo posicionado en porcentajes ya no cae
-     sobre el cuello del frasco, sino sobre el aire a su lado. */
   width: max-content;
   display: grid;
   place-items: center;
@@ -346,178 +334,16 @@
   translate: var(--par-x, 0) var(--par-y, 0);
   rotate: 0deg;
   transform: rotateY(var(--par-giro-y, 0deg)) rotateX(var(--par-giro-x, 0deg));
-  /* Zona del gesto de la tapa: al pasar el puntero, o al tocar. */
-  cursor: pointer;
-  /* Este envoltorio tiene `tabindex` para que el teclado pueda destapar el
-     frasco, y por defecto el navegador —o el sistema operativo, con el
-     indicador de foco reforzado que trae Windows— le dibuja un recuadro
-     con sólo tocarlo, no sólo al navegar con Tab. Se apaga el automático y
-     se pone uno propio, discreto, que sólo aparece navegando con teclado
-     de verdad (`:focus-visible`), no al hacer clic ni al pasar el mouse. */
-  outline: none;
-}
-.hero__flotante:focus-visible {
-  outline: 2px solid var(--oro-rosa);
-  outline-offset: 12px;
-  border-radius: var(--radio-suave, 14px);
 }
 
 /* La deriva vive en la imagen y el paralaje en el envoltorio: si
    compartieran propiedad, uno pisaría al otro. */
 .hero__frasco { z-index: auto; }
 
-/* --- Armar y desarmar --------------------------------------------------
-   La marca fotografió la tapa suelta, aparte del cuerpo del frasco —dos
-   piezas, no una fusionada—, así que el gesto de quitar y poner la tapa
-   se puede montar con la foto real en vez de fingirlo con un modelo 3D.
-
-   Se probó primero atado al scroll de la página, pero el hero mide casi
-   toda la pantalla: para cuando la tapa terminaba de subir, el scroll ya
-   se había llevado el frasco entero fuera de la vista. Por eso el gesto
-   no persigue el scroll — responde al puntero (o al toque), como el vídeo
-   de referencia: se puede repetir tantas veces como se quiera, en lugar
-   de dispararse una sola vez de camino a la siguiente sección.
-
-   La tapa se posiciona en porcentajes sobre el cuello del frasco (33.2%
-   de ancho, centrada al 49.8%, apoyada en el borde superior de la foto,
-   que es justo donde empieza el atomizador). */
-.hero__tapa {
-  position: absolute;
-  z-index: 3;
-  left: 49.8%;
-  top: 0;
-  width: 33.2%;
-  height: auto;
-  translate: -50% 0;
-  rotate: 0deg;
-  scale: 1;
-  /* El pivote baja al borde inferior izquierdo, no al centro. Una tapa a
-     rosca no se levanta plana: se ladea apoyada en un canto mientras el
-     otro sube primero. Con el origen en el centro giraba como una peonza. */
-  transform-origin: 30% 100%;
-  filter: drop-shadow(0 6px 8px rgba(139, 90, 75, .22));
-  /* La curva empieza por debajo de cero y termina por encima de uno: la
-     tapa se hunde un pelo antes de subir (anticipación) y se pasa un poco
-     antes de asentarse (overshoot). Son dos de los principios clásicos de
-     animación, y son la diferencia entre un objeto con peso y una capa de
-     Photoshop deslizándose. Una `ease-out` limpia se lee siempre a
-     mecanismo. */
-  transition: translate 760ms cubic-bezier(.34, -0.30, .28, 1.24),
-              rotate 760ms cubic-bezier(.34, -0.30, .28, 1.24),
-              scale 760ms cubic-bezier(.34, -0.30, .28, 1.24),
-              filter 760ms var(--curva-suave);
-  pointer-events: none;
-}
-
-/* El pase inicial: la tapa llega puesta, no aparece ya puesta. Es la
-   primera demostración del gesto, antes de que nadie haya tocado nada. */
-.hero__tapa {
-  /* `backwards`, no `both`: con `both` la animación conserva su fotograma
-     final al terminar, y en la cascada una animación gana a cualquier regla
-     normal — así que el `:hover` de abajo no volvía a mover la tapa nunca
-     más. Por eso el gesto "funcionaba" el primer segundo y luego no. */
-  animation: tapa-armar 1100ms var(--curva) 900ms backwards;
-}
-@keyframes tapa-armar {
-  from {
-    translate: -50% -78px;
-    rotate: -26deg;
-    scale: 1.05;
-    opacity: 0;
-  }
-  to {
-    translate: -50% 0;
-    rotate: 0deg;
-    scale: 1;
-    opacity: 1;
-  }
-}
-
-/* Con puntero fino, pasar por encima ya cuenta la historia. `.hero__flotante`
-   es la zona: cubre el frasco y la tapa juntos, así que el gesto no depende
-   de acertarle a un blanco estrecho. */
-@media (hover: hover) and (pointer: fine) {
-  .hero__flotante:hover .hero__tapa,
-  .hero__flotante:focus-within .hero__tapa {
-    /* Se levanta 122 % de su propia altura: medido, es lo que hace falta
-       para que el borde inferior de la tapa despeje el atomizador. Antes
-       subía 56 px sobre una tapa de 95 px de alto, así que se quedaba
-       montada encima del cuello — de ahí lo de "no sale del todo".
-       El giro baja de 20° a 7°: veinte grados no es una tapa que se
-       levanta, es una tapa que se cae. Y la escala sube muy poco, lo justo
-       para que se lea que se acerca a la cámara al subir. */
-    translate: -50% -122%;
-    rotate: -7deg;
-    scale: 1.03;
-    /* La sombra acompaña: cuanto más alto está el objeto, más lejos y más
-       difusa cae su sombra, y menos opaca. Una sombra que no cambia
-       mientras el objeto se mueve es lo que más delata un recorte. */
-    filter: drop-shadow(0 34px 30px rgba(139, 90, 75, .26));
-  }
-}
-
-/* Sin puntero fino no hay "pasar por encima": un toque alterna el mismo
-   estado a mano, con `armado.js`. */
-.hero__flotante[data-tapa-abierta] .hero__tapa {
-  /* Se levanta 122 % de su propia altura: medido, es lo que hace falta
-     para que el borde inferior de la tapa despeje el atomizador. Antes
-     subía 56 px sobre una tapa de 95 px de alto, así que se quedaba
-     montada encima del cuello — de ahí lo de "no sale del todo".
-     El giro baja de 20° a 7°: veinte grados no es una tapa que se
-     levanta, es una tapa que se cae. Y la escala sube muy poco, lo justo
-     para que se lea que se acerca a la cámara al subir. */
-  translate: -50% -122%;
-  rotate: -7deg;
-  scale: 1.03;
-  /* La sombra acompaña: cuanto más alto está el objeto, más lejos y más
-     difusa cae su sombra, y menos opaca. Una sombra que no cambia
-     mientras el objeto se mueve es lo que más delata un recorte. */
-  filter: drop-shadow(0 34px 30px rgba(139, 90, 75, .26));
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero__tapa { animation: none; transition: none; }
-}
-
 /* La sombra se estira y se desplaza al contrario que el frasco, como haría
    una sombra real cuando el objeto se ladea. */
 .hero__reflejo {
   translate: calc(-50% + var(--par-x, 0px) * -0.6) 0;
-}
-
-
-/* --- El vaho -------------------------------------------------------------
-   Antes esto eran cinco círculos con `radial-gradient` y `blur(7px)` en
-   bucle infinito. El problema no estaba en los valores: con cinco discos
-   del mismo tamaño no se puede construir un aerosol. Un spray real tiene
-   un abanico amplio de tamaños de gota, sale en cono desde la boquilla con
-   velocidad alta y frena por rozamiento; una niebla es homogénea y flota.
-   Cinco manchas iguales expandiéndose siempre se van a leer como lo
-   segundo, por muy bien elegido que esté el color — y por eso se veía de
-   baja calidad.
-
-   Había además una razón de accesibilidad: las WCAG piden poder parar el
-   contenido en movimiento automático que dure más de cinco segundos, y
-   aquello era un bucle infinito. Una bruma facial no es ambiente, es un
-   gesto: dura lo que dura el disparo. Ahora es una ráfaga que se apaga
-   sola al quitar la tapa. El dibujo lo lleva `vaho.js`.                 */
-.hero__vaho {
-  position: absolute;
-  z-index: 4;
-  /* El lienzo desborda el frasco por arriba y por los lados a propósito. La
-     primera versión lo dejó pegado a la caja de la fotografía (`inset: 0`) y
-     el chorro sale hacia arriba desde una boquilla que está en el 2 % de esa
-     caja: casi todas las gotas nacían y morían fuera del lienzo, recortadas.
-     Se estaban pintando, pero en un sitio donde no se veían. */
-  left: -60%;
-  top: -34%;
-  width: 220%;
-  height: 134%;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero__vaho { display: none; }
 }
 
 

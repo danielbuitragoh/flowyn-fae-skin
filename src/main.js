@@ -30,8 +30,6 @@ import { montarIconos } from './modulos/iconos.js';
 import { iniciarRitual } from './modulos/ritual.js';
 import { montarFrasco3D } from './modulos/frasco3d.js';
 import { iniciarProfundidad } from './modulos/profundidad.js';
-import { iniciarArmado } from './modulos/armado.js';
-import { iniciarVaho } from './modulos/vaho.js';
 import { iniciarRegreso } from './modulos/regreso.js';
 import { iniciarPestanas } from './modulos/pestanas.js';
 import { iniciarPalabras } from './modulos/palabras.js';
@@ -50,8 +48,6 @@ function iniciar() {
   sembrarDestellos(document.querySelector('[data-destellos]'));
   iniciarRitual();
   iniciarProfundidad();
-  iniciarArmado();
-  iniciarVaho();
 
   // La tienda va antes que el revelado: el carrito tiene que pintar su
   // contenido guardado aunque el visitante no haya hecho scroll todavía.
