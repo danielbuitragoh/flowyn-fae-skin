@@ -6,6 +6,10 @@
 
 *Ethereal Beauty in Motion*
 
+[![Verificar](https://github.com/danielbuitragoh/flowyn-fae-skin/actions/workflows/verificar.yml/badge.svg)](https://github.com/danielbuitragoh/flowyn-fae-skin/actions/workflows/verificar.yml)
+
+[**Ver la web**](https://danielbuitragoh.github.io/flowyn-fae-skin/) · [Cómo está armado](#cómo-está-armado) · [Cómo correrlo](#correrlo)
+
 🎨 **Dirección creativa:** Gabriela Chávez Castellano · 💻 **Desarrollo:** Daniel Buitrago
 
 </div>
@@ -174,6 +178,36 @@ orden.
 Cuando llegue el checkout irá contra el **entorno de pruebas de Wompi**, no contra producción. El motivo es simple: flowyn es una marca de proyecto, no una sociedad con NIT, y no puede ni debe recibir dinero real. El flujo es idéntico al de producción y se puede recorrer entero con las tarjetas de prueba que Wompi publica.
 
 La firma de integridad se calculará en una función de servidor, no en el navegador. Es la diferencia entre tener un checkout y entender por qué un checkout se firma del lado del servidor: quien tenga el código del cliente puede leer cualquier cosa que viva en él, así que el monto a cobrar nunca se confía desde ahí.
+
+---
+
+## In English
+
+A single-product landing page and store for **FAE SKIN — Ethereal Skin
+Mist**, a 100 ml facial mist by the fictional brand *flowyn*. It's a
+portfolio project: the brand's naming, visual identity, positioning, and
+product development are Gabriela Chávez Castellano's; my part is turning
+that into a web experience that holds up technically — catalog, cart,
+authentication, and checkout, with no payment server of my own.
+
+Stack: a Vite-built static frontend deployed to GitHub Pages, Supabase for
+auth and data (Google OAuth, Postgres, Edge Functions), and Wompi's sandbox
+environment for payments — the brand has no legal entity, so it can't take
+real money, and the checkout is honest about that. The one architectural
+decision worth calling out: the payment amount is never trusted from the
+browser. A Supabase Edge Function recalculates the full order from its own
+copy of the catalog and signs that total server-side, because anyone with
+devtools open can read and rewrite anything that lives in client code.
+`npm run verificar` includes 30 tests that specifically try to cheat that
+calculation — injected prices, out-of-range quantities, spoofed cities,
+duplicated line items — and asserts every one gets rejected.
+
+Also covered: a real accessibility pass against Apple's Human Interface
+Guidelines (44×44pt touch targets, a WCAG AA contrast checker that runs on
+every push and fails the build if the palette drifts), a proper accessible
+modal for the cart (focus trap, `Escape`, focus return, scroll lock), and a
+server-validated shipping-data flow where the customer's department can't
+be spoofed for cities the store already knows.
 
 ---
 
