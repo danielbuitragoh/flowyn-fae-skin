@@ -57,6 +57,14 @@ Así que el hero sirve la fotografía y le da dimensión tratando la escena como
 
 **La paleta no se tocó, se separó.** El manual de marca es monocromo cálido: crema, nude, cobre, caoba. Precioso en muestras grandes, pero medí los pares y tres fallaban WCAG AA en texto pequeño — el cobre de las etiquetas daba 3.01:1 sobre crema, cuando el mínimo es 4.5:1. La salida fácil habría sido oscurecer la marca. En vez de eso, los tonos originales se quedan para superficies, filetes y acentos, y para texto hay variantes más profundas del mismo color. Un verificador corre en cada push y falla la construcción si alguien rompe el equilibrio.
 
+**Se probó un gesto de "quitar la tapa" y se descartó.** Hubo una versión con
+el frasco y la tapa como dos fotografías separadas, que se despegaba al
+pasar el mouse con un aerosol dibujado en canvas. Por bien medida que
+quedara la física de la animación —anticipación, overshoot, sombra que crece
+con la altura—, seguía siendo un compuesto de dos piezas tratando de leerse
+como una sola, y nunca se sintió como parte del mismo objeto. El hero usa
+ahora una única fotografía del frasco ya montado: menos gesto, más frasco.
+
 **El frasco flota, y eso no es un capricho.** El manual repite una imagen: *"una nube dulce flotando en el aire"*. Si el packshot estuviera apoyado sobre una superficie con su sombra debajo, la promesa de la marca se rompería en el primer segundo. Por eso el frasco deriva muy despacio, la luz nace detrás de él, y lo único que hay abajo es la memoria de un reflejo.
 
 **El logotipo es vectorial, no una imagen.** Lo extraje de los documentos originales y lo vectoricé, así que conserva la ligadura de la `fl` y el descendente largo de la `y` — los dos rasgos que ninguna fuente de sistema reproduce. Va en línea como SVG y se tiñe con `currentColor`, de modo que el mismo archivo sirve en caoba sobre crema y en crema sobre caoba.
@@ -141,17 +149,25 @@ Este repositorio está en construcción. Lo que ya funciona y lo que falta:
 - [x] **Fase 1** — Secciones de producto, ritual, fórmula y aroma
 - [x] **Fase 2** — Ficha de compra, carrito y cálculo de envío por ciudad
 - [x] **Fase 3** — Cuenta con Google, carrito en la nube, historial de pedidos
-- [x] **Fase 4** — Checkout con firma del pago en servidor *(código listo y desplegado; faltan las llaves de Wompi)*
-- [ ] **Fase 5** — Accesibilidad, responsive y despliegue
+- [x] **Fase 4** — Checkout con firma del pago en servidor, datos de envío y correo de confirmación *(código listo y desplegado; faltan las llaves de Wompi y la contraseña de Gmail)*
+- [x] **Fase 5** — Accesibilidad (Human Interface Guidelines), responsive y limpieza de assets
+- [ ] **Fase 6** — Despliegue en GitHub Pages *(workflow listo; falta crear el repositorio y activar Pages — ver `docs/credenciales.md`)*
 
 De la Fase 4 queda el mismo tipo de cabo suelto que tuvo la Fase 3, y por la
-misma razón. Las dos funciones de servidor están escritas, desplegadas y
-activas; el cálculo del pedido está probado contra manipulación del cliente
-con `npm run verificar`. Lo que falta son las llaves de Wompi, que sólo puede
-crear el dueño del comercio. Hasta que estén, el botón de pagar contesta
-"los pagos todavía no están configurados" en lugar de romperse — que es el
-comportamiento correcto, no un pendiente disfrazado. Los pasos exactos están
-en `docs/credenciales.md`.
+misma razón. Las funciones de servidor están escritas, desplegadas y activas
+—incluida la del correo de confirmación—; el cálculo del pedido y de los
+datos de envío está probado contra manipulación del cliente con
+`npm run verificar`. Lo que falta son las llaves de Wompi y la contraseña de
+aplicación de Gmail, que sólo puede crear el dueño de esas cuentas. Hasta que
+estén, el botón de pagar contesta "los pagos todavía no están configurados"
+en lugar de romperse, y un pedido aprobado sin correo configurado se registra
+en el log sin tumbar el pedido — comportamiento correcto en los dos casos,
+no un pendiente disfrazado.
+
+De la Fase 6 no hay nada de código pendiente: el repositorio simplemente no
+existe todavía en GitHub. Los pasos —crear el repo, activar Pages con
+Actions como origen y pegar las llaves— están en `docs/credenciales.md`, en
+orden.
 
 ## Sobre los pagos
 
