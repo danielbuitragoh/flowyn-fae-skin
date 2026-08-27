@@ -12,8 +12,9 @@
  * 2. Que las dos copias del catálogo no se hayan separado. Los precios están
  *    escritos dos veces a propósito —el navegador no puede tocar la del
  *    servidor— pero si alguien sube el precio en `src/datos/catalogo.js` y se
- *    olvida del otro, la tienda enseñaría un precio y cobraría otro. Aquí se
- *    comparan y la construcción falla si no coinciden.
+ *    olvida del otro, la tienda enseñaría un precio y el pedido que llega
+ *    por WhatsApp diría otro. Aquí se comparan y la construcción falla si no
+ *    coinciden.
  */
 
 import { execFileSync } from 'node:child_process';
@@ -133,16 +134,7 @@ for (const zona of cliente.ENVIOS) {
     s ? `cliente ${zona.tarifa} · servidor ${s.tarifa}` : 'no existe en el servidor');
 }
 
-/* --- 4. La firma ----------------------------------------------------------- */
-console.log('\n  Firma de integridad');
-// Vector conocido: el mismo cálculo que hace Wompi, comprobado a mano.
-const firma = await servidor.sha256Hex('REF-123' + '10280000' + 'COP' + 'secreto_de_prueba');
-afirmar('SHA-256 en hexadecimal de 64 caracteres',
-  /^[0-9a-f]{64}$/.test(firma), firma);
-afirmar('La firma cambia si cambia el monto',
-  firma !== await servidor.sha256Hex('REF-123' + '10280001' + 'COP' + 'secreto_de_prueba'));
-
-/* --- 5. Los datos de envío ---------------------------------------------------
+/* --- 4. Los datos de envío ---------------------------------------------------
    Un pedido pagado con la dirección en blanco es un pedido que no se puede
    despachar, y eso sólo se descubre cuando ya cobraste. Estas comprobaciones
    son al validador de envío lo que las de arriba son al de precios.        */

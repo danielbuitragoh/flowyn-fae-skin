@@ -33,10 +33,9 @@ const G_GOOGLE = `
 const FECHA = new Intl.DateTimeFormat('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
 
 const ESTADOS = {
-  pendiente: 'Pendiente de pago',
-  aprobado: 'Pagado',
-  rechazado: 'Pago rechazado',
-  anulado: 'Anulado',
+  recibido: 'Recibido · por confirmar',
+  confirmado: 'Confirmado',
+  cancelado: 'Cancelado',
 };
 
 export function montarCuenta() {

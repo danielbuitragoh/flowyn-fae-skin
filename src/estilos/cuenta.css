@@ -199,10 +199,9 @@
   color: var(--taupe-texto);
 }
 /* El color dice lo mismo que el texto, nunca en su lugar: quien no
-   distingue los tonos lee "Pagado" igual. */
-.pedido__estado[data-estado='aprobado'] { color: var(--verde-ok); }
-.pedido__estado[data-estado='rechazado'],
-.pedido__estado[data-estado='anulado']  { color: var(--caoba-hondo); }
+   distingue los tonos lee "Confirmado" igual. */
+.pedido__estado[data-estado='confirmado'] { color: var(--verde-ok); }
+.pedido__estado[data-estado='cancelado']  { color: var(--caoba-hondo); }
 
 .pedido__meta {
   margin: 0.35rem 0 0;

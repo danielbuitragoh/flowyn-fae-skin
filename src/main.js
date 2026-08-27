@@ -29,7 +29,6 @@ import { montarNav } from './modulos/nav.js';
 import { montarIconos } from './modulos/iconos.js';
 import { iniciarRitual } from './modulos/ritual.js';
 import { iniciarProfundidad } from './modulos/profundidad.js';
-import { iniciarRegreso } from './modulos/regreso.js';
 import { iniciarPestanas } from './modulos/pestanas.js';
 import { iniciarPalabras } from './modulos/palabras.js';
 import { iniciarBarraCompra } from './modulos/barra-compra.js';
@@ -38,6 +37,9 @@ import { montarFicha } from './modulos/ficha.js';
 import { montarCuenta } from './modulos/cuenta-ui.js';
 import { iniciarSesionModulo } from './modulos/sesion.js';
 import { sincronizarCarritoConSesion } from './modulos/sincronizar-carrito.js';
+// `regreso.js` ya no aplica: sin pasarela de pago no hay a dónde "volver".
+// El pedido se cierra abriendo WhatsApp en una pestaña nueva, no navegando
+// fuera del sitio, así que no hace falta detectar un regreso.
 
 function iniciar() {
   montarNav();
@@ -58,9 +60,6 @@ function iniciar() {
   // retira sola y la tienda funciona igual que en la Fase 2.
   montarCuenta();
   sincronizarCarritoConSesion();
-  // Va después de montar carrito y cuenta: si la clienta vuelve de pagar,
-  // este módulo necesita que el carrito ya exista para poder vaciarlo.
-  iniciarRegreso();
   iniciarSesionModulo();
 
   iniciarPestanas();

@@ -18,7 +18,7 @@ import {
   fijarCantidad, quitar, fijarCiudad, alCambiar,
 } from './carrito.js';
 import { crearModal, conFocoPreservado } from './modal.js';
-import { irAPagar } from '../servicios/pago.js';
+import { confirmarPedido } from '../servicios/pago.js';
 import { leerEnvio, guardarEnvio, revisarEnvio } from './envio-datos.js';
 
 export function montarCarrito() {
@@ -185,11 +185,11 @@ export function montarCarrito() {
 
       <div class="envio-datos__acciones">
         <button type="button" class="boton boton--fantasma" data-volver-bandeja>Volver</button>
-        <button type="submit" form="form-envio" class="boton boton--principal" data-ir-al-pago>Ir a pagar</button>
+        <button type="submit" form="form-envio" class="boton boton--principal" data-ir-al-pago>Pedir por WhatsApp</button>
       </div>
 
       <p class="carrito__aviso" data-malo="false" aria-live="polite">
-        Pago seguro con Wompi. El total se calcula en el servidor.
+        Te escribimos por WhatsApp para confirmar el pago. El total se calcula en el servidor.
       </p>
       <p class="envio-datos__legal">
         Entrega en el plazo indicado. Tienes cinco días hábiles desde que lo
@@ -345,22 +345,25 @@ export function montarCarrito() {
 
     // El botón se bloquea mientras dura la petición. Sin esto, dos clics
     // seguidos crean dos pedidos con dos referencias distintas y la clienta
-    // acaba pagando el que no era.
+    // acaba mandando el que no era.
     boton.disabled = true;
     const textoOriginal = boton.textContent;
-    boton.textContent = 'Preparando el pago…';
-    decir('Estamos creando tu pedido.');
+    boton.textContent = 'Preparando tu pedido…';
+    decir('Estamos registrando tu pedido.');
 
-    const resultado = await irAPagar({
+    const resultado = await confirmarPedido({
       lineas: obtenerLineas(), ciudad: obtenerCiudad(), envio: datos,
     });
 
     if (resultado.ok) {
-      // La referencia se guarda antes de salir: al volver de Wompi la página
-      // se carga de cero y es lo único que queda para saber qué pedido era.
-      try { sessionStorage.setItem('flowyn:pedido', resultado.referencia); } catch { /* modo privado */ }
-      decir('Te llevamos a la pasarela de pago…');
-      window.location.assign(resultado.url);
+      // A diferencia de una pasarela de pago, aquí la clienta no sale del
+      // sitio: WhatsApp se abre en una pestaña nueva y la tienda se queda
+      // como estaba, con el carrito vaciado porque el pedido ya quedó
+      // registrado del lado del servidor.
+      decir('Te llevamos a WhatsApp para confirmar el pedido…');
+      window.open(resultado.url, '_blank', 'noopener');
+      vaciar();
+      cerrar();
       return;
     }
 

@@ -13,9 +13,8 @@
  *   · Código postal. En Colombia es opcional y casi nadie se lo sabe. Es
  *     fricción a cambio de un dato que la transportadora ignora.
  *
- *   · Cédula. Se le exige al remitente —nosotros—, no a quien recibe, y sólo
- *     hace falta para pagar por PSE. En ese caso la pide el checkout de
- *     Wompi a quien elige ese método, en vez de pedírsela a todo el mundo.
+ *   · Cédula. Se le exige al remitente —nosotros—, no a quien recibe. Cerrar
+ *     el pedido por WhatsApp no la necesita, así que no se pide.
  *
  * La dirección va en un campo de texto libre y no troceada en "Calle" /
  * "Carrera" con números aparte. La nomenclatura colombiana parece regular y
@@ -59,8 +58,8 @@ export function guardarEnvio(datos) {
  * Las mismas reglas que corren en el servidor.
  *
  * Duplicarlas aquí no es desconfiar del servidor: es que enterarse de que
- * falta el número de la casa **después** de que la página te mande a Wompi
- * es una experiencia pésima. El servidor sigue teniendo la última palabra —
+ * falta el número de la casa **después** de intentar cerrar el pedido por
+ * WhatsApp es una experiencia pésima. El servidor sigue teniendo la última palabra —
  * lo que llega del navegador es una propuesta— pero el formulario avisa
  * antes, junto al campo, que es donde se puede arreglar.
  */

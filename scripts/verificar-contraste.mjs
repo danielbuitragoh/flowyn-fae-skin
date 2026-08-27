@@ -83,7 +83,7 @@ const PARES = [
   ['borde-ui',     'nude',         3.0, 'Bordes sobre tarjeta'],
 
   // Estado de pedido. Único color fuera de la paleta: se mide igual.
-  ['verde-ok',     'nude',         4.5, 'Estado «Pagado» en el historial'],
+  ['verde-ok',     'nude',         4.5, 'Estado «Confirmado» en el historial'],
 ];
 
 /* -- Exentos y por qué -----------------------------------------------------

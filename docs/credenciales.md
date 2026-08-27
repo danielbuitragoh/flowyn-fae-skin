@@ -145,17 +145,12 @@ Abre <http://localhost:5173>, pulsa **Entrar** arriba a la derecha y
 
 ---
 
-## 4. Wompi — cuando lleguemos a la Fase 4
+## 4. WhatsApp — el número donde llegan los pedidos
 
-Todavía no hace falta. Cuando toque serán las llaves de **sandbox**
-(`pub_test_…` y su secreto de integridad), nunca las de producción: flowyn es
-una marca de proyecto, sin NIT, y no puede recibir dinero real. El flujo es
-idéntico al de producción y se recorre entero con las tarjetas de prueba que
-Wompi publica.
-
-El secreto de integridad se calculará dentro de una función de Supabase, no
-en el navegador. Quien tenga el código del cliente puede leer cualquier cosa
-que viva en él, así que el monto a cobrar no se confía desde ahí.
+La tienda no cobra sola: la clienta confirma su pedido por WhatsApp. Hace
+falta un único secreto en Supabase — ver la Fase 4 más abajo para el detalle
+completo. Sin él, el botón de pedir responde honestamente "los pedidos por
+WhatsApp todavía no están configurados", igual que hacía antes con Wompi.
 
 ---
 
@@ -174,131 +169,83 @@ Lo montamos en la Fase 5, junto con el resto del despliegue.
 
 ---
 
-# Fase 4 · Los pagos (Wompi) — decidido no activar
+# Fase 4 · Pedidos por WhatsApp
 
-**Estado: cerrado, a propósito.** El código del checkout está desplegado,
-probado y funcionando en tu Supabase — no le falta nada. Lo que se decidió
-fue no terminar de activar la cuenta de comercio en Wompi, porque su
-registro actual (agosto 2026) exige, incluso solo para llegar a las llaves
-de sandbox: dirección real, dos redes sociales activas de la marca y una
-cuenta bancaria personal vinculada. Es el mismo nivel de verificación que le
-pedirían a un negocio real cobrando de verdad, y no tiene sentido pagar ese
-costo —ni en tiempo ni en exponer una cuenta bancaria propia— por un
-proyecto de portafolio que nunca va a facturar ni generar ingresos.
+**Estado: activo.** Se evaluó activar Wompi para cobrar de verdad y se
+descartó a propósito: su registro actual (agosto 2026) exige, incluso solo
+para llegar a las llaves de sandbox, dirección real, dos redes sociales
+activas de la marca y una cuenta bancaria personal vinculada — el mismo
+nivel de verificación que le pedirían a un negocio real cobrando de verdad.
+No tenía sentido pagar ese costo, ni en tiempo ni en exponer una cuenta
+bancaria propia, por un proyecto de portafolio que nunca va a facturar. En
+su lugar, el pedido se cierra como lo cerraría cualquier tienda pequeña que
+despacha ella misma: por chat.
 
-El botón de pagar se queda respondiendo *"Los pagos todavía no están
-configurados"*, que es el comportamiento correcto y honesto, no un pendiente
-a medias. Si en algún momento cambia el cálculo —por ejemplo, si el proyecto
-deja de ser sólo portafolio— el resto de esta sección sigue siendo la guía
-para activarlo. Mientras tanto, no hay ninguna acción pendiente aquí.
+El flujo es el mismo de siempre hasta el final: el navegador manda qué
+producto y cuántos, nunca el precio; `supabase/funciones/crear-pedido`
+recalcula el total contra su propia copia del catálogo, guarda el pedido y
+sólo entonces arma el mensaje de WhatsApp con esos números — nunca con lo
+que mandó el navegador. `npm run verificar` sigue probando que un precio
+inyectado, una cantidad fuera de rango o una línea repetida para saltarse el
+tope se rechacen igual que antes.
 
-<details>
-<summary>Cómo se activaría si algún día hiciera falta</summary>
+## 1. Sacar el número de WhatsApp Business
 
-**Importante: todo iría en modo de pruebas.** flowyn es una marca de
-proyecto, no una sociedad con NIT, así que no puede ni debe recibir dinero
-real. Las llaves de prueba empiezan por `pub_test_`, `prv_test_`,
-`test_integrity_` y `test_events_`. Si alguna vez ves una que empieza por
-`prod_`, párate: ésa cobra de verdad.
+El número al que deben llegar los pedidos, en formato internacional y sin
+signos: `57` + el número a 10 dígitos (ej. `573001234567` para un celular
+`300 123 4567`).
 
-## 1. Sacar las llaves en Wompi
-
-1. Entra en tu comercio en <https://comercios.wompi.co>.
-2. Ve a **Configuración → Llaves API** (o "Desarrolladores").
-3. Cambia al **ambiente de pruebas** (sandbox) si no estás ya en él.
-4. Copia estos tres valores:
-   - **Llave pública** — empieza por `pub_test_`
-   - **Secreto de integridad** — empieza por `test_integrity_`
-   - **Secreto de eventos** — empieza por `test_events_`
-
-La llave privada (`prv_test_`) no hace falta para este flujo. Si no la
-necesitas, no la copies: una llave que no está en ningún sitio no se puede
-filtrar.
-
-## 2. Guardarlas en Supabase (no en el proyecto)
-
-Ninguna de estas llaves va en el código ni en el `.env` del sitio. El `.env`
-del sitio termina dentro del JavaScript que descarga cualquier visitante, y
-el secreto de integridad es justo lo que permite firmar un cobro: si viajara
-al navegador, cualquiera podría firmar un cobro de mil pesos por un frasco de
-89.900. Por eso viven en el servidor y sólo ahí.
+## 2. Guardarlo en Supabase
 
 En <https://supabase.com/dashboard> → tu proyecto → **Edge Functions →
-Secrets** (o *Project Settings → Edge Functions*), añade:
+Secrets**, añade:
 
 | Nombre | Valor |
 |---|---|
-| `WOMPI_LLAVE_PUBLICA` | tu `pub_test_…` |
-| `WOMPI_SECRETO_INTEGRIDAD` | tu `test_integrity_…` |
-| `WOMPI_SECRETO_EVENTOS` | tu `test_events_…` |
-| `URL_REGRESO` | `http://localhost:5173/` mientras pruebas en local |
+| `WHATSAPP_NUMERO` | tu número, ej. `573001234567` |
 
-`URL_REGRESO` es a dónde vuelve la clienta después de pagar. Cuando
-publiquemos el sitio hay que cambiarla por la dirección real de GitHub Pages,
-o Wompi devolverá a la gente a tu computador.
-
-Hasta que pongas las dos primeras, el botón de pagar responde *"Los pagos
+Hasta que lo pongas, el botón de pedir responde *"Los pedidos por WhatsApp
 todavía no están configurados"* en lugar de fallar con un error feo. Es el
-estado normal, no un bug.
+mismo patrón que tenía Wompi — un estado honesto, no un bug.
 
-## 3. Decirle a Wompi dónde avisar
-
-En el panel de Wompi, en **Configuración → Eventos** (o "URL de eventos"),
-pon:
-
-```
-https://etnmbgvdjymduujhlgvp.supabase.co/functions/v1/wompi-eventos
-```
-
-Esto es lo que marca un pedido como pagado. Sin esto el cobro funciona, pero
-el pedido se queda en "pendiente" para siempre, porque el sitio **nunca** da
-un pago por bueno sólo porque la clienta haya vuelto a la página: eso lo
-podría falsificar cualquiera escribiendo la dirección a mano. El único aviso
-que se cree es el que llega firmado desde Wompi a esa URL.
-
-## 4. Probarlo
+## 3. Probarlo
 
 1. Arranca el sitio (`npm run dev`), entra con Google y añade un frasco.
-2. Pulsa **Finalizar pedido**. Debe llevarte a la pasarela de Wompi.
-3. Paga con una de las **tarjetas de prueba** que Wompi publica en su
-   documentación (hay una que aprueba y otra que rechaza — prueba las dos).
-4. Al volver deberías ver el panel de confirmación con la referencia.
-5. Abre tu cuenta en la tienda: el pedido tiene que aparecer en el historial
-   con su estado.
+2. Llena los datos de envío y pulsa **Pedir por WhatsApp**.
+3. Se abre WhatsApp Web (o la app, en el celular) en una pestaña nueva, con
+   el mensaje ya redactado: producto, envío, total y los datos de a dónde
+   llevarlo. El sitio se queda abierto detrás, con el carrito vacío.
+4. Abre tu cuenta en la tienda: el pedido tiene que aparecer en el
+   historial, con estado "Recibido · por confirmar".
 
-Si el estado se queda en "pendiente" más de un par de minutos, casi siempre
-es el paso 3 de arriba: la URL de eventos no está puesta o está mal escrita.
+## Confirmar o cancelar un pedido
+
+No hay panel propio para esto todavía — con el volumen de un proyecto de
+portafolio no hace falta más que editar la fila a mano. En el panel de
+Supabase → **Table Editor → pedidos**, cambia la columna `estado` de
+`recibido` a `confirmado` (ya coordinaste el pago y el envío por WhatsApp) o
+a `cancelado`. El cambio se refleja solo en el historial de la clienta la
+próxima vez que abra su cuenta.
 
 ## Qué pasa si alguien intenta hacer trampa
 
 El navegador sólo manda **qué producto y cuántos**. Nunca el precio, ni el
 subtotal, ni el total. El servidor recalcula la cuenta entera desde su propia
-copia del catálogo y firma ese total, no el que le digan. `npm run verificar`
-incluye una prueba que intenta colar precios falsos, productos inventados,
-cantidades absurdas y líneas repetidas, y comprueba que todas se rechacen.
-
-</details>
+copia del catálogo y sólo con ese resultado arma el mensaje de WhatsApp.
+`npm run verificar` incluye una prueba que intenta colar precios falsos,
+productos inventados, cantidades absurdas y líneas repetidas, y comprueba
+que todas se rechacen.
 
 ---
 
-# Fase 5 · El correo de confirmación — también cerrado, por la misma razón
+# Fase 5 · El correo de confirmación
 
-**Estado: cerrado.** Este correo sólo se dispara cuando `wompi-eventos`
-recibe el aviso de que un pago quedó aprobado (Fase 4). Como se decidió no
-activar Wompi, este correo nunca se va a disparar tampoco — no hay ningún
-pedido que vaya a pasar de verdad a "aprobado". Configurar la contraseña de
-aplicación de Gmail ahora sería trabajo sin nada que probarlo. El código
-queda escrito, desplegado y documentado —es una pieza real de la
-arquitectura, no un relleno— a la espera de que la Fase 4 se active algún
-día.
-
-<details>
-<summary>Cómo se activaría si algún día hiciera falta</summary>
-
-Cuando un pago se aprueba salen dos correos: la confirmación a la clienta y
-un aviso a ti con todo lo necesario para rellenar la guía de la
-transportadora. Sin configurar esto, el pago funciona igual — sólo que nadie
-recibe nada, y en el registro de la función queda un aviso.
+**Estado: activo.** Ya no depende de un webhook de pago: se manda directo
+desde `crear-pedido` apenas el pedido queda guardado, con el aviso a la
+clienta ("recibimos tu pedido, te escribimos por WhatsApp para confirmar")
+y el aviso a ti con todo lo necesario para rellenar la guía de la
+transportadora. Sin configurar esto, el pedido se registra igual — sólo que
+nadie recibe el correo, y en el registro de la función queda un aviso.
 
 ## Por qué Gmail y no Resend
 
@@ -350,10 +297,11 @@ frontend es público en GitHub Pages.
 
 **3. Probarlo.**
 
-Con las llaves de Wompi puestas, haz un pedido de prueba y págalo con una
-tarjeta de sandbox. Deberían llegarte los dos correos. Si no llegan, mira el
-registro de `wompi-eventos` en el panel de Supabase: los fallos de correo se
-registran ahí y **no** tumban el pedido, que queda aprobado igual.
+Con el número de WhatsApp puesto (Fase 4), haz un pedido de prueba. Deberían
+llegarte los dos correos apenas se registre el pedido, antes incluso de
+tocar el enlace de WhatsApp. Si no llegan, mira el registro de
+`crear-pedido` en el panel de Supabase: los fallos de correo se registran
+ahí y **no** tumban el pedido, que queda registrado igual.
 
 ## Qué se manda
 
@@ -363,19 +311,17 @@ registran ahí y **no** tumban el pedido, que queda aprobado igual.
 - **A ti:** los mismos datos en formato de ficha, pensado para copiar a la
   guía de la transportadora sin abrir la base de datos.
 
-Sólo se manda cuando el pedido pasa de "pendiente" a "aprobado" de verdad.
-Wompi reenvía cada evento hasta tres veces si no recibe un `200`, y sin esa
-comprobación la clienta recibiría la confirmación por triplicado.
-
-</details>
+Se manda apenas el pedido queda guardado — ya no hace falta esperar un aviso
+de una pasarela, porque ya no hay pasarela.
 
 ---
 
 # Fase 6 · Publicar en GitHub Pages
 
-El proyecto vive hoy sólo en este espacio de trabajo: no hay repositorio
-remoto (`git remote -v` no devuelve nada). Nada de lo de abajo se puede
-saltar en el orden — cada paso depende del anterior.
+**Estado: hecho.** El sitio está publicado en
+<https://danielbuitragoh.github.io/flowyn-fae-skin/>. Lo que sigue es la
+guía tal como se siguió para llegar ahí — queda como referencia, no como
+pendiente.
 
 ## 1. Subirlo a GitHub
 
@@ -419,19 +365,12 @@ Con eso, cada `git push` a `main` reconstruye el sitio y lo publica solo
 forma que en la-mesa): corre las 66 pruebas automáticas y sólo si todas
 pasan sube el resultado a Pages.
 
-## 3. Lo que no hace falta hacer
-
-Wompi y el correo de confirmación (Fases 4 y 5) quedaron **decididas como
-cerradas, no como pendientes** — ver el detalle en esas secciones si quieres
-el porqué completo. No hay ninguna llave de Wompi ni de Gmail que configurar
-para dar por terminado el proyecto. El botón de pagar respondiendo "los
-pagos todavía no están configurados" en la URL real es el resultado
-esperado, no un error.
-
-## 4. Probar en la URL real
+## 3. Probar en la URL real
 
 Con el repo publicado: entrar con Google, agregar un frasco al carrito,
-llenar los datos de envío, y confirmar que el resumen y el botón de pagar se
-comportan igual que en local — ya no en `localhost`, sino en
-`https://danielbuitragoh.github.io/flowyn-fae-skin/`. Eso es todo lo que
-queda por verificar; no hay un pago real que completar.
+llenar los datos de envío, y confirmar que el resumen y el botón de "Pedir
+por WhatsApp" se comportan igual que en local — ya no en `localhost`, sino
+en `https://danielbuitragoh.github.io/flowyn-fae-skin/`. Si el número de
+WhatsApp (Fase 4) y las llaves de Gmail (Fase 5) ya están puestas en
+Supabase, el pedido de prueba tiene que terminar en un mensaje de WhatsApp
+real y dos correos.

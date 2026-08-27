@@ -118,15 +118,6 @@ export function calcularPedido(
   };
 }
 
-/** SHA-256 en hexadecimal. Es lo que pide Wompi para la firma. */
-export async function sha256Hex(texto: string): Promise<string> {
-  const datos = new TextEncoder().encode(texto);
-  const resumen = await crypto.subtle.digest('SHA-256', datos);
-  return Array.from(new Uint8Array(resumen))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
 /* ==========================================================================
    DATOS DE ENVÍO
    Se validan en el servidor por la misma razón que los precios: lo que llega
@@ -135,7 +126,7 @@ export async function sha256Hex(texto: string): Promise<string> {
    despachar, y descubrirlo después de cobrar es peor que rechazarlo antes.
    ========================================================================== */
 
-/** El departamento de cada ciudad que atendemos. Wompi lo pide como `region`. */
+/** El departamento de cada ciudad que atendemos, para el dato de envío. */
 export const DEPARTAMENTOS: Record<string, string> = {
   bogota:       'Bogotá D.C.',
   medellin:     'Antioquia',
@@ -168,8 +159,8 @@ const limpiar = (v: unknown, tope: number) =>
  * es maltratar a quien lo escribió bien.
  *
  * No se pide código postal —es opcional en Colombia y casi nadie lo sabe— ni
- * cédula del destinatario: la exigen del remitente, y para PSE la pide el
- * propio checkout de Wompi.
+ * cédula del destinatario: se le exige al remitente, no a quien recibe, y
+ * cerrar el pedido por WhatsApp no la necesita.
  */
 export function validarEnvio(bruto: unknown, ciudadId: string):
   { envio: Envio } | { error: string } {
@@ -219,3 +210,4 @@ export function validarEnvio(bruto: unknown, ciudadId: string):
     },
   };
 }
+

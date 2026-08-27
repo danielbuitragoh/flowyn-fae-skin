@@ -7,8 +7,9 @@
 *Ethereal Beauty in Motion*
 
 [![Verificar](https://github.com/danielbuitragoh/flowyn-fae-skin/actions/workflows/verificar.yml/badge.svg)](https://github.com/danielbuitragoh/flowyn-fae-skin/actions/workflows/verificar.yml)
+[![Licencia MIT](https://img.shields.io/badge/licencia-MIT-caoba)](LICENSE)
 
-[**Ver la web**](https://danielbuitragoh.github.io/flowyn-fae-skin/) · [Cómo está armado](#cómo-está-armado) · [Cómo correrlo](#correrlo)
+[**Ver la web**](https://danielbuitragoh.github.io/flowyn-fae-skin/) · [Capturas y video](#capturas) · [Cómo está armado](#cómo-está-armado) · [Cómo correrlo](#correrlo) · [In English](#in-english)
 
 🎨 **Dirección creativa:** Gabriela Chávez Castellano · 💻 **Desarrollo:** Daniel Buitrago
 
@@ -18,11 +19,41 @@
 
 ## Qué es
 
-Una página de producto único para **FAE SKIN — Ethereal Skin Mist**, la bruma facial de 100 ml de la marca flowyn. No es un catálogo: es una sola historia que empieza en la identidad de la marca y termina en el carrito.
+Una página de producto único para **FAE SKIN — Ethereal Skin Mist**, la bruma facial de 100 ml de la marca flowyn. No es un catálogo: es una sola historia que empieza en la identidad de la marca y termina en el carrito, con cuenta, carrito persistente y cierre de pedido de verdad — no una maqueta estática.
 
-La marca es un proyecto de Gabriela Chávez —nombre, identidad visual, posicionamiento, campaña y desarrollo de producto son suyos—. Mi parte es traducir ese universo a una experiencia web que se sostenga técnicamente: catálogo, carrito, autenticación y checkout, sin servidor de pago.
+La marca es un proyecto de Gabriela Chávez —nombre, identidad visual, posicionamiento, campaña y desarrollo de producto son suyos—. Mi parte es traducir ese universo a una experiencia web que se sostenga técnicamente: catálogo, carrito, autenticación y cierre de pedido, con el precio siempre decidido en el servidor.
 
 El material de partida son tres documentos de marca: Marketing MIX, Objetivos SMART y Desarrollo del Producto. Todo lo que dice esta web —el precio, los claims, los ingredientes, la pirámide olfativa, el recorrido de uso— sale de ahí. No inventé copy de relleno.
+
+## Capturas
+
+<table>
+<tr>
+<td width="50%"><img src="docs/capturas/captura-hero.png" alt="Hero de flowyn, con el frasco flotando sobre fondo crema"></td>
+<td width="50%"><img src="docs/capturas/captura-producto.png" alt="Sección de producto, pestaña El objeto"></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/capturas/captura-formula.png" alt="Pestaña de la fórmula, con los cuatro ingredientes activos"></td>
+<td width="50%"><img src="docs/capturas/captura-ritual.png" alt="Sección de ritual de uso"></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/capturas/captura-comprar.png" alt="Ficha de compra, con precio, formulación y botón de añadir"></td>
+<td width="50%"><img src="docs/capturas/captura-carrito.png" alt="Carrito abierto como panel modal"></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/capturas/captura-checkout.png" alt="Formulario de datos de envío"></td>
+<td width="50%">
+  <img src="docs/capturas/captura-movil-hero.png" alt="Hero en móvil" width="49%">
+  <img src="docs/capturas/captura-movil-carrito.png" alt="Carrito en móvil" width="49%">
+</td>
+</tr>
+</table>
+
+### Video
+
+<video src="docs/capturas/flowyn-anuncio.mp4" controls muted playsinline poster="docs/capturas/captura-hero.png" width="100%"></video>
+
+Si tu visor no reproduce el `<video>` de arriba, el archivo está en [`docs/capturas/flowyn-anuncio.mp4`](docs/capturas/flowyn-anuncio.mp4).
 
 ## Lo que más me interesa que se mire
 
@@ -125,14 +156,13 @@ ahora una única fotografía del frasco ya montado: menos gesto, más frasco.
 | `src/servicios/` | Todo lo que habla con Supabase, y nada más |
 | `src/modulos/` | El resto, por responsabilidad: revelado, atmósfera, marca, navegación, ritual, profundidad |
 | `supabase/migraciones/` | El esquema, con el porqué de cada decisión escrito arriba |
-| `docs/credenciales.md` | Cómo sacar las llaves de Google y dónde va cada una |
+| `docs/credenciales.md` | Cómo sacar las llaves de Google y de WhatsApp, y dónde va cada una |
+| `docs/capturas/` | Capturas y video del sitio, usados en este README |
 | `public/assets/` | Logotipo y isotipo vectorizados, packshots y fotografía de campaña |
 | `scripts/verificar-contraste.mjs` | Mide la paleta contra WCAG AA y falla si algo no cumple |
 | `scripts/verificar-pedido.mjs` | Intenta engañar al cálculo del servidor y comprueba que no se deje |
-| `supabase/funciones/crear-pedido/` | Crea el pedido y firma el cobro. El total se decide aquí, nunca en el navegador |
-| `supabase/funciones/wompi-eventos/` | Recibe el aviso firmado de Wompi. El único sitio que marca un pedido como pagado |
-| `src/servicios/pago.js` | Pide el pedido al servidor y devuelve a dónde ir. No calcula nada |
-| `src/modulos/regreso.js` | La vuelta de la pasarela: consulta el estado, no lo decide |
+| `supabase/funciones/crear-pedido/` | Crea el pedido, recalcula el total en el servidor y arma el mensaje de WhatsApp. El total se decide aquí, nunca en el navegador |
+| `src/servicios/pago.js` | Pide el pedido al servidor y abre WhatsApp con el mensaje ya armado. No calcula nada |
 | `src/modulos/pestanas.js` | Las tres miradas al producto, con el patrón de pestañas de WAI-ARIA |
 | `src/modulos/palabras.js` | El titular del hero, condensándose palabra por palabra |
 
@@ -151,51 +181,48 @@ persistencia cambia de proveedor, se reescribe ese archivo y nada más.
 npm install
 cp .env.example .env   # opcional: sin esto funciona todo menos la cuenta
 npm run dev            # servidor de desarrollo
-npm run verificar      # contraste + construcción
-npm run build          # genera dist/
+npm run verificar      # contraste + pruebas de pedido + construcción
+npm run build           # genera dist/
 ```
 
 Las llaves y los pasos para obtenerlas están en
 [`docs/credenciales.md`](docs/credenciales.md).
 
-## Estado
+## Qué incluye
 
-Este repositorio está en construcción. Lo que ya funciona y lo que falta:
+Landing de producto completa —marca, producto, fórmula, aroma, ritual y
+compra— recorrida en scroll, con ficha de compra en pestañas, carrito
+accesible con persistencia en el navegador y en la nube, cuenta con Google
+(Supabase Auth) e historial de pedidos, formulario de envío validado en el
+servidor y cierre de pedido por WhatsApp con correo de confirmación.
+Accesibilidad revisada contra las Human Interface Guidelines de Apple y
+contraste WCAG AA verificado automáticamente. Desplegado en GitHub Pages,
+con `npm run verificar` (contraste + 29 pruebas contra manipulación del
+pedido + build) corriendo en cada push a `main` antes de publicar nada.
 
-- [x] **Fase 0** — Activos de marca, sistema de diseño, verificador de contraste, hero
-- [x] **Fase 1** — Secciones de producto, ritual, fórmula y aroma
-- [x] **Fase 2** — Ficha de compra, carrito y cálculo de envío por ciudad
-- [x] **Fase 3** — Cuenta con Google, carrito en la nube, historial de pedidos
-- [x] **Fase 4** — Checkout con firma del pago en servidor, datos de envío y correo de confirmación *(código completo y probado; Wompi queda deliberadamente sin activar — ver más abajo)*
-- [x] **Fase 5** — Accesibilidad (Human Interface Guidelines), responsive y limpieza de assets
-- [ ] **Fase 6** — Despliegue en GitHub Pages *(workflow listo; falta crear el repositorio y activar Pages — ver `docs/credenciales.md`)*
+## Cómo se cierra un pedido
 
-La Fase 4 no tiene ningún cabo suelto de código: las dos funciones de
-servidor están escritas y desplegadas, y el cálculo del pedido y de los
-datos de envío está probado contra manipulación del cliente con
-`npm run verificar`. Lo que sí se decidió, a propósito, fue no terminar de
-activar la cuenta de comercio de Wompi. El registro actual exige dirección
-real, redes sociales activas de la marca y cuenta bancaria propia vinculada
-—el mismo nivel de verificación que pediría a un negocio real cobrando de
-verdad—, y eso no tiene sentido para una marca de proyecto que jamás va a
-recibir un pago real ni generar ingresos: el costo de completar ese trámite
-superaba lo que aportaba. El botón de pagar sigue contestando honestamente
-"los pagos todavía no están configurados" en vez de fingir un checkout que
-nunca se va a poder cobrar. Como el correo de confirmación sólo se dispara
-cuando Wompi avisa que un pedido quedó aprobado, tampoco tiene sentido
-activarlo sin lo anterior — las dos piezas quedan como arquitectura
-demostrada, no como funciones en vivo.
+El checkout no pasa por una pasarela de pago: al confirmar, el servidor
+recalcula el total desde su propio catálogo —nunca confía en lo que mandó
+el navegador—, guarda el pedido con estado `recibido`, envía un correo de
+aviso a la clienta y a la tienda, y abre WhatsApp con un mensaje ya armado
+con la referencia, las líneas y el total. Confirmar el pago y coordinar el
+envío queda del lado humano de una conversación real, y el estado del
+pedido (`recibido` → `confirmado`/`cancelado`) se actualiza a mano desde el
+panel de Supabase — no hay todavía un panel de administración propio.
 
-De la Fase 6 no hay nada de código pendiente: el repositorio simplemente no
-existe todavía en GitHub. Los pasos —crear el repo, activar Pages con
-Actions como origen y pegar las llaves— están en `docs/credenciales.md`, en
-orden.
-
-## Sobre los pagos
-
-El checkout está construido contra el **entorno de pruebas de Wompi**, nunca contra producción — flowyn es una marca de proyecto, no una sociedad con NIT, y no puede ni debe recibir dinero real. Eso seguía siendo cierto incluso para el sandbox: activar una cuenta de comercio en Wompi hoy pide, sí o sí, dirección real, redes sociales activas de la marca y una cuenta bancaria personal vinculada — el mismo trámite que le pedirían a cualquier negocio real, independientemente de si va a mover dinero de verdad o no. Para un proyecto de portafolio que jamás va a facturar, ese costo no se justificaba, así que la cuenta se quedó sin activar a propósito.
-
-Lo que sí queda completo, probado y desplegado es la parte que de verdad importa mostrar: la firma de integridad se calcula en una función de servidor, no en el navegador. Es la diferencia entre tener un checkout y entender por qué un checkout se firma del lado del servidor: quien tenga el código del cliente puede leer cualquier cosa que viva en él, así que el monto a cobrar nunca se confía desde ahí. `npm run verificar` incluye las pruebas que confirman que ese cálculo no se deja manipular, con o sin llaves de Wompi puestas.
+La primera versión de este checkout sí firmaba un cobro contra el entorno
+de pruebas de Wompi, con la firma de integridad calculada en una función de
+servidor. Ese código quedó descartado a propósito: activar incluso una
+cuenta de pruebas exige hoy dirección real, redes sociales activas de la
+marca y una cuenta bancaria vinculada —el mismo trámite que a un negocio
+real cobrando de verdad—, y mantenerlo vivo sólo para una marca de
+portafolio que nunca va a facturar no valía el tiempo. Lo que sí se
+conserva, porque es la parte que importa mostrar, es la arquitectura: el
+total de un pedido se decide una sola vez, en el servidor, y
+`npm run verificar` incluye las pruebas que confirman que ese cálculo no se
+deja manipular con precios, cantidades o ciudades inyectadas desde el
+cliente.
 
 ---
 
@@ -206,19 +233,30 @@ Mist**, a 100 ml facial mist by the fictional brand *flowyn*. It's a
 portfolio project: the brand's naming, visual identity, positioning, and
 product development are Gabriela Chávez Castellano's; my part is turning
 that into a web experience that holds up technically — catalog, cart,
-authentication, and checkout, with no payment server of my own.
+authentication, and order handoff, with the price always decided
+server-side.
 
-Stack: a Vite-built static frontend deployed to GitHub Pages, Supabase for
-auth and data (Google OAuth, Postgres, Edge Functions), and Wompi's sandbox
-environment for payments — the brand has no legal entity, so it can't take
-real money, and the checkout is honest about that. The one architectural
-decision worth calling out: the payment amount is never trusted from the
-browser. A Supabase Edge Function recalculates the full order from its own
-copy of the catalog and signs that total server-side, because anyone with
-devtools open can read and rewrite anything that lives in client code.
-`npm run verificar` includes 30 tests that specifically try to cheat that
-calculation — injected prices, out-of-range quantities, spoofed cities,
-duplicated line items — and asserts every one gets rejected.
+Stack: a Vite-built static frontend deployed to GitHub Pages, and Supabase
+for auth and data (Google OAuth, Postgres with RLS, Edge Functions).
+There's no payment gateway: the store closes an order by having the server
+recompute the total from its own copy of the catalog, save the order, send
+a confirmation email, and hand the customer a pre-filled WhatsApp link to
+confirm payment and coordinate shipping directly. That's a deliberate
+choice, not a shortcut — an earlier version of this checkout did sign a
+real charge against Wompi's sandbox, but activating even a test merchant
+account today requires a real address, active social accounts for the
+brand, and a linked bank account: the same KYC a real business would go
+through, for a portfolio brand that will never actually bill anyone and was
+never going to make money off it. It wasn't worth keeping alive.
+
+What did carry over, because it's the part worth showing: the payment
+amount is never trusted from the browser. A Supabase Edge Function
+recalculates the full order from its own copy of the catalog before
+anything is saved, because anyone with devtools open can read and rewrite
+anything living in client code. `npm run verificar` includes tests that
+specifically try to cheat that calculation — injected prices,
+out-of-range quantities, spoofed cities, duplicated line items — and
+asserts every one gets rejected.
 
 Also covered: a real accessibility pass against Apple's Human Interface
 Guidelines (44×44pt touch targets, a WCAG AA contrast checker that runs on
@@ -227,8 +265,10 @@ modal for the cart (focus trap, `Escape`, focus return, scroll lock), and a
 server-validated shipping-data flow where the customer's department can't
 be spoofed for cities the store already knows.
 
+Screenshots and a short promo video are up above, in [Capturas](#capturas).
+
 ---
 
 <div align="center">
-<sub>Proyecto personal · marca de proyecto · dirección creativa: Gabriela Chávez Castellano</sub>
+<sub>Proyecto personal de portafolio · marca de proyecto · dirección creativa: Gabriela Chávez Castellano</sub>
 </div>

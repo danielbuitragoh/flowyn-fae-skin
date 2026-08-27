@@ -41,12 +41,12 @@
   --borde-ui:       #928681;   /* bordes con significado (campos, foco) */
 
   /* El único color ajeno a la paleta en toda la tienda, y aparece una sola
-     vez: el estado "Pagado" de un pedido. La marca es monocroma cálida, así
-     que no tiene un verde — y un pedido pagado necesita distinguirse de uno
-     rechazado sin que haya que leer. Se eligió apagado y terroso para que
-     no chirríe al lado del caoba, y medido: 5.08:1 sobre nude.
+     vez: el estado "Confirmado" de un pedido. La marca es monocroma cálida,
+     así que no tiene un verde — y un pedido confirmado necesita distinguirse
+     de uno cancelado sin que haya que leer. Se eligió apagado y terroso para
+     que no chirríe al lado del caoba, y medido: 5.08:1 sobre nude.
      El color nunca dice nada que el texto no diga también: quien no
-     distingue los tonos lee "Pagado" igual. */
+     distingue los tonos lee "Confirmado" igual. */
   --verde-ok:       #4B6B4F;
 
   /* ---- Degradados ----------------------------------------------------- */

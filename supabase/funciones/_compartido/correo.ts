@@ -1,6 +1,10 @@
 /**
  * El correo de confirmación.
  *
+ * Ya no lo dispara un webhook de pago: se manda directo desde `crear-pedido`
+ * apenas se guarda el pedido, porque ahora el pago se confirma por WhatsApp,
+ * no por un aviso firmado de una pasarela.
+ *
  * Va por SMTP de Gmail, y esa decisión merece explicación porque no es la
  * obvia. Lo normal sería Resend o Postmark, pero los dos —y Brevo, y
  * Mailgun— exigen un dominio propio verificado para poder escribirle a
@@ -44,10 +48,11 @@ export function hayCorreo(): boolean {
 /**
  * Manda un correo. Nunca lanza.
  *
- * Que falle el correo no puede tumbar el webhook de Wompi: si esta función
- * lanzara, Wompi vería un error, reintentaría, y acabaríamos con el pedido
- * actualizado varias veces por un fallo de correo. El pago es lo importante;
- * el aviso es deseable. Se devuelve si salió o no para poder registrarlo.
+ * Que falle el correo no puede tumbar la creación del pedido: si esta
+ * función lanzara, `crear-pedido` fallaría por un problema que no es culpa
+ * de la clienta y que no le impide cerrar su pedido por WhatsApp. Crear el
+ * pedido es lo importante; el aviso por correo es deseable. Se devuelve si
+ * salió o no para poder registrarlo.
  */
 export async function enviarCorreo(correo: Correo): Promise<{ ok: boolean; error?: string }> {
   const usuario = Deno.env.get('CORREO_USUARIO');
@@ -100,10 +105,30 @@ export type DatosPedido = {
   direccion: string | null;
   complemento: string | null;
   barrio: string | null;
+  /** Nombre visible de la ciudad ("Bogotá"), para mostrar en el correo. */
   ciudad: string;
+  /** Identificador de la ciudad en el catálogo ("bogota"), para buscar el plazo. */
+  ciudad_id: string;
   departamento: string | null;
   indicaciones: string | null;
   lineas: Array<{ nombre: string; formato: string; cantidad: number; precio_unitario: number }>;
+};
+
+/**
+ * Cuánto tarda cada zona. Es lo que va en el correo como plazo prometido.
+ * Duplica el mismo dato que ya está en `src/datos/catalogo.js` (campo
+ * `dias`) por la razón de siempre: el servidor no importa el archivo del
+ * cliente. Aquí sólo se usa para redactar el correo, no para cobrar nada,
+ * así que no hace falta que `npm run verificar` la compare entre copias.
+ */
+const PLAZOS: Record<string, string> = {
+  bogota: '2 a 4 días hábiles',
+  medellin: '2 a 4 días hábiles',
+  cali: '2 a 4 días hábiles',
+  barranquilla: '3 a 5 días hábiles',
+  cartagena: '3 a 5 días hábiles',
+  bucaramanga: '3 a 5 días hábiles',
+  otras: '4 a 7 días hábiles',
 };
 
 /**
@@ -120,7 +145,9 @@ export type DatosPedido = {
  * devolución del dinero en quince días calendario. Va aquí porque es el
  * documento que la clienta conserva.
  */
-export function correoParaLaClienta(p: DatosPedido, plazo: string): Correo {
+export function correoParaLaClienta(p: DatosPedido): Correo {
+  const plazo = PLAZOS[p.ciudad_id] ?? '4 a 7 días hábiles';
+
   const filas = p.lineas.map((l) => `
     <tr>
       <td style="padding:10px 0;border-bottom:1px solid #DDCBC3;color:#6E655E;font-size:15px">
@@ -153,8 +180,9 @@ export function correoParaLaClienta(p: DatosPedido, plazo: string): Correo {
     </td></tr>
 
     <tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#6E655E;padding-bottom:26px">
-      Tu pedido está confirmado y en preparación. Te escribimos otra vez cuando salga
-      de camino.
+      Recibimos tu pedido. Te escribimos por WhatsApp para confirmar el pago y
+      coordinar el envío — si no te ha llegado el mensaje, escríbenos tú con
+      la referencia de abajo.
     </td></tr>
 
     <tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#7F655C;padding-bottom:6px">
@@ -212,7 +240,7 @@ export function correoParaLaClienta(p: DatosPedido, plazo: string): Correo {
   const texto = [
     `Gracias, ${p.destinatario ?? ''}.`,
     '',
-    `Tu pedido ${p.referencia} está confirmado y en preparación.`,
+    `Recibimos tu pedido ${p.referencia}. Te escribimos por WhatsApp para confirmar el pago y coordinar el envío.`,
     '',
     ...p.lineas.map((l) => `- ${l.nombre} ${l.formato}${l.cantidad > 1 ? ` x${l.cantidad}` : ''}  ${pesos(l.precio_unitario * l.cantidad)}`),
     `Envío (${p.ciudad}): ${p.envio === 0 ? 'Gratis' : pesos(p.envio)}`,
@@ -228,7 +256,7 @@ export function correoParaLaClienta(p: DatosPedido, plazo: string): Correo {
     'devolvemos el dinero en máximo quince días calendario.',
   ].join('\n');
 
-  return { para: '', asunto: `Tu pedido ${p.referencia} está confirmado`, html, texto };
+  return { para: '', asunto: `Recibimos tu pedido ${p.referencia}`, html, texto };
 }
 
 /**
@@ -252,7 +280,7 @@ export function correoParaLaTienda(p: DatosPedido): Correo {
   ];
 
   const html = `<!doctype html><html lang="es"><body style="font-family:Helvetica,Arial,sans-serif;background:#FAF5F2;padding:24px">
-  <h1 style="font-size:18px;color:#8B5A4B">Pedido pagado · ${p.referencia}</h1>
+  <h1 style="font-size:18px;color:#8B5A4B">Pedido nuevo · ${p.referencia}</h1>
   <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-size:14px;color:#6E655E">
     ${filas.map(([k, v]) => `<tr>
       <td style="border-bottom:1px solid #DDCBC3;color:#7F655C;white-space:nowrap">${k}</td>
@@ -261,5 +289,5 @@ export function correoParaLaTienda(p: DatosPedido): Correo {
 </body></html>`;
 
   const texto = filas.map(([k, v]) => `${k}: ${v}`).join('\n');
-  return { para: '', asunto: `Pedido pagado · ${p.referencia} · ${pesos(p.total)}`, html, texto };
+  return { para: '', asunto: `Pedido nuevo · ${p.referencia} · ${pesos(p.total)}`, html, texto };
 }
