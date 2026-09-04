@@ -53,20 +53,17 @@ El material de partida son tres documentos de marca: Marketing MIX, Objetivos SM
 
 ### Video
 
-[![Anuncio de flowyn · FAE SKIN](docs/capturas/video-portada.png)](docs/capturas/flowyn-anuncio.mp4)
+https://github.com/user-attachments/assets/d566f487-08b2-4e43-8978-8f133120faba
 
-**[▶ Ver el anuncio](docs/capturas/flowyn-anuncio.mp4)** · 28 s · 1080p · 5,6 MB
+Fotografía de campaña, la pantalla real de compra y el frasco, en 28 segundos.
+Está hecho con [Remotion](https://remotion.dev): el anuncio es un componente de
+React que se renderiza fotograma a fotograma con Chromium, no un montaje hecho
+en un editor de video. Las tarjetas de texto, el recorrido sobre las fotos y el
+marco del navegador son código, así que cambiar un claim es cambiar una línea y
+volver a renderizar.
 
-Fotografía de campaña, la pantalla real de compra y el frasco. Está hecho con
-[Remotion](https://remotion.dev): el anuncio es un componente de React que se
-renderiza fotograma a fotograma con Chromium, no un montaje hecho en un editor
-de video. Las tarjetas de texto, el recorrido sobre las fotos y el marco del
-navegador son código, así que cambiar un claim es cambiar una línea y volver a
-renderizar.
-
-> GitHub no reproduce vídeos servidos desde el propio repositorio: los elimina
-> al sanear el HTML del README. Por eso arriba va la portada enlazada al
-> archivo, y no un reproductor incrustado.
+El archivo también está versionado en
+[`docs/capturas/flowyn-anuncio.mp4`](docs/capturas/flowyn-anuncio.mp4).
 
 ## Lo que más me interesa que se mire
 
