@@ -17,7 +17,7 @@ import {
   entrarConGoogle, salir, alCambiarSesion,
 } from './sesion.js';
 import { misPedidos } from '../servicios/carrito-nube.js';
-import { formatearPrecio } from '../datos/catalogo.js';
+import { formatearPrecio, envioPorId } from '../datos/catalogo.js';
 
 /* El logotipo de Google va en línea y con sus colores oficiales: sus
    condiciones de marca no permiten recolorearlo ni reconstruirlo, así que
@@ -37,6 +37,35 @@ const ESTADOS = {
   confirmado: 'Confirmado',
   cancelado: 'Cancelado',
 };
+
+const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+
+/**
+ * Escapa antes de meter algo en una plantilla `innerHTML`.
+ *
+ * El nombre, el correo y la URL de la foto los pone Google, no nosotros, y un
+ * nombre de perfil puede llevar cualquier carácter. Sin esto, un `<` o unas
+ * comillas en el nombre parten el marcado del panel en el primer repintado
+ * después de entrar — justo cuando la clienta acaba de confiarnos su cuenta.
+ */
+function esc(valor) {
+  return String(valor ?? '').replace(/[&<>"']/g, (c) => ESCAPES[c]);
+}
+
+/**
+ * El nombre visible de la ciudad a partir del identificador que guarda el
+ * pedido: en la base queda `'bogota'` o `'otras'`, y a la clienta leerse
+ * "otras" en su propio historial no le dice nada.
+ *
+ * `envioPorId` cae a la primera ciudad del catálogo cuando el id no existe,
+ * así que se comprueba que devolvió la que se pidió: para un pedido viejo de
+ * una ciudad que ya no esté en el catálogo, enseñar el dato crudo es más
+ * honesto que enseñar Bogotá.
+ */
+function nombreCiudad(id) {
+  const envio = envioPorId(id);
+  return envio?.id === id ? envio.nombre : id;
+}
 
 export function montarCuenta() {
   const panel = document.querySelector('[data-cuenta]');
@@ -60,7 +89,7 @@ export function montarCuenta() {
   const { abrir, cerrar } = crearModal({
     panel,
     velo,
-    alAbrir: () => { if (haySesion() && pedidos === null) cargarPedidos(); },
+    alAbrir: () => { if (haySesion() && pedidos === null) pedirPedidos(); },
   });
 
   boton.addEventListener('click', () => abrir(boton));
@@ -94,11 +123,11 @@ export function montarCuenta() {
     cuerpo.innerHTML = `
       <div class="cuenta__identidad">
         ${foto
-          ? `<img class="cuenta__foto" src="${foto}" alt="" referrerpolicy="no-referrer" />`
-          : `<span class="cuenta__foto cuenta__foto--inicial" aria-hidden="true">${nombreVisible().charAt(0).toUpperCase()}</span>`}
+          ? `<img class="cuenta__foto" src="${esc(foto)}" alt="" referrerpolicy="no-referrer" />`
+          : `<span class="cuenta__foto cuenta__foto--inicial" aria-hidden="true">${esc(nombreVisible().charAt(0).toUpperCase())}</span>`}
         <div>
-          <p class="cuenta__nombre">Hola, ${nombreVisible()}</p>
-          <p class="cuenta__correo">${u?.email ?? ''}</p>
+          <p class="cuenta__nombre">Hola, ${esc(nombreVisible())}</p>
+          <p class="cuenta__correo">${esc(u?.email ?? '')}</p>
         </div>
       </div>
 
@@ -137,7 +166,7 @@ export function montarCuenta() {
         <p class="pedido__meta">
           ${FECHA.format(new Date(p.creado_en))} ·
           ${(p.lineas ?? []).reduce((n, l) => n + l.cantidad, 0)} ud ·
-          ${p.ciudad}
+          ${esc(nombreCiudad(p.ciudad))}
         </p>
         <p class="pedido__total">${formatearPrecio(p.total)}</p>
       </li>`).join('')}</ul>`;
@@ -159,6 +188,19 @@ export function montarCuenta() {
     pintar();
   }
 
+  /* Las dos llamadas que no esperan el resultado pasan por aquí. Un rechazo
+     sin atrapar dejaría `cargando` en true y el panel congelado para siempre
+     en "Buscando tus pedidos…", que es la peor forma de fallar: nunca llega a
+     parecer un fallo. Se degrada al mensaje de reintentar, que sí lo parece. */
+  function pedirPedidos() {
+    cargarPedidos().catch((e) => {
+      console.warn('[flowyn] No se pudo cargar el historial.', e);
+      cargando = false;
+      falloAlCargar = true;
+      pintar();
+    });
+  }
+
   /* --- Acciones --------------------------------------------------------- */
 
   cuerpo.addEventListener('click', async (e) => {
@@ -175,7 +217,7 @@ export function montarCuenta() {
       return;
     }
 
-    if (e.target.closest('[data-reintentar]')) { cargarPedidos(); return; }
+    if (e.target.closest('[data-reintentar]')) { pedirPedidos(); return; }
 
     if (e.target.closest('[data-salir]')) {
       await salir();
@@ -203,8 +245,8 @@ export function montarCuenta() {
       const foto = avatar();
       if (marco) {
         marco.innerHTML = foto
-          ? `<img src="${foto}" alt="" referrerpolicy="no-referrer" />`
-          : nombreVisible().charAt(0).toUpperCase();
+          ? `<img src="${esc(foto)}" alt="" referrerpolicy="no-referrer" />`
+          : esc(nombreVisible().charAt(0).toUpperCase());
         marco.hidden = false;
       }
     } else {

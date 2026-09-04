@@ -14,6 +14,11 @@ import { almacenNube } from '../servicios/carrito-nube.js';
 
 export function sincronizarCarritoConSesion() {
   let conectadoA = null;
+  // Testigo de generación: cada cambio de sesión invalida al anterior. Sirve
+  // para que una conexión lenta que vuelve de la red sepa que su turno ya
+  // pasó, en vez de pisar el estado de quien haya entrado —o salido—
+  // mientras tanto.
+  let generacion = 0;
 
   alCambiarSesion(({ listo }) => {
     if (!listo) return;
@@ -27,8 +32,17 @@ export function sincronizarCarritoConSesion() {
     // es idempotente en cuanto entra en juego una escritura a medias.
     if (id === conectadoA) return;
     conectadoA = id;
+    const mia = ++generacion;
 
-    if (id) conectarAlmacen(almacenNube(id));
-    else desconectarAlmacen();
+    if (id) {
+      conectarAlmacen(almacenNube(id), () => mia === generacion).catch((e) => {
+        console.warn('[flowyn] No se pudo conectar el carrito de la cuenta.', e);
+        // Sin esto la sesión quedaría marcada como conectada pese a haber
+        // fallado, y la guarda de arriba impediría cualquier reintento.
+        if (mia === generacion) conectadoA = null;
+      });
+    } else {
+      desconectarAlmacen();
+    }
   });
 }

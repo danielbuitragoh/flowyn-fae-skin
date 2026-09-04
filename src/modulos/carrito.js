@@ -112,9 +112,17 @@ function cargarSincrono() {
  *
  * La ciudad la manda la nube si la tiene: es una preferencia guardada a
  * propósito, mientras que la local puede ser sólo el valor por defecto.
+ *
+ * `sigueVigente` es el permiso para seguir. La lectura remota es un viaje a
+ * la red, y en ese hueco la clienta puede haber cerrado sesión: sin la
+ * comprobación, la respuesta que llega tarde reinstala el almacén de quien
+ * ya salió y el carrito de la siguiente visitante anónima acaba escrito en
+ * la fila de la anterior. Quien llama sabe si su turno sigue siendo el
+ * bueno; aquí sólo se le pregunta.
  */
-export async function conectarAlmacen(nuevo) {
+export async function conectarAlmacen(nuevo, sigueVigente = () => true) {
   const remoto = await nuevo.leer().catch(() => null);
+  if (!sigueVigente()) return;
 
   const lineasRemotas = sanearLineas(remoto?.lineas);
   const cantidadLocal = estado.lineas[0]?.cantidad ?? 0;
@@ -125,6 +133,22 @@ export async function conectarAlmacen(nuevo) {
   estado.ciudad = sanearCiudad(remoto?.ciudad, estado.ciudad);
 
   almacen = nuevo;
+
+  // Con sesión, `guardar()` sólo escribe en la nube y la copia de
+  // `localStorage` se queda congelada en el valor de antes de entrar. Al
+  // recargar, el arranque síncrono lee esa copia vieja y la fusión de arriba
+  // la resucita con `Math.max`, devolviendo cantidades que la clienta ya
+  // había bajado o quitado. Se borra al conectar para que la copia local
+  // nunca pueda parecer más nueva que la de la nube.
+  if (nuevo !== ALMACEN_LOCAL) {
+    try {
+      localStorage.removeItem(CLAVE);
+    } catch {
+      // Modo privado: ni siquiera se puede borrar. No hay nada que hacer y
+      // tampoco nada que contarle a la clienta.
+    }
+  }
+
   avisar('almacen');   // guarda ya fusionado en el destino y repinta
 }
 

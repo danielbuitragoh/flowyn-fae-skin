@@ -12,6 +12,14 @@ import { PRODUCTO, MAX_UNIDADES, ENVIO_GRATIS_DESDE, formatearPrecio } from '../
 import { agregar } from './carrito.js';
 
 export function montarFicha() {
+  // El precio del hero está fuera de la ficha, pero tiene el mismo problema
+  // que el de dentro: escrito a mano en el HTML, subir el precio en el
+  // catálogo dejaba la primera pantalla anunciando el viejo. Se pinta antes
+  // del guardia de abajo porque el hero existe aunque la sección de compra
+  // no, y de paso hereda el formato es-CO del resto del sitio.
+  const precioHero = document.querySelector('[data-precio-hero]');
+  if (precioHero) precioHero.textContent = formatearPrecio(PRODUCTO.precio);
+
   const seccion = document.querySelector('#comprar');
   if (!seccion) return;
 

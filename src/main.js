@@ -60,7 +60,7 @@ function iniciar() {
   // retira sola y la tienda funciona igual que en la Fase 2.
   montarCuenta();
   sincronizarCarritoConSesion();
-  iniciarSesionModulo();
+  iniciarSesionModulo().catch((e) => console.error('[flowyn] La sesión no arrancó.', e));
 
   iniciarPestanas();
   iniciarPalabras();

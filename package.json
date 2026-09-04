@@ -15,6 +15,7 @@
   "author": "Daniel Buitrago",
   "license": "MIT",
   "devDependencies": {
+    "esbuild": "^0.21.5",
     "vite": "^5.4.21"
   },
   "dependencies": {

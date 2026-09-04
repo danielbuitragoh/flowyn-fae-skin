@@ -53,6 +53,22 @@ export function almacenNube(usuarioId) {
 }
 
 /**
+ * Una señal que se corta sola a los `ms` milisegundos.
+ *
+ * `AbortSignal.timeout` no existe en Safari anterior al 16, y allí la llamada
+ * no fallaba: lanzaba un TypeError síncrono antes de que hubiera consulta
+ * alguna. El respaldo hace lo mismo a mano con `AbortController`.
+ */
+function senalDeCorte(ms) {
+  const nativa = AbortSignal.timeout?.(ms);
+  if (nativa) return nativa;
+
+  const control = new AbortController();
+  setTimeout(() => control.abort(), ms);
+  return control.signal;
+}
+
+/**
  * Pedidos de la clienta, con sus líneas.
  *
  * Una sola consulta con junta anidada en lugar de una por pedido: el
@@ -69,22 +85,31 @@ export function almacenNube(usuarioId) {
  * la peor forma de fallar, porque nunca llega a parecer un fallo.
  */
 export async function misPedidos() {
-  const cliente = await nube();
-  if (!cliente) return { ok: false, pedidos: [] };
+  // Todo el cuerpo va dentro del try porque quien llama pinta una pantalla:
+  // cualquier excepción —del cliente, del navegador, de lo que sea— tiene que
+  // salir por la misma puerta que un fallo de red, o el panel se queda
+  // esperando una promesa que nunca se resolvió.
+  try {
+    const cliente = await nube();
+    if (!cliente) return { ok: false, pedidos: [] };
 
-  const { data, error } = await cliente
-    .from('pedidos')
-    .select(`
-      id, referencia, estado, subtotal, envio, total, ciudad, creado_en,
-      lineas:lineas_pedido ( nombre, formato, precio_unitario, cantidad )
-    `)
-    .order('creado_en', { ascending: false })
-    .limit(20)
-    .abortSignal(AbortSignal.timeout(8000));
+    const { data, error } = await cliente
+      .from('pedidos')
+      .select(`
+        id, referencia, estado, subtotal, envio, total, ciudad, creado_en,
+        lineas:lineas_pedido ( nombre, formato, precio_unitario, cantidad )
+      `)
+      .order('creado_en', { ascending: false })
+      .limit(20)
+      .abortSignal(senalDeCorte(8000));
 
-  if (error) {
-    console.warn('[flowyn] No se pudo leer el historial.', error.message);
+    if (error) {
+      console.warn('[flowyn] No se pudo leer el historial.', error.message);
+      return { ok: false, pedidos: [] };
+    }
+    return { ok: true, pedidos: data ?? [] };
+  } catch (e) {
+    console.warn('[flowyn] No se pudo leer el historial.', e);
     return { ok: false, pedidos: [] };
   }
-  return { ok: true, pedidos: data ?? [] };
 }
