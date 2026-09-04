@@ -11,8 +11,7 @@
 
 [**Ver la web**](https://danielbuitragoh.github.io/flowyn-fae-skin/) · [Capturas](#capturas) · [Cómo está armado](#cómo-está-armado) · [Cómo correrlo](#correrlo)
 
-🎨 **Dirección creativa:** [Gabriela Chávez Castellano](https://www.instagram.com/gabrielae.cc) · 💻 **Desarrollo:** Daniel Buitrago
-
+ **Dirección creativa:** [Gabriela Chávez Castellano](https://www.instagram.com/gabrielae.cc) 
 </div>
 
 https://github.com/user-attachments/assets/d566f487-08b2-4e43-8978-8f133120faba
