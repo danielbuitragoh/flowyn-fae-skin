@@ -9,11 +9,13 @@
 [![Verificar](https://github.com/danielbuitragoh/flowyn-fae-skin/actions/workflows/verificar.yml/badge.svg)](https://github.com/danielbuitragoh/flowyn-fae-skin/actions/workflows/verificar.yml)
 [![Licencia MIT](https://img.shields.io/badge/licencia-MIT-caoba)](LICENSE)
 
-[**Ver la web**](https://danielbuitragoh.github.io/flowyn-fae-skin/) · [Capturas y video](#capturas) · [Cómo está armado](#cómo-está-armado) · [Cómo correrlo](#correrlo)
+[**Ver la web**](https://danielbuitragoh.github.io/flowyn-fae-skin/) · [Capturas](#capturas) · [Cómo está armado](#cómo-está-armado) · [Cómo correrlo](#correrlo)
 
 🎨 **Dirección creativa:** [Gabriela Chávez Castellano](https://www.instagram.com/gabrielae.cc) · 💻 **Desarrollo:** Daniel Buitrago
 
 </div>
+
+https://github.com/user-attachments/assets/d566f487-08b2-4e43-8978-8f133120faba
 
 ---
 
@@ -51,18 +53,13 @@ El material de partida son tres documentos de marca: Marketing MIX, Objetivos SM
 </tr>
 </table>
 
-### Video
+### El anuncio
 
-https://github.com/user-attachments/assets/d566f487-08b2-4e43-8978-8f133120faba
-
-Fotografía de campaña, la pantalla real de compra y el frasco, en 28 segundos.
-Está hecho con [Remotion](https://remotion.dev): el anuncio es un componente de
-React que se renderiza fotograma a fotograma con Chromium, no un montaje hecho
-en un editor de video. Las tarjetas de texto, el recorrido sobre las fotos y el
-marco del navegador son código, así que cambiar un claim es cambiar una línea y
-volver a renderizar.
-
-El archivo también está versionado en
+El video de arriba está hecho con [Remotion](https://remotion.dev): es un
+componente de React que se renderiza fotograma a fotograma con Chromium, no un
+montaje hecho en un editor de video. Las tarjetas de texto, el recorrido sobre
+las fotos de campaña y el marco del navegador son código, así que cambiar un
+claim es cambiar una línea y volver a renderizar. El archivo está versionado en
 [`docs/capturas/flowyn-anuncio.mp4`](docs/capturas/flowyn-anuncio.mp4).
 
 ## Lo que más me interesa que se mire
