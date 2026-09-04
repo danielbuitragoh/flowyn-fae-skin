@@ -28,13 +28,22 @@ const CLIENTE_JS = 'src/datos/catalogo.js';
 /* --- Cargar el módulo del servidor (es TypeScript) ------------------------ */
 const temporal = mkdtempSync(join(tmpdir(), 'flowyn-'));
 
+/* En Windows el ejecutable que npm deja en `.bin` es un `.cmd`, no el
+   binario a secas: `execFileSync` no resuelve esa extensión sola y el script
+   moría con ENOENT antes de comprobar nada. El proyecto se desarrolla en
+   Windows y se verifica en Linux (Actions), así que la ruta se decide según
+   la plataforma en vez de asumir una de las dos. */
+const BIN = process.platform === 'win32'
+  ? 'node_modules/.bin/esbuild.cmd'
+  : 'node_modules/.bin/esbuild';
+
 /* El catálogo del cliente usa `import.meta.env.BASE_URL`, que sólo existe
    dentro de Vite. Los dos se pasan por esbuild: el del servidor porque es
    TypeScript, y el del cliente para sustituir esa variable por algo que
    Node entienda. Aquí no se prueban rutas de imágenes, sólo cifras. */
 function cargar(entrada, nombre, define = []) {
   const salida = join(temporal, nombre);
-  execFileSync('node_modules/.bin/esbuild', [
+  execFileSync(BIN, [
     entrada, '--bundle', '--format=esm', '--platform=neutral',
     '--log-level=warning', ...define, `--outfile=${salida}`,
   ]);

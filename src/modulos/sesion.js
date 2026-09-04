@@ -20,8 +20,16 @@ const estado = {
 
 const oyentes = new Set();
 
+// Cada oyente va en su propio try/catch y sobre una copia del Set: un fallo
+// al pintar la nav no puede dejar sin avisar al carrito, y un oyente que se
+// dé de baja mientras se avisa no rompe la iteración. La instantánea se
+// calcula una vez para que todos vean exactamente el mismo estado.
 function avisar() {
-  for (const o of oyentes) o({ ...estado });
+  const instantanea = { ...estado };
+  for (const oyente of [...oyentes]) {
+    try { oyente(instantanea); }
+    catch (e) { console.error('[flowyn] Un oyente de sesión falló.', e); }
+  }
 }
 
 /* --- Lectura ----------------------------------------------------------- */

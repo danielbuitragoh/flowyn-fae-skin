@@ -224,17 +224,43 @@
   color: var(--cobre-texto);
   margin-bottom: var(--e-2);
 }
+/* Era el único control de la tienda que hablaba el idioma del sistema
+   operativo y no el de la marca: esquina cuadrada donde todo lo demás es
+   píldora, borde duro donde todo lo demás es filete rosa, y el chevron gris
+   de la plataforma en medio de una paleta que no tiene un solo tono frío. Y
+   estaba en la pantalla de la compra, que es donde peor sienta que algo
+   parezca traído de otro sitio.
+
+   Se le quita el dibujo nativo, pero el `<select>` de debajo sigue siendo el
+   nativo a propósito: en móvil la rueda del sistema se maneja mejor que
+   cualquier lista que dibujemos nosotros, y el teclado ya funciona.
+
+   El hexadecimal del chevron es el valor literal de `--cobre`: un `data:` URI
+   es un recurso externo para el navegador y no puede leer una propiedad
+   personalizada. Si la marca cambia el cobre, este es el único sitio del CSS
+   donde hay que tocarlo a mano. */
 .envio select {
+  appearance: none;
   width: 100%;
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--borde-ui);
-  border-radius: 12px;
-  background: var(--crema);
+  min-height: 44px;                      /* el mínimo táctil del resto de controles */
+  padding: 0.8rem 2.9rem 0.8rem 1.2rem;  /* el hueco derecho es el del chevron */
+  border: 1px solid var(--rosa-borde);
+  border-radius: 999px;
+  background-color: var(--crema);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.6 6 6.4 11 1.6' stroke='%23A9877B' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.15rem center;
+  background-size: 12px 8px;
   color: var(--caoba);
   font-family: var(--sans);
   font-size: 0.9375rem;
   cursor: pointer;
+  transition: border-color var(--dur-corta) var(--curva);
 }
+/* Mismo gesto que los campos del formulario de envío: el borde se afirma al
+   pasar por encima. El anillo de foco es el global de `base.css` y no se
+   toca — sobrevive a `appearance: none`. */
+.envio select:hover { border-color: var(--borde-ui); }
 .envio__plazo {
   margin: var(--e-2) 0 0;
   font-size: var(--t-pequeno);

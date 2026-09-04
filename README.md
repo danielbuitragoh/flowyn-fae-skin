@@ -9,9 +9,9 @@
 [![Verificar](https://github.com/danielbuitragoh/flowyn-fae-skin/actions/workflows/verificar.yml/badge.svg)](https://github.com/danielbuitragoh/flowyn-fae-skin/actions/workflows/verificar.yml)
 [![Licencia MIT](https://img.shields.io/badge/licencia-MIT-caoba)](LICENSE)
 
-[**Ver la web**](https://danielbuitragoh.github.io/flowyn-fae-skin/) · [Capturas y video](#capturas) · [Cómo está armado](#cómo-está-armado) · [Cómo correrlo](#correrlo) · [In English](#in-english)
+[**Ver la web**](https://danielbuitragoh.github.io/flowyn-fae-skin/) · [Capturas y video](#capturas) · [Cómo está armado](#cómo-está-armado) · [Cómo correrlo](#correrlo)
 
-🎨 **Dirección creativa:** Gabriela Chávez Castellano · 💻 **Desarrollo:** Daniel Buitrago
+🎨 **Dirección creativa:** [Gabriela Chávez Castellano](https://www.instagram.com/gabrielae.cc) · 💻 **Desarrollo:** Daniel Buitrago
 
 </div>
 
@@ -24,6 +24,8 @@ Una página de producto único para **FAE SKIN — Ethereal Skin Mist**, la brum
 La marca es un proyecto de Gabriela Chávez —nombre, identidad visual, posicionamiento, campaña y desarrollo de producto son suyos—. Mi parte es traducir ese universo a una experiencia web que se sostenga técnicamente: catálogo, carrito, autenticación y cierre de pedido, con el precio siempre decidido en el servidor.
 
 El material de partida son tres documentos de marca: Marketing MIX, Objetivos SMART y Desarrollo del Producto. Todo lo que dice esta web —el precio, los claims, los ingredientes, la pirámide olfativa, el recorrido de uso— sale de ahí. No inventé copy de relleno.
+
+**La web de arriba funciona de verdad.** No es una maqueta ni sólo un video: la cuenta con Google, el carrito con persistencia en la nube y el cierre de pedido por WhatsApp corren contra un backend real, con el precio siempre decidido en el servidor — nunca en lo que manda el navegador.
 
 ## Capturas
 
@@ -197,8 +199,9 @@ accesible con persistencia en el navegador y en la nube, cuenta con Google
 servidor y cierre de pedido por WhatsApp con correo de confirmación.
 Accesibilidad revisada contra las Human Interface Guidelines de Apple y
 contraste WCAG AA verificado automáticamente. Desplegado en GitHub Pages,
-con `npm run verificar` (contraste + 29 pruebas contra manipulación del
-pedido + build) corriendo en cada push a `main` antes de publicar nada.
+con `npm run verificar` (62 pruebas automáticas —17 pares de contraste y 45
+contra manipulación del pedido— + build) corriendo en cada push a `main`
+antes de publicar nada.
 
 ## Cómo se cierra un pedido
 
@@ -226,7 +229,8 @@ cliente.
 
 ---
 
-## In English
+<details>
+<summary><b>In English</b></summary>
 
 A single-product landing page and store for **FAE SKIN — Ethereal Skin
 Mist**, a 100 ml facial mist by the fictional brand *flowyn*. It's a
@@ -266,6 +270,8 @@ server-validated shipping-data flow where the customer's department can't
 be spoofed for cities the store already knows.
 
 Screenshots and a short promo video are up above, in [Capturas](#capturas).
+
+</details>
 
 ---
 

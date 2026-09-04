@@ -84,7 +84,28 @@
   color: var(--caoba);
   font-size: 1.05rem;
   font-variant-numeric: tabular-nums;
+  transition: bottom var(--dur-corta) var(--curva);
 }
+
+/* La barra de compra es `position: fixed` al borde inferior y nada de la
+   página compensa su altura: se monta sobre el tramo bajo del arco y tapa
+   justo esta píldora, que es la única señal de progreso de una sección de
+   3.700 px. El peor momento posible, además, porque la barra está a la vista
+   precisamente durante todo el recorrido del ritual.
+
+   No hace falta que JS marque nada nuevo: la barra ya publica su estado en su
+   propio atributo, y `:has()` deja que el `body` —un ancestro que siempre
+   está ahí— lo lea desde CSS. Así el contador sube y baja con la barra sin
+   que los dos módulos tengan que conocerse.
+
+   El desplazamiento es la altura real de la barra —el botón con su relleno de
+   1.05rem, más los 0.7rem que la barra añade arriba y abajo, más su filete—
+   y encima el área segura, que en los móviles con gesto de inicio hace que la
+   barra ocupe bastante más de lo que dice su relleno. */
+body:has(.barra-compra[data-visible='true']) .ritual__contador {
+  bottom: calc(var(--e-3) + 4.9rem + env(safe-area-inset-bottom, 0px));
+}
+
 .ritual__contador small {
   font-family: var(--sans);
   font-size: var(--t-etiqueta);

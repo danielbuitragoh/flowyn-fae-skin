@@ -32,6 +32,7 @@
  */
 
 import { agregar } from './carrito.js';
+import { PRODUCTO, formatearPrecio } from '../datos/catalogo.js';
 
 export function iniciarBarraCompra() {
   const barra = document.querySelector('[data-barra-compra]');
@@ -41,6 +42,17 @@ export function iniciarBarraCompra() {
 
   barra.querySelector('[data-barra-agregar]')
     ?.addEventListener('click', () => agregar(1));
+
+  // Formato y precio salen del catálogo igual que en la ficha. Estaban
+  // escritos a mano en el HTML y ningún módulo los repintaba: subir el
+  // precio en `catalogo.js` dejaba esta barra —que es justo donde se pulsa
+  // "añadir"— anunciando el precio viejo mientras el carrito cobraba el
+  // nuevo.
+  const precio = barra.querySelector('[data-barra-precio]');
+  if (precio) {
+    precio.textContent =
+      `${PRODUCTO.formato} · ${formatearPrecio(PRODUCTO.precio)} ${PRODUCTO.moneda}`;
+  }
 
   barra.dataset.visible = 'false';
   let pedido = false;

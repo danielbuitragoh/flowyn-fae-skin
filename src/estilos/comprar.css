@@ -129,6 +129,12 @@
   margin-bottom: var(--e-4);
 }
 
+/* La píldora se dimensiona por su contenido, no por el hueco que le toque.
+   Como flex-item heredaba el ancho del contenedor: ~250 px en la línea del
+   carrito, con los controles apiñados a la izquierda de un marco medio vacío,
+   y los 330 px enteros en la ficha en móvil, con el "−" y el "+" en extremos
+   opuestos. Un control cuyos dos botones no se tocan deja de leerse como un
+   control y pasa a leerse como dos cosas sueltas. */
 .cantidad {
   display: flex;
   align-items: center;
@@ -136,6 +142,8 @@
   padding: 0.3rem;
   border: 1px solid var(--rosa-borde);
   border-radius: 999px;
+  width: max-content;
+  justify-self: start;
 }
 .cantidad button {
   /* 44 px, el mínimo táctil de las HIG. Estaban en 38. */
@@ -154,14 +162,25 @@
   transition: background-color var(--dur-corta) var(--curva);
 }
 .cantidad button:hover:not(:disabled) { background: var(--nude); }
-.cantidad button:disabled { opacity: .32; cursor: not-allowed; }
+/* Deshabilitado no puede querer decir invisible. A .32 el "−" de la primera
+   unidad prácticamente desaparecía y la píldora parecía tener un solo botón:
+   quien quiere bajar la cantidad no encuentra dónde. Se sube la opacidad y se
+   apaga el tono, que es lo que de verdad comunica "ahora no", en vez de
+   pedirle todo el trabajo a la transparencia. */
+.cantidad button:disabled { opacity: .45; color: var(--taupe-texto); cursor: not-allowed; }
+/* El valor va en la sans y no en el serif de los titulares. A este tamaño el
+   "1" de Cormorant en peso ligero es un trazo fino y sin remates: se lee como
+   una "I" o como un cursor de texto parpadeando, y resulta que es el dato que
+   dice cuántas unidades se llevan. El caoba se queda —es el mismo tono de la
+   marca—; lo que cambia es el peso del trazo. */
 .cantidad output {
   min-width: 2ch;
   text-align: center;
-  font-family: var(--serif);
-  font-size: 1.2rem;
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 1rem;
   color: var(--caoba);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums;   /* la cifra no baila al pasar de 9 a 10 */
 }
 
 /* --- Promesas de servicio ---------------------------------------------------
@@ -195,8 +214,10 @@
 
 @media (max-width: 520px) {
   .ficha__valor { grid-template-columns: 1fr; }
+  /* La píldora ya no se estira con este `stretch` porque mide lo que ocupa su
+     contenido; antes había que repartir el sobrante con `space-between`, que
+     es lo que separaba el "−" del "+" de lado a lado de la pantalla. */
   .ficha__compra { flex-direction: column; align-items: stretch; }
-  .cantidad { justify-content: space-between; }
 }
 
 /* ==========================================================================

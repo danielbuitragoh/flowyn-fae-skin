@@ -15,7 +15,7 @@ import isotipo from '/assets/isotipo-gota.svg?raw';
 import { PRODUCTO, MAX_UNIDADES, ENVIOS, ENVIO_GRATIS_DESDE, formatearPrecio } from '../datos/catalogo.js';
 import {
   obtenerLineas, obtenerCiudad, totales, unidades, estaVacio,
-  fijarCantidad, quitar, fijarCiudad, alCambiar,
+  agregar, fijarCantidad, quitar, fijarCiudad, vaciar, alCambiar,
 } from './carrito.js';
 import { crearModal, conFocoPreservado } from './modal.js';
 import { confirmarPedido } from '../servicios/pago.js';
@@ -48,12 +48,23 @@ export function montarCarrito() {
 
   /* --- Pintado --------------------------------------------------------------- */
 
+  /**
+   * La bandeja vacía se ve en el momento de mayor intención de toda la tienda:
+   * alguien acaba de abrir el carrito de una tienda de un solo producto. Hasta
+   * ahora la única salida era cerrar el panel, buscar la ficha y volver a
+   * empezar, y el pie —donde vive el botón de comprar— está oculto aquí. El
+   * botón ahorra ese viaje, y lleva el precio porque es la pregunta que
+   * acompaña siempre a "añadir".
+   */
   function pintarVacio() {
     cuerpo.innerHTML = `
       <div class="carrito__vacio">
         <img src="${PRODUCTO.imagen}" alt="" aria-hidden="true" />
         <strong>Tu bandeja está lista</strong>
         <p>Cuando añadas FAE SKIN aparecerá aquí, con su envío y su total.</p>
+        <button type="button" class="boton boton--principal" data-agregar-vacio>
+          Añadir ${PRODUCTO.nombre} · ${formatearPrecio(PRODUCTO.precio)}
+        </button>
       </div>`;
     pie.hidden = true;
   }
@@ -232,9 +243,11 @@ export function montarCarrito() {
     // a su hermano en lugar de perderse en el vacío.
     conFocoPreservado(
       panel,
-      ['mas', 'menos', 'quitar', 'ciudad'],
+      ['mas', 'menos', 'quitar', 'ciudad', 'agregar-vacio'],
       () => { if (estaVacio()) pintarVacio(); else pintarLineas(); },
-      { menos: 'mas', mas: 'menos', quitar: 'mas' },
+      // El botón de la bandeja vacía desaparece al pulsarlo —ya hay línea—,
+      // así que el foco pasa al control que continúa la misma conversación.
+      { menos: 'mas', mas: 'menos', quitar: 'mas', 'agregar-vacio': 'mas' },
     );
     if (paso === 'envio' && !estaVacio()) pintarFormulario();
     actualizarContadores();
@@ -274,6 +287,9 @@ export function montarCarrito() {
   cuerpo.addEventListener('click', (e) => {
     const b = e.target.closest('button');
     if (!b) return;
+
+    // Desde la bandeja vacía no hay línea sobre la que operar: se crea una.
+    if (b.hasAttribute('data-agregar-vacio')) { agregar(1); return; }
 
     const linea = obtenerLineas()[0];
     if (b.dataset.mas && linea) fijarCantidad(b.dataset.mas, linea.cantidad + 1);

@@ -95,6 +95,26 @@ export async function enviarCorreo(correo: Correo): Promise<{ ok: boolean; error
 const pesos = (n: number) =>
   '$ ' + n.toLocaleString('es-CO', { maximumFractionDigits: 0 });
 
+const ESCAPES: Record<string, string> = {
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+};
+
+/**
+ * Escapa lo que escribió una persona antes de meterlo en la plantilla HTML.
+ *
+ * Destinatario, dirección, complemento, barrio, indicaciones y —cuando la
+ * ciudad es "otra"— también `ciudad`, que en ese caso no es el nombre del
+ * catálogo sino el municipio que escribió la clienta, salen del formulario.
+ * `validarEnvio` los recorta y les normaliza los espacios, pero no toca
+ * `< > &`: una dirección escrita como "Cl 100 #1<2" deforma tanto el correo
+ * que conserva la clienta como el aviso con el que se despacha el pedido.
+ *
+ * Sólo se usa en el HTML; la versión en texto plano no interpreta marcado y
+ * escaparla sería enseñarle `&amp;` a quien lea el correo sin formato.
+ */
+const esc = (v: string | null | undefined): string =>
+  String(v ?? '').replace(/[&<>"']/g, (c) => ESCAPES[c]);
+
 export type DatosPedido = {
   referencia: string;
   total: number;
@@ -158,11 +178,13 @@ export function correoParaLaClienta(p: DatosPedido): Correo {
       </td>
     </tr>`).join('');
 
+  /* El `<br />` que separa las líneas es nuestro; lo que va entre medias, no.
+     Por eso se escapa cada trozo antes de juntarlos y no la cadena entera. */
   const destino = [
-    p.direccion,
-    p.complemento,
-    p.barrio,
-    [p.ciudad, p.departamento].filter(Boolean).join(', '),
+    esc(p.direccion),
+    esc(p.complemento),
+    esc(p.barrio),
+    [p.ciudad, p.departamento].filter(Boolean).map(esc).join(', '),
   ].filter(Boolean).join('<br />');
 
   const html = `<!doctype html>
@@ -176,7 +198,7 @@ export function correoParaLaClienta(p: DatosPedido): Correo {
     </td></tr>
 
     <tr><td style="font-family:Georgia,'Times New Roman',serif;font-size:27px;line-height:1.3;color:#8B5A4B;padding-bottom:10px">
-      Gracias, ${p.destinatario ?? ''}.
+      Gracias, ${esc(p.destinatario)}.
     </td></tr>
 
     <tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#6E655E;padding-bottom:26px">
@@ -194,7 +216,7 @@ export function correoParaLaClienta(p: DatosPedido): Correo {
              style="font-family:Helvetica,Arial,sans-serif;border-collapse:collapse">
         ${filas}
         <tr>
-          <td style="padding:10px 0;color:#6E655E;font-size:14px">Envío · ${p.ciudad}</td>
+          <td style="padding:10px 0;color:#6E655E;font-size:14px">Envío · ${esc(p.ciudad)}</td>
           <td style="padding:10px 0;text-align:right;color:#6E655E;font-size:14px">
             ${p.envio === 0 ? 'Gratis' : pesos(p.envio)}
           </td>
@@ -214,9 +236,9 @@ export function correoParaLaClienta(p: DatosPedido): Correo {
     <tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#6E655E;padding-bottom:6px">
       ${destino}
     </td></tr>
-    ${p.indicaciones ? `<tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#8A837B;padding-bottom:6px">${p.indicaciones}</td></tr>` : ''}
+    ${p.indicaciones ? `<tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#8A837B;padding-bottom:6px">${esc(p.indicaciones)}</td></tr>` : ''}
     <tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#6E655E;padding-bottom:26px">
-      Tel. ${p.telefono ?? ''}
+      Tel. ${esc(p.telefono)}
     </td></tr>
 
     <tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#6E655E;padding-bottom:22px;border-top:1px solid #DDCBC3;padding-top:22px">
@@ -279,12 +301,15 @@ export function correoParaLaTienda(p: DatosPedido): Correo {
     ['Unidades', p.lineas.map((l) => `${l.nombre} ×${l.cantidad}`).join(', ')],
   ];
 
+  /* Los valores se escapan al pintar el HTML y no al armar `filas`, porque la
+     misma lista alimenta la versión en texto plano, que se queda literal. Las
+     etiquetas de la izquierda son nuestras y no hace falta tocarlas. */
   const html = `<!doctype html><html lang="es"><body style="font-family:Helvetica,Arial,sans-serif;background:#FAF5F2;padding:24px">
   <h1 style="font-size:18px;color:#8B5A4B">Pedido nuevo · ${p.referencia}</h1>
   <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-size:14px;color:#6E655E">
     ${filas.map(([k, v]) => `<tr>
       <td style="border-bottom:1px solid #DDCBC3;color:#7F655C;white-space:nowrap">${k}</td>
-      <td style="border-bottom:1px solid #DDCBC3;color:#8B5A4B">${v}</td></tr>`).join('')}
+      <td style="border-bottom:1px solid #DDCBC3;color:#8B5A4B">${esc(v)}</td></tr>`).join('')}
   </table>
 </body></html>`;
 
