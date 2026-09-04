@@ -52,14 +52,7 @@ El material de partida son tres documentos de marca: Marketing MIX, Objetivos SM
 </tr>
 </table>
 
-### El anuncio
 
-El video de arriba está hecho con [Remotion](https://remotion.dev): es un
-componente de React que se renderiza fotograma a fotograma con Chromium, no un
-montaje hecho en un editor de video. Las tarjetas de texto, el recorrido sobre
-las fotos de campaña y el marco del navegador son código, así que cambiar un
-claim es cambiar una línea y volver a renderizar. El archivo está versionado en
-[`docs/capturas/flowyn-anuncio.mp4`](docs/capturas/flowyn-anuncio.mp4).
 
 ## Lo que más me interesa que se mire
 
@@ -180,19 +173,6 @@ era exactamente el objetivo de separarlos en la Fase 2.
 La sesión y el carrito tampoco se conocen entre sí: `sincronizar-carrito.js`
 es el único archivo que sabe las dos cosas y las conecta. Si mañana la
 persistencia cambia de proveedor, se reescribe ese archivo y nada más.
-
-## Correrlo
-
-```bash
-npm install
-cp .env.example .env   # opcional: sin esto funciona todo menos la cuenta
-npm run dev            # servidor de desarrollo
-npm run verificar      # contraste + pruebas de pedido + construcción
-npm run build           # genera dist/
-```
-
-Las llaves y los pasos para obtenerlas están en
-[`docs/credenciales.md`](docs/credenciales.md).
 
 ## Qué incluye
 
