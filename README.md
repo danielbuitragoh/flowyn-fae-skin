@@ -9,7 +9,7 @@
 [![Verificar](https://github.com/danielbuitragoh/flowyn-fae-skin/actions/workflows/verificar.yml/badge.svg)](https://github.com/danielbuitragoh/flowyn-fae-skin/actions/workflows/verificar.yml)
 [![Licencia MIT](https://img.shields.io/badge/licencia-MIT-caoba)](LICENSE)
 
-[**Ver la web**](https://danielbuitragoh.github.io/flowyn-fae-skin/) · [Capturas](#capturas) · [Cómo está armado](#cómo-está-armado) · [Cómo correrlo](#correrlo)
+[**Ver la web**](https://danielbuitragoh.github.io/flowyn-fae-skin/) · [Capturas](#capturas) · [Cómo está armado](#cómo-está-armado) · [Cómo correrlo](#cómo-correrlo)
 
  **Dirección creativa:** [Gabriela Chávez Castellano](https://www.instagram.com/gabrielae.cc) 
 </div>
@@ -173,6 +173,12 @@ era exactamente el objetivo de separarlos en la Fase 2.
 La sesión y el carrito tampoco se conocen entre sí: `sincronizar-carrito.js`
 es el único archivo que sabe las dos cosas y las conecta. Si mañana la
 persistencia cambia de proveedor, se reescribe ese archivo y nada más.
+
+## Cómo correrlo
+
+Clona el repositorio e instala las dependencias con `npm install`. Los scripts disponibles son `npm run dev` (entorno de desarrollo con recarga en caliente), `npm run build` (construye el sitio estático en `dist/`), `npm run preview` (sirve la build de producción localmente) y `npm run verificar` (corre las pruebas de contraste y de pedido, y luego el build).
+
+Para la cuenta con Google y el carrito persistente en la nube hace falta configurar las variables de entorno de Supabase (ver `docs/credenciales.md`); sin ellas la tienda sigue funcionando igual, con el carrito guardado en el navegador.
 
 ## Qué incluye
 
