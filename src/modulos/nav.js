@@ -27,6 +27,20 @@ export function montarNav() {
 
   montarMenu(nav);
 
+  // "Desliza" es una invitación: una vez aceptada, sobra. Sin esto seguía
+  // subiendo con el hero y cruzaba por debajo de la barra cuando ésta aún
+  // es transparente, y se leía "LA FÓRMULA DESLIZA EL AROMA".
+  const pista = document.querySelector('.hero__scroll');
+  if (pista) {
+    const alDesplazar = () => {
+      if (window.scrollY < 60) return;
+      pista.classList.add('hero__scroll--vista');
+      window.removeEventListener('scroll', alDesplazar);
+    };
+    window.addEventListener('scroll', alDesplazar, { passive: true });
+    alDesplazar();
+  }
+
   const centinela = document.querySelector('[data-centinela]');
   if (!centinela || !('IntersectionObserver' in window)) return;
 
