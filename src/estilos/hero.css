@@ -207,6 +207,13 @@
   text-transform: uppercase;
   color: var(--cobre-texto);
   text-decoration: none;
+  transition: opacity 0.5s ease, visibility 0s linear 0s;
+}
+/* Ya se desplazó: la invitación se retira (y deja de recibir el foco). */
+.hero__scroll--vista {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0s linear 0.5s;
 }
 .hero__scroll i {
   display: block;

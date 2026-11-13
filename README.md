@@ -16,6 +16,8 @@
 
 https://github.com/user-attachments/assets/d566f487-08b2-4e43-8978-8f133120faba
 
+<sub>Recorrido nuevo de 37 s con la web tal como está publicada: [docs/capturas/flowyn-recorrido.mp4](docs/capturas/flowyn-recorrido.mp4)</sub>
+
 ---
 
 ## Qué es
@@ -216,6 +218,15 @@ total de un pedido se decide una sola vez, en el servidor, y
 `npm run verificar` incluye las pruebas que confirman que ese cálculo no se
 deja manipular con precios, cantidades o ciudades inyectadas desde el
 cliente.
+
+Lo que la función no limitaba era cuántas veces se le podía llamar. Cada
+pedido escribe una fila, manda dos correos y redacta un mensaje, así que una
+cuenta con un bucle en la consola podía llenar la tabla y la bandeja de
+entrada en un minuto. Desde la migración `0005` la base acepta como mucho un
+pedido por minuto y cinco por hora por cuenta, con un bloqueo por cuenta
+para que dos peticiones simultáneas no se cuelen por el mismo hueco. Vive en
+la base y no en la función para que valga en cualquier camino que inserte un
+pedido; la función sólo traduce el error a un 429 con un mensaje legible.
 
 ---
 
