@@ -291,7 +291,7 @@
      y que el botón sea grande. */
   .barra-compra__foto { display: none; }
   .barra-compra__datos strong { display: none; }
-  .barra-compra__datos span { font-size: 0.875rem; color: var(--caoba); }
+  .barra-compra__datos span { font-size: 0.875rem; color: var(--caoba); white-space: nowrap; }
   .barra-compra__accion { padding-inline: 1.1rem; }
 }
 
