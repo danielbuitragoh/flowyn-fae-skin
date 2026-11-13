@@ -189,6 +189,12 @@ Deno.serve(async (peticion) => {
     .select('id, referencia')
     .single();
 
+  // El límite de pedidos por cuenta lo pone la base (migración 0005). Su
+  // mensaje ya está escrito para la clienta, así que se le pasa tal cual.
+  if (errorPedido?.hint === 'limite_pedidos') {
+    return responder({ error: errorPedido.message, codigo: 'demasiados_pedidos' }, 429, origen);
+  }
+
   if (errorPedido || !pedido) {
     console.error('[flowyn] No se pudo crear el pedido.', errorPedido);
     return responder({ error: 'No se pudo registrar el pedido.' }, 500, origen);
